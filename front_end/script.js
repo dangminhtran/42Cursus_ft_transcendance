@@ -1,4 +1,4 @@
- class SPARouter {
+class SPARouter {
     constructor() {
         this.currentPage = 'home';
         this.init();
@@ -10,7 +10,13 @@
             link.addEventListener('click', (e) => {
                 e.preventDefault();
                 const page = e.target.dataset.page;
-                this.navigate(page);
+
+				const token = window.localStorage.getItem("token");
+				// TODO: check if token is valid with API call
+				if (token && page == "log_in")
+					 this.navigate("home");
+				else
+					this.navigate(page);
             });
         });
 
@@ -25,6 +31,11 @@
     }
 
     navigate(page, pushState = true) {
+		const token = window.localStorage.getItem("token");
+		if (!token && (page == "pong" || page == "game2"))
+		{
+			page = "log_in";
+		}
         // Hide current page
         document.querySelector('.page.active').classList.remove('active');
         document.querySelector('.nav-link.active').classList.remove('active');
@@ -41,88 +52,15 @@
         this.currentPage = page;
 
         // Page-specific initialization
-        this.initPageContent(page);
-    }
-
-    initPageContent(page) {
-        switch (page) {
-            case 'contact':
-                this.initContactForm();
-                break;
-            case 'data':
-                this.initDataPage();
-                break;
-        }
-    }
-
-    initContactForm() {
-        const form = document.getElementById('contactForm');
-        form.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const formData = new FormData(form);
-            const data = Object.fromEntries(formData);
-
-            // Simulate form submission
-            alert(`Thank you ${data.name}! Your message has been sent.`);
-            form.reset();
-        });
-    }
-
-    initDataPage() {
-        const loadButton = document.getElementById('loadData');
-        const container = document.getElementById('dataContainer');
-
-        loadButton.addEventListener('click', async () => {
-            container.innerHTML = '<div class="loading"><div class="spinner"></div>Loading users...</div>';
-
-            try {
-                // Simulate API call
-                await new Promise(resolve => setTimeout(resolve, 1000));
-
-                // Generate mock data
-                const users = this.generateMockUsers(3);
-                this.displayUsers(users);
-            } catch (error) {
-                container.innerHTML = '<div class="api-data">Error loading data. Please try again.</div>';
-            }
-        });
-    }
-
-    generateMockUsers(count) {
-        const names = ['Alice Johnson', 'Bob Smith', 'Carol Williams', 'David Brown', 'Emma Davis'];
-        const roles = ['Developer', 'Designer', 'Manager', 'Analyst', 'Consultant'];
-
-        return Array.from({ length: count }, (_, i) => ({
-            id: i + 1,
-            name: names[Math.floor(Math.random() * names.length)],
-            role: roles[Math.floor(Math.random() * roles.length)],
-            email: `user${i + 1}@example.com`
-        }));
-    }
-
-    displayUsers(users) {
-        const container = document.getElementById('dataContainer');
-        const html = users.map(user => `
-            <div class="api-data">
-                <strong>${user.name}</strong><br>
-                Role: ${user.role}<br>
-                Email: ${user.email}
-            </div>
-        `).join('');
-
-        container.innerHTML = html;
+        // this.initPageContent(page);
     }
 }
 
 // Initialize the SPA when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
-    new SPARouter();
-});
+    window.router = new SPARouter();
 
-// Optional: Add some interactive effects
-document.addEventListener('DOMContentLoaded', () => {
-    // Add hover effect to cards
-    document.querySelectorAll('.card').forEach(card => {
+	document.querySelectorAll('.card').forEach(card => {
         card.addEventListener('mouseenter', () => {
             card.style.transform = 'translateY(-5px)';
         });
@@ -147,4 +85,16 @@ document.addEventListener('DOMContentLoaded', () => {
             }, 1000);
         });
     });
+
+	document.querySelector("#loginForm").addEventListener("submit", function (e) {
+		e.preventDefault();
+		const email = document.querySelector("#email").value;
+		const password = document.querySelector("#password").value;
+
+		// TODO: connect with back end
+		const token = email + password;
+		window.localStorage.setItem("token", token);
+		window.router.navigate("home");
+	})
 });
+
