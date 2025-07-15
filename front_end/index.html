@@ -7,21 +7,7 @@
 	<title>My Web Page</title>
 	<link rel="stylesheet" href="style.css">
 	<script src="https://cdn.babylonjs.com/babylon.js"></script>
-	<style>
-		html,
-		body {
-			width: 100%;
-			height: 100%;
-			margin: 0;
-			padding: 0;
-		}
-
-		#renderCanvas {
-			width: 1000px;
-			height: 500px;
-			display: block;
-		}
-	</style>
+	<script src="https://cdn.babylonjs.com/gui/babylon.gui.min.js"></script>
 </head>
 
 <body>
@@ -52,10 +38,6 @@
 		<div id="pong" class="page">
 			<h1>Pong Game</h1>
 			<button id="startgame">Start game</button>
-			<ul>
-				<li id="pong-p1-score">Player 1: 0</li>
-				<li id="pong-p2-score">Player 2: 0</li>
-			</ul>
 			<canvas id="renderCanvas" touch-action="none"></canvas>
 		</div>
 
