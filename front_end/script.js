@@ -12,6 +12,8 @@ class SPARouter {
                 const page = e.target.dataset.page;
 
 				const token = window.localStorage.getItem("token");
+				if (token)
+					document.getElementById("nav-link-logout").classList.remove('nodisplay');
 				// TODO: check if token is valid with API call
 				if (token && page == "log_in")
 					 this.navigate("home");
@@ -36,6 +38,14 @@ class SPARouter {
 		{
 			page = "log_in";
 		}
+
+		if (page == "logout" && token)
+		{
+			window.localStorage.removeItem("token");
+			page = "home";
+			document.getElementById("nav-link-logout").classList.add('nodisplay');
+			document.getElementById("nav-link-login").classList.remove('nodisplay');
+		}
         // Hide current page
         document.querySelector('.page.active').classList.remove('active');
         document.querySelector('.nav-link.active').classList.remove('active');
@@ -59,6 +69,12 @@ class SPARouter {
 // Initialize the SPA when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
     window.router = new SPARouter();
+
+	if (window.localStorage.getItem("token"))
+	{
+		document.getElementById("nav-link-logout").classList.remove('nodisplay');
+		document.getElementById("nav-link-login").classList.add('nodisplay');
+	}
 
 	document.querySelectorAll('.card').forEach(card => {
         card.addEventListener('mouseenter', () => {
@@ -94,6 +110,8 @@ document.addEventListener('DOMContentLoaded', () => {
 		// TODO: connect with back end
 		const token = email + password;
 		window.localStorage.setItem("token", token);
+		document.querySelector("#nav-link-logout").classList.remove('nodisplay');
+		document.getElementById("nav-link-login").classList.add('nodisplay');
 		window.router.navigate("home");
 	})
 });
