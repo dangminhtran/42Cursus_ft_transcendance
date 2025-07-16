@@ -1,19 +1,25 @@
 import Fastify from 'fastify';
+import fastifyFormbody from '@fastify/formbody';
+import jwtPlugin from './jwt';
+import twoFARoutes from './routes/2fa';
+import authRoutes from './routes/auth';
+import userRoutes from './routes/users';
 
-const app = Fastify({ logger: true });
 
-app.get('/', async (request, reply) => {
-  return { hello: 'world' };
-});
+const fastify = Fastify({ logger: true });
+fastify.register(fastifyFormbody);
 
-const start = async () => {
-  try {
-    await app.listen({ port: 3000 });
-    console.log('Server listening on http://localhost:3000');
-  } catch (err) {
-    app.log.error(err);
+fastify.register(jwtPlugin);
+
+fastify.register(authRoutes, { prefix: '/auth' });
+fastify.register(twoFARoutes, { prefix: '/2fa' });
+fastify.register(userRoutes, { prefix: '/2fa' });
+
+// Démarrer serveur
+fastify.listen({ port: 4000 }, (err, address) => {
+  if (err) {
+    fastify.log.error(err);
     process.exit(1);
   }
-};
-
-start();
+  fastify.log.info(`Auth service running on ${address}`);
+});
