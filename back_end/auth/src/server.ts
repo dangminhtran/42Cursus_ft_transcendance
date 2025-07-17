@@ -7,8 +7,8 @@ import userRoutes from './routes/users';
 
 
 const fastify = Fastify({ logger: true });
-fastify.register(fastifyFormbody);
 
+fastify.register(fastifyFormbody);
 fastify.register(jwtPlugin);
 
 fastify.register(authRoutes, { prefix: '/auth' });
@@ -16,7 +16,7 @@ fastify.register(twoFARoutes, { prefix: '/2fa' });
 fastify.register(userRoutes, { prefix: '/2fa' });
 
 // Démarrer serveur
-fastify.listen({ port: 3000 , host: '0.0.0.0'}, (err, address) => {
+fastify.listen({ port: 3000 , host: '0.0.0.0'}, (err: any, address: any) => {
   if (err) {
     fastify.log.error(err);
     process.exit(1);
