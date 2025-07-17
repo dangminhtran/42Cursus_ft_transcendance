@@ -4,45 +4,41 @@
 
 Without framework : Typescript
 
-Minor module : Tailwind CSS
+- Minor module : Tailwind CSS
 
-Minor module : support on all devices
+- Minor module : support on all devices
 
-Minor module : accessibility for visually impaired users
+- Minor module : accessibility for visually impaired users
 
 **GAMEPLAY AND USER EXPERIENCE**
 
-*Major module : Remote players
+- Major module : Another game
 
-*Major module : Another game
-
-*Major module : live chat
+- Major module : live chat
 
 **GRAPHICS**
 
-*Major module : 3D Babylon.js
+- Major module : 3D Babylon.js
 
 **BACK-END**
 
-*Major module : Framework - Fastify / Node.js
-
-Minor module : Database in SQLite
-
-*Major module : Micro-services
+- Major module : Framework - Fastify / Node.js
+- Minor module : Database in SQLite
+- Major module : Micro-services
 
 **USER MANAGEMENT**
 
-*Major module : standard user management
+- Major module : standard user management
 
-*Major module : Google sign-in
+- Major module : Google sign-in
 
-**CYBERSECURITY**
+**CYBER SCURITY**
+- 2FA and JWT
 
-*Major module : Two-factor authentification 
 
 **GITHUB**
 
-- Mono-repo *
+- Mono-repo
 
 **Front-end :** 
 

@@ -16,7 +16,7 @@ fastify.register(twoFARoutes, { prefix: '/2fa' });
 fastify.register(userRoutes, { prefix: '/2fa' });
 
 // Démarrer serveur
-fastify.listen({ port: 4000 }, (err, address) => {
+fastify.listen({ port: 3000 , host: '0.0.0.0'}, (err, address) => {
   if (err) {
     fastify.log.error(err);
     process.exit(1);

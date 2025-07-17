@@ -1,0 +1,17 @@
+services:
+  auth:
+    image: auth
+    build: auth/
+    container_name: auth
+    ports:
+      - "3000:3000"
+    restart: always
+    env_file:
+      - .env
+    networks:
+      - transcendance-net
+
+networks:
+  transcendance-net:
+    name: transcendance-net
+    driver: bridge
