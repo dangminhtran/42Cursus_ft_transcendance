@@ -6,12 +6,12 @@ async function dbConnector(fastify : any, options : any) {
   const db = new Database(dbFile, { verbose: console.log });
 
   db.exec(`
-    CREATE TABLE IF NOT EXISTS posts (
+    CREATE TABLE IF NOT EXISTS users (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
-      title TEXT NOT NULL,
-      slug TEXT UNIQUE NOT NULL,
-      content TEXT NOT NULL,
-      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+      email TEXT NOT NULL UNIQUE,
+      password TEXT NOT NULL,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
     );
   `);
 

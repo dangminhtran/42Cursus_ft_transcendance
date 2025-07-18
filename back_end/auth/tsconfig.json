@@ -9,5 +9,5 @@
     "strict": true,
     "skipLibCheck": true
   },
-  "typeRoots": ["src"]
+  "include": ["src", "types"]
 }

@@ -1,16 +1,26 @@
 // ROUTE DE TEST NE RESTERA PAS ICI DANS LE PROJET FINAL
 
 import { FastifyInstance } from 'fastify';
-import { usersDb } from "../mock_db/db";
+// import { usersDb } from "../mock_db/db";
 
 export default async function userRoutes(fastify: FastifyInstance) {
 
     // -- GET User
     fastify.get('/profile', { preValidation: [fastify.authenticate] }, async (request: any, reply) => {
       const userId = request.user.id;
-      const user = usersDb.get(userId);
-      if (!user) return reply.code(404).send({ error: 'Utilisateur introuvable' });
+    
+      const stmt = fastify.db.prepare(`
+        SELECT id, email, is2FAEnabled FROM users WHERE id = ?
+        `);
 
-      return { id: user.id, email: user.email, is2FAEnabled: user.is2FAEnabled };
-    });
+       const row = stmt.get(userId) as { id: string; email: string; is2FAEnabled: number } | undefined;
+      
+    if (!row) return reply.code(404).send({ error: 'Utilisateur introuvable' });
+
+    return {
+      id: row.id,
+      email: row.email,
+      is2FAEnabled: !!row.is2FAEnabled,
+    };
+  });
 }
