@@ -4,12 +4,14 @@ import jwtPlugin from './jwt';
 import twoFARoutes from './routes/2fa';
 import authRoutes from './routes/auth';
 import userRoutes from './routes/users';
+import dbConnector from "./database";
 
 
 const fastify = Fastify({ logger: true });
 
 fastify.register(fastifyFormbody);
 fastify.register(jwtPlugin);
+fastify.register(dbConnector);
 
 fastify.register(authRoutes, { prefix: '/auth' });
 fastify.register(twoFARoutes, { prefix: '/2fa' });
