@@ -9,6 +9,12 @@
 		rel="stylesheet">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 	<title>BOULOT</title>
+	<meta charset="UTF-8" />
+	<link rel="icon" type="image/svg+xml" href="/vite.svg" />
+	<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+		rel="stylesheet">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>BOULOT</title>
 </head>
 
 <body>
@@ -70,7 +76,22 @@
 		overflow: hidden;
 		font-family: 'Poppins', sans-serif;
 	}
+	body {
+		margin: 0;
+		padding: 0;
+		overflow: hidden;
+		font-family: 'Poppins', sans-serif;
+	}
 
+	.background {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100vw;
+		height: 100vh;
+		object-fit: cover;
+		z-index: -1;
+	}
 	.background {
 		position: absolute;
 		top: 0;
@@ -94,6 +115,11 @@
 		font-size: 5rem;
 		margin-right: 20px;
 	}
+	.container h2 {
+		color: white;
+		font-size: 5rem;
+		margin-right: 20px;
+	}
 
 	.card {
 		background: rgba(255, 255, 255, 0.1);
@@ -104,7 +130,25 @@
 		box-shadow:
 			0 8px 32px rgba(0, 0, 0, 0.3),
 			inset 0 1px 0 rgba(255, 255, 255, 0.2);
+	.card {
+		background: rgba(255, 255, 255, 0.1);
+		backdrop-filter: blur(10px);
+		-webkit-backdrop-filter: blur(10px);
+		border-radius: 16px;
+		border: 1px solid rgba(255, 255, 255, 0.2);
+		box-shadow:
+			0 8px 32px rgba(0, 0, 0, 0.3),
+			inset 0 1px 0 rgba(255, 255, 255, 0.2);
 
+		width: 30rem;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+		font-size: 20px;
+		font-weight: 700;
+		color: white;
+	}
 		width: 30rem;
 		display: flex;
 		flex-direction: column;
@@ -220,6 +264,13 @@
 		background: rgba(19, 18, 18, 0.336);
 		margin: 20px 0;
 	}
+	.line {
+		width: 80%;
+		border: 0;
+		height: 1px;
+		background: rgba(19, 18, 18, 0.336);
+		margin: 20px 0;
+	}
 
 	.google-signup {
 		margin-top: -20px;
@@ -243,7 +294,21 @@
 		font-size: 15px;
 		cursor: pointer;
 	}
+	#googleBtn {
+		width: 21rem;
+		padding: 10px;
+		margin: 10px 0;
+		border: none;
+		border-radius: 8px;
+		background: linear-gradient(90deg, #501794, #3E70A1);
+		color: white;
+		font-size: 15px;
+		cursor: pointer;
+	}
 
+	#googleBtn:hover {
+		background: rgba(255, 255, 255, 0.2);
+	}
 	#googleBtn:hover {
 		background: rgba(255, 255, 255, 0.2);
 	}
@@ -265,6 +330,11 @@
 		height: 100%;
 		touch-action: none;
 	}
+	#renderCanvas {
+		width: 100%;
+		height: 100%;
+		touch-action: none;
+	}
 
 	#gameUI {
 		position: absolute;
@@ -276,7 +346,27 @@
 		z-index: 1001;
 		pointer-events: none;
 	}
+	#gameUI {
+		position: absolute;
+		top: 20px;
+		width: 100%;
+		text-align: center;
+		color: white;
+		font-size: 24px;
+		z-index: 1001;
+		pointer-events: none;
+	}
 
+	#instructions {
+		position: absolute;
+		bottom: 20px;
+		width: 100%;
+		text-align: center;
+		color: white;
+		font-size: 16px;
+		z-index: 1001;
+		pointer-events: none;
+	}
 	#instructions {
 		position: absolute;
 		bottom: 20px;
@@ -301,7 +391,23 @@
 		z-index: 1001;
 		font-family: 'Poppins', sans-serif;
 	}
+	#backBtn {
+		position: absolute;
+		top: 20px;
+		left: 20px;
+		padding: 10px 20px;
+		background: rgba(255, 255, 255, 0.2);
+		color: white;
+		border: none;
+		border-radius: 8px;
+		cursor: pointer;
+		z-index: 1001;
+		font-family: 'Poppins', sans-serif;
+	}
 
+	#backBtn:hover {
+		background: rgba(255, 255, 255, 0.3);
+	}
 	#backBtn:hover {
 		background: rgba(255, 255, 255, 0.3);
 	}
