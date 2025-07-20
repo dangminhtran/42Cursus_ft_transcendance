@@ -13,7 +13,7 @@ WORKDIR /app
 
 
 COPY --from=builder /app/dist ./dist
-COPY package*.json ./
+COPY package*.json transcendence.db ./
 RUN npm ci --only=production
 
 CMD ["node", "dist/server.js"]
