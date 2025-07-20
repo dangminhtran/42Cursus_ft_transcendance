@@ -5,7 +5,7 @@ import jwtPlugin from './jwt';
 import twoFARoutes from './routes/2fa';
 import authRoutes from './routes/auth';
 import userRoutes from './routes/users';
-import dbConnector from "./database";
+import dbConnector from "./database/db";
 
 
 const fastify = Fastify({ logger: true });

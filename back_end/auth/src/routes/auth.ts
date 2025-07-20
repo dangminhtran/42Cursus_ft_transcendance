@@ -1,5 +1,6 @@
 import { FastifyInstance } from 'fastify';
-import { usersDb } from "../mock_db/db";
+import { User } from '../database/db';
+import bcrypt from "bcrypt";
 
 
 export default async function authRoutes(fastify: FastifyInstance) {
@@ -7,25 +8,31 @@ export default async function authRoutes(fastify: FastifyInstance) {
     // -- REGISTER simple (sans hash, juste pour exemple)
     fastify.post('/register', async (request, reply) => {
         const { email, password } = request.body as { email: string, password: string };
-        if ([...usersDb.values()].find(u => u.email === email)) {
-            return reply.code(400).send({ error: 'Email déjà utilisé' });
-        }
-        const id = Math.random().toString(36).substring(2, 10);
-        usersDb.set(id, { id, email, password, is2FAEnabled: false });
+        let user: User | null = await fastify.getUserByEmail(email);
+		if (user != null)
+			return {"message": "Email already used. Please login."};
+        let status: boolean = await fastify.addUser(email, password);
+		if (!status)
+			return reply.code(401).send({ error: 'Unable to create user.' });
 
-        const token = fastify.jwt.sign({ id, email });
-        return { id, email, token };
+        const token = fastify.jwt.sign({ email });
+        return { token };
     });
-
-
 
     // -- LOGIN + issue JWT (sans 2FA)
     fastify.post('/login', async (request, reply) => {
         const { email, password } = request.body as { email: string, password: string };
-        const user = [...usersDb.values()].find(u => u.email === email && u.password === password);
+        const user: User | null = await fastify.getUserByEmail(email);
+
         if (!user) {
             return reply.code(401).send({ error: 'Identifiants invalides' });
         }
+
+		const match: boolean = await bcrypt.compare(password, user.password);
+
+		if (!match)
+			return reply.code(401).send({ error: 'Identifiants invalides' });
+
         if (user.is2FAEnabled) {
             // Si 2FA activé, demander code TOTP avant de délivrer JWT
             return reply.send({ twoFARequired: true, userId: user.id });
