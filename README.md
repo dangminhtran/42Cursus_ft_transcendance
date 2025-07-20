@@ -2,29 +2,26 @@
 
 **FRONT-END**
 
-Without framework : Typescript
+Without framework : Typescript - OK
 
 - Minor module : Tailwind CSS
 
-- Minor module : support on all devices (OPTIONAL)
-
-- Minor module : accessibility for visually impaired users (OPTIONAL)
 
 **GAMEPLAY AND USER EXPERIENCE**
 
 - Major module : Another game
 
-- Major module : live chat
+- Major module : live chat - OK
 
 **GRAPHICS**
 
-- Major module : 3D Babylon.js
+- Major module : 3D Babylon.js - OK
 
 **BACK-END**
 
-- Major module : Framework - Fastify / Node.j
-- Minor module : Database in SQLite
-- Major module : Micro-services
+- Major module : Framework - Fastify / Node.js - OK
+- Minor module : Database in SQLite - OK
+- Major module : Micro-services - OK
 
 **USER MANAGEMENT**
 
@@ -33,7 +30,10 @@ Without framework : Typescript
 - Major module : Google sign-in
 
 **CYBER SCURITY**
-- 2FA and JWT
+- Major module: 2FA and JWT - OK
+
+**BLOCKCHAIN**
+- Major module: Historique des tournois
 
 
 **GITHUB**
