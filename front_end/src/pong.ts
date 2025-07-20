@@ -82,16 +82,17 @@ function initializeAuthHandlers() {
 				alert('Login failed. Please try again.');
 			}
 		} else {
-	
+      // Pour le sign in
 			if (!email || !password) {
 				alert('Please fill in all fields');
 				return;
 			}
 
-			if (password) {
-				alert('Passwords do not match');
-				return;
-			}
+      // A FAIRE AVEC LE PASSWORD ENREGISTRE EN BACK END
+			// if (password) {
+			// 	alert('Passwords do not match');
+			// 	return;
+			// }
 
 			const signupSuccessful = await SignUp(email, password);
 			if (signupSuccessful) {
@@ -140,8 +141,12 @@ async function SignUp(email: string, password: string): Promise<boolean> {
 			email,
 			password,
 		});
-		const success = response.data?.success;
-		return !!success;
+		const token = response.data?.token;
+		if (token) {
+			window.sessionStorage.setItem("token", token);
+			return true;
+		}
+		return false;
 	} catch (err) {
 		console.error("Signup failed:", err);
 		return false;
@@ -169,6 +174,7 @@ async function Login(email: string, password: string) {
 }
 
 function startPongGame() {
+  console.log('Starting Pong Game');
 	document.getElementById('authContainer')!.style.display = 'none';
 	document.getElementById('gameContainer')!.style.display = 'block';
 	(window as any).currentGame = new PongGame();
