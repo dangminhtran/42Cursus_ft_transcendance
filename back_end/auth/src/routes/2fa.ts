@@ -1,16 +1,16 @@
 import { FastifyInstance } from "fastify";
 import speakeasy from 'speakeasy';
 import qrcode from 'qrcode';
-import { usersDb } from "../database/db";
 
 
 export default async function twoFARoutes(fastify: FastifyInstance) {
 
-
     // -- Générer secret 2FA et QR Code (protégé par JWT)
     fastify.post('/setup', { preValidation: [fastify.authenticate] }, async (request: any, reply) => {
         const userId = request.user.id;
-        const user = usersDb.get(userId);
+		console.log(request.user)
+        const user = await fastify.getUserByID(userId);
+
         if (!user) return reply.code(404).send({ error: 'Utilisateur introuvable' });
         if (user.is2FAEnabled) return reply.code(400).send({ error: '2FA déjà activée' });
         
@@ -18,7 +18,8 @@ export default async function twoFARoutes(fastify: FastifyInstance) {
             name: `Transcendance (${user.email})`,
         });
         user.twoFASecret = secret.base32;
-        usersDb.set(userId, user);
+		console.log(secret.base32)
+        fastify.update2FASecret(user.id, secret.base32);
         
         if (!secret.otpauth_url) {
             return reply.code(500).send({ error: 'Impossible de générer le QR code' });
@@ -34,7 +35,7 @@ export default async function twoFARoutes(fastify: FastifyInstance) {
     fastify.post('/verify-setup', { preValidation: [fastify.authenticate] }, async (request: any, reply) => {
         const userId = request.user.id;
         const { token } = request.body as { token: string };
-        const user = usersDb.get(userId);
+        const user = await fastify.getUserByID(userId);
         if (!user || !user.twoFASecret) return reply.code(400).send({ error: 'Pas de secret 2FA trouvé' });
         
         const verified = speakeasy.totp.verify({
@@ -47,7 +48,7 @@ export default async function twoFARoutes(fastify: FastifyInstance) {
         if (!verified) return reply.code(400).send({ error: 'Code 2FA invalide' });
         
         user.is2FAEnabled = true;
-        usersDb.set(userId, user);
+        // usersDb.set(userId, user);
         
         return { success: true, message: '2FA activée' };
     });
@@ -55,8 +56,8 @@ export default async function twoFARoutes(fastify: FastifyInstance) {
 
     // -- Vérifier code 2FA à la connexion et délivrer JWT final
     fastify.post('/login', async (request, reply) => {
-        const { userId, token } = request.body as { userId: string, token: string };
-        const user = usersDb.get(userId);
+        const { userId, token } = request.body as { userId: number, token: string };
+        const user = await fastify.getUserByID(userId);
         if (!user || !user.twoFASecret) return reply.code(400).send({ error: 'Utilisateur ou 2FA secret introuvable' });
         
         const verified = speakeasy.totp.verify({

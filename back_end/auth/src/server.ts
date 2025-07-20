@@ -4,7 +4,7 @@ import cors from '@fastify/cors'
 import jwtPlugin from './jwt';
 import twoFARoutes from './routes/2fa';
 import authRoutes from './routes/auth';
-import userRoutes from './routes/users';
+import {userRoutes} from './routes/users';
 import dbConnector from "./database/db";
 
 

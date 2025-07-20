@@ -1,5 +1,5 @@
 import { FastifyInstance } from 'fastify';
-import { User } from '../database/db';
+import { User } from '../database/users/index'
 import bcrypt from "bcrypt";
 
 
@@ -14,8 +14,12 @@ export default async function authRoutes(fastify: FastifyInstance) {
         let status: boolean = await fastify.addUser(email, password);
 		if (!status)
 			return reply.code(401).send({ error: 'Unable to create user.' });
-
-        const token = fastify.jwt.sign({ email });
+		
+		let dbUser: User | null = await fastify.getUserByEmail(email);
+		if (!dbUser) {
+            return reply.code(500).send({ error: 'Identifiants invalides' });
+        }
+        const token = fastify.jwt.sign({  id: dbUser.id, email: dbUser.email  });
         return { token };
     });
 
