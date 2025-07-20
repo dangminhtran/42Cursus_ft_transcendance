@@ -34,7 +34,92 @@
       <div>Player: <span id="playerScore">0</span> | AI: <span id="aiScore">0</span></div>
     </div>
     <div id="instructions">
-      Use W/S or Arrow Keys to move your paddle
+      Use W/S or Arrow Keys to move your  
+	  
+ <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/babylonjs/5.57.1/babylon.min.js"></script>
+
+  <script>
+    document.getElementById('signInBtn').addEventListener('click', async () => {
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+
+      if (!email || !password) {
+        alert('Please fill in both email and password');
+        return;
+      }
+
+      //  Test Minh
+      const loginSuccessful = await simulateLogin(email, password);
+
+      if (loginSuccessful) {
+        startPongGame();
+      } else {
+        alert('Login failed. Please try again.');
+      }
+    });
+
+    document.getElementById('backBtn').addEventListener('click', () => {
+      document.getElementById('gameContainer').style.display = 'none';
+      document.getElementById('loginContainer').style.display = 'flex';
+
+      if (window.currentGame) {
+        window.currentGame.dispose();
+        window.currentGame = null;
+      }
+    });
+
+    // Test Minh
+    async function simulateLogin(email, password) {
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      return email.includes('@') && password.length > 3;
+    }
+
+    function startPongGame() {
+      document.getElementById('loginContainer').style.display = 'none';
+      document.getElementById('gameContainer').style.display = 'block';
+      window.currentGame = new PongGame();
+    }
+
+    class PongGame {
+      constructor() {
+        this.canvas = document.getElementById("renderCanvas");
+        this.engine = new BABYLON.Engine(this.canvas, true);
+
+        this.playerScore = 0;
+        this.aiScore = 0;
+        this.ballSpeed = { x: 0.3, z: 0.2 };
+        this.paddleSpeed = 0.5;
+
+        this.inputStates = {
+          wPressed: false,
+          sPressed: false
+        };
+
+        this.createScene();
+        this.setupControls();
+        this.startGameLoop();
+      }
+
+      createScene() {
+        this.scene = new BABYLON.Scene(this.engine);
+
+        this.camera = new BABYLON.ArcRotateCamera("camera", -Math.PI / 2, Math.PI / 3, 20, BABYLON.Vector3.Zero(), this.scene);
+        this.camera.setTarget(BABYLON.Vector3.Zero());
+
+        const light = new BABYLON.HemisphericLight("light", new BABYLON.Vector3(0, 1, 0), this.scene);
+        light.intensity = 0.8;
+
+        this.createGameField();
+        this.createBall();
+        this.createPaddles();
+        this.resetBall();
+      }
+
+      createGameField() {
+        const fieldWidth = 16;
+        const fieldHeight = 10;
+
+        // Floor paddle
     </div>
   </div>
 

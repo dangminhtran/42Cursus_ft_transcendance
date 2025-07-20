@@ -2,273 +2,288 @@ import "@babylonjs/core/Debug/debugLayer";
 import "@babylonjs/loaders/glTF";
 import { BASE_ADDRESS } from "./config";
 import { ArcRotateCamera, Color3, Engine, HemisphericLight, MeshBuilder, Scene, StandardMaterial, Vector3 } from "@babylonjs/core";
+import axios from "axios";
 
 
- document.getElementById('signInBtn').addEventListener('click', async () => {
-      const email = document.getElementById('email').value;
-      const password = document.getElementById('password').value;
+document.getElementById('signInBtn').addEventListener('click', async () => {
+	const email = document.getElementById('email').value;
+	const password = document.getElementById('password').value;
 
-      if (!email || !password) {
-        alert('Please fill in both email and password');
-        return;
-      }
+	if (!email || !password) {
+	alert('Please fill in both email and password');
+	return;
+	}
 
-      //  Test Minh
-      const loginSuccessful = await simulateLogin(email, password);
+	//  Test Minh
+	const loginSuccessful = await Login(email, password);
 
-      if (loginSuccessful) {
-        startPongGame();
-      } else {
-        alert('Login failed. Please try again.');
-      }
-    });
+	if (loginSuccessful) {
+	startPongGame();
+	} else {
+	alert('Login failed. Please try again.');
+	}
+});
 
-    document.getElementById('backBtn').addEventListener('click', () => {
-      document.getElementById('gameContainer').style.display = 'none';
-      document.getElementById('loginContainer').style.display = 'flex';
+document.getElementById('backBtn').addEventListener('click', () => {
+	document.getElementById('gameContainer').style.display = 'none';
+	document.getElementById('loginContainer').style.display = 'flex';
 
-      if (window.currentGame) {
-        window.currentGame.dispose();
-        window.currentGame = null;
-      }
-    });
+	if (window.currentGame) {
+	window.currentGame.dispose();
+	window.currentGame = null;
+	}
+});
 
-    // Test Minh
-    async function simulateLogin(email, password) {
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      return email.includes('@') && password.length > 3;
-    }
+// Test Minh
+async function Login(email: string, password: string) {
+	if (!email || !password) return false;
 
-    function startPongGame() {
-      document.getElementById('loginContainer').style.display = 'none';
-      document.getElementById('gameContainer').style.display = 'block';
-      window.currentGame = new PongGame();
-    }
+	try {
+		const response = await axios.post(`${BASE_ADDRESS}/auth/login`,
+			{ email, password },
+		);
+		const token = response.data?.token;
+		if (token) {
+			window.sessionStorage.setItem("token", token);
+			return true;
+		}
+		return false;
+	} catch (err) {
+		console.error("Login failed:", err);
+		return false;
+	}
+}
 
-    class PongGame {
-	  canvas: HTMLCanvasElement | any;
-	  engine: any;
-	  playerScore: number;
-	  aiScore: number;
-	  ballSpeed: { x: number; z: number; };
-	  paddleSpeed: number;
-	  inputStates: { wPressed: boolean; sPressed: boolean; };
-	  scene: any;
-	  camera: any;
-	  fieldWidth: number;
-	  fieldHeight: number;
-	  ball: any;
-	  playerPaddle: any;
-	  aiPaddle: any;
-      constructor() {
-        this.canvas = document.getElementById("renderCanvas");
-        this.engine = new Engine(this.canvas, true);
+function startPongGame() {
+	document.getElementById('loginContainer').style.display = 'none';
+	document.getElementById('gameContainer').style.display = 'block';
+	window.currentGame = new PongGame();
+}
 
-        this.playerScore = 0;
-        this.aiScore = 0;
-        this.ballSpeed = { x: 0.3, z: 0.2 };
-        this.paddleSpeed = 0.5;
+class PongGame {
+	canvas: HTMLCanvasElement | any;
+	engine: any;
+	playerScore: number;
+	aiScore: number;
+	ballSpeed: { x: number; z: number; };
+	paddleSpeed: number;
+	inputStates: { wPressed: boolean; sPressed: boolean; };
+	scene: any;
+	camera: any;
+	fieldWidth: number;
+	fieldHeight: number;
+	ball: any;
+	playerPaddle: any;
+	aiPaddle: any;
+	constructor() {
+	this.canvas = document.getElementById("renderCanvas");
+	this.engine = new Engine(this.canvas, true);
 
-        this.inputStates = {
-          wPressed: false,
-          sPressed: false
-        };
+	this.playerScore = 0;
+	this.aiScore = 0;
+	this.ballSpeed = { x: 0.3, z: 0.2 };
+	this.paddleSpeed = 0.5;
 
-        this.createScene();
-        this.setupControls();
-        this.startGameLoop();
-      }
+	this.inputStates = {
+		wPressed: false,
+		sPressed: false
+	};
 
-      createScene() {
-        this.scene = new Scene(this.engine);
+	this.createScene();
+	this.setupControls();
+	this.startGameLoop();
+	}
 
-        this.camera = new ArcRotateCamera("camera", -Math.PI / 2, Math.PI / 3, 20, Vector3.Zero(), this.scene);
-        this.camera.setTarget(Vector3.Zero());
+	createScene() {
+	this.scene = new Scene(this.engine);
 
-        const light = new HemisphericLight("light", new Vector3(0, 1, 0), this.scene);
-        light.intensity = 0.8;
+	this.camera = new ArcRotateCamera("camera", -Math.PI / 2, Math.PI / 3, 20, Vector3.Zero(), this.scene);
+	this.camera.setTarget(Vector3.Zero());
 
-        this.createGameField();
-        this.createBall();
-        this.createPaddles();
-        this.resetBall();
-      }
+	const light = new HemisphericLight("light", new Vector3(0, 1, 0), this.scene);
+	light.intensity = 0.8;
 
-      createGameField() {
-        const fieldWidth = 16;
-        const fieldHeight = 10;
+	this.createGameField();
+	this.createBall();
+	this.createPaddles();
+	this.resetBall();
+	}
 
-        // Floor
-        const ground = MeshBuilder.CreateGround("ground", { width: fieldWidth, height: fieldHeight }, this.scene);
-        const groundMaterial = new StandardMaterial("groundMat", this.scene);
-        groundMaterial.diffuseColor = new Color3(0.1, 0.1, 0.1);
-        ground.material = groundMaterial;
+	createGameField() {
+	const fieldWidth = 16;
+	const fieldHeight = 10;
 
-        // Center line
-        const centerLine = MeshBuilder.CreateBox("centerLine", { width: 0.1, height: 0.1, depth: fieldHeight }, this.scene);
-        centerLine.position = new Vector3(0, 0.05, 0);
-        const lineMaterial = new StandardMaterial("lineMat", this.scene);
-        lineMaterial.diffuseColor = new Color3(1, 1, 1);
-        centerLine.material = lineMaterial;
+	// Floor
+	const ground = MeshBuilder.CreateGround("ground", { width: fieldWidth, height: fieldHeight }, this.scene);
+	const groundMaterial = new StandardMaterial("groundMat", this.scene);
+	groundMaterial.diffuseColor = new Color3(0.1, 0.1, 0.1);
+	ground.material = groundMaterial;
 
-        this.fieldWidth = fieldWidth;
-        this.fieldHeight = fieldHeight;
-      }
+	// Center line
+	const centerLine = MeshBuilder.CreateBox("centerLine", { width: 0.1, height: 0.1, depth: fieldHeight }, this.scene);
+	centerLine.position = new Vector3(0, 0.05, 0);
+	const lineMaterial = new StandardMaterial("lineMat", this.scene);
+	lineMaterial.diffuseColor = new Color3(1, 1, 1);
+	centerLine.material = lineMaterial;
 
-      createBall() {
-        this.ball = MeshBuilder.CreateSphere("ball", { diameter: 0.5 }, this.scene);
-        this.ball.position = new Vector3(0, 0.25, 0);
+	this.fieldWidth = fieldWidth;
+	this.fieldHeight = fieldHeight;
+	}
 
-        const ballMaterial = new StandardMaterial("ballMat", this.scene);
-        ballMaterial.diffuseColor = new Color3(1, 0, 0); // Red ball
-        ballMaterial.emissiveColor = new Color3(0.2, 0, 0);
-        this.ball.material = ballMaterial;
-      }
+	createBall() {
+	this.ball = MeshBuilder.CreateSphere("ball", { diameter: 0.5 }, this.scene);
+	this.ball.position = new Vector3(0, 0.25, 0);
 
-      createPaddles() {
-        // Player paddle (left)
-        this.playerPaddle = MeshBuilder.CreateBox("playerPaddle", { width: 0.3, height: 1, depth: 2 }, this.scene);
-        this.playerPaddle.position = new Vector3(-7, 0.5, 0);
+	const ballMaterial = new StandardMaterial("ballMat", this.scene);
+	ballMaterial.diffuseColor = new Color3(1, 0, 0); // Red ball
+	ballMaterial.emissiveColor = new Color3(0.2, 0, 0);
+	this.ball.material = ballMaterial;
+	}
 
-        const playerMaterial = new StandardMaterial("playerMat", this.scene);
-        playerMaterial.diffuseColor = new Color3(0, 0.8, 1);
-        this.playerPaddle.material = playerMaterial;
+	createPaddles() {
+	// Player paddle (left)
+	this.playerPaddle = MeshBuilder.CreateBox("playerPaddle", { width: 0.3, height: 1, depth: 2 }, this.scene);
+	this.playerPaddle.position = new Vector3(-7, 0.5, 0);
 
-        // AI paddle (right)
-        this.aiPaddle = MeshBuilder.CreateBox("aiPaddle", { width: 0.3, height: 1, depth: 2 }, this.scene);
-        this.aiPaddle.position = new Vector3(7, 0.5, 0);
+	const playerMaterial = new StandardMaterial("playerMat", this.scene);
+	playerMaterial.diffuseColor = new Color3(0, 0.8, 1);
+	this.playerPaddle.material = playerMaterial;
 
-        const aiMaterial = new StandardMaterial("aiMat", this.scene);
-        aiMaterial.diffuseColor = new Color3(1, 0.5, 0);
-        this.aiPaddle.material = aiMaterial;
-      }
+	// AI paddle (right)
+	this.aiPaddle = MeshBuilder.CreateBox("aiPaddle", { width: 0.3, height: 1, depth: 2 }, this.scene);
+	this.aiPaddle.position = new Vector3(7, 0.5, 0);
 
-      setupControls() {
-        window.addEventListener('keydown', (event) => {
-          switch (event.code) {
-            case 'KeyW':
-            case 'ArrowUp':
-              this.inputStates.wPressed = true;
-              break;
-            case 'KeyS':
-            case 'ArrowDown':
-              this.inputStates.sPressed = true;
-              break;
-          }
-        });
+	const aiMaterial = new StandardMaterial("aiMat", this.scene);
+	aiMaterial.diffuseColor = new Color3(1, 0.5, 0);
+	this.aiPaddle.material = aiMaterial;
+	}
 
-        window.addEventListener('keyup', (event) => {
-          switch (event.code) {
-            case 'KeyW':
-            case 'ArrowUp':
-              this.inputStates.wPressed = false;
-              break;
-            case 'KeyS':
-            case 'ArrowDown':
-              this.inputStates.sPressed = false;
-              break;
-          }
-        });
-      }
+	setupControls() {
+	window.addEventListener('keydown', (event) => {
+		switch (event.code) {
+		case 'KeyW':
+		case 'ArrowUp':
+			this.inputStates.wPressed = true;
+			break;
+		case 'KeyS':
+		case 'ArrowDown':
+			this.inputStates.sPressed = true;
+			break;
+		}
+	});
 
-      updatePlayerPaddle() {
-        if (this.inputStates.wPressed && this.playerPaddle.position.z < this.fieldHeight / 2 - 1) {
-          this.playerPaddle.position.z += this.paddleSpeed;
-        }
-        if (this.inputStates.sPressed && this.playerPaddle.position.z > -this.fieldHeight / 2 + 1) {
-          this.playerPaddle.position.z -= this.paddleSpeed;
-        }
-      }
+	window.addEventListener('keyup', (event) => {
+		switch (event.code) {
+		case 'KeyW':
+		case 'ArrowUp':
+			this.inputStates.wPressed = false;
+			break;
+		case 'KeyS':
+		case 'ArrowDown':
+			this.inputStates.sPressed = false;
+			break;
+		}
+	});
+	}
 
-      updateAIPaddle() {
-        const ballZ = this.ball.position.z;
-        const paddleZ = this.aiPaddle.position.z;
-        const aiSpeed = this.paddleSpeed * 0.8;
+	updatePlayerPaddle() {
+	if (this.inputStates.wPressed && this.playerPaddle.position.z < this.fieldHeight / 2 - 1) {
+		this.playerPaddle.position.z += this.paddleSpeed;
+	}
+	if (this.inputStates.sPressed && this.playerPaddle.position.z > -this.fieldHeight / 2 + 1) {
+		this.playerPaddle.position.z -= this.paddleSpeed;
+	}
+	}
 
-        if (ballZ > paddleZ + 0.5 && this.aiPaddle.position.z < this.fieldHeight / 2 - 1) {
-          this.aiPaddle.position.z += aiSpeed;
-        } else if (ballZ < paddleZ - 0.5 && this.aiPaddle.position.z > -this.fieldHeight / 2 + 1) {
-          this.aiPaddle.position.z -= aiSpeed;
-        }
-      }
+	updateAIPaddle() {
+	const ballZ = this.ball.position.z;
+	const paddleZ = this.aiPaddle.position.z;
+	const aiSpeed = this.paddleSpeed * 0.8;
 
-      updateBall() {
-        this.ball.position.x += this.ballSpeed.x;
-        this.ball.position.z += this.ballSpeed.z;
+	if (ballZ > paddleZ + 0.5 && this.aiPaddle.position.z < this.fieldHeight / 2 - 1) {
+		this.aiPaddle.position.z += aiSpeed;
+	} else if (ballZ < paddleZ - 0.5 && this.aiPaddle.position.z > -this.fieldHeight / 2 + 1) {
+		this.aiPaddle.position.z -= aiSpeed;
+	}
+	}
 
-        // Wall collision
-        if (this.ball.position.z >= this.fieldHeight / 2 - 0.25 || this.ball.position.z <= -this.fieldHeight / 2 + 0.25) {
-          this.ballSpeed.z *= -1;
-        }
+	updateBall() {
+	this.ball.position.x += this.ballSpeed.x;
+	this.ball.position.z += this.ballSpeed.z;
 
-        this.checkPaddleCollision();
+	// Wall collision
+	if (this.ball.position.z >= this.fieldHeight / 2 - 0.25 || this.ball.position.z <= -this.fieldHeight / 2 + 0.25) {
+		this.ballSpeed.z *= -1;
+	}
 
-        // Scoring
-        if (this.ball.position.x > this.fieldWidth / 2) {
-          this.playerScore++;
-          this.updateScore();
-          this.resetBall();
-        } else if (this.ball.position.x < -this.fieldWidth / 2) {
-          this.aiScore++;
-          this.updateScore();
-          this.resetBall();
-        }
-      }
+	this.checkPaddleCollision();
 
-      checkPaddleCollision() {
-        const ballPos = this.ball.position;
+	// Scoring
+	if (this.ball.position.x > this.fieldWidth / 2) {
+		this.playerScore++;
+		this.updateScore();
+		this.resetBall();
+	} else if (this.ball.position.x < -this.fieldWidth / 2) {
+		this.aiScore++;
+		this.updateScore();
+		this.resetBall();
+	}
+	}
 
-        // Player paddle collision
-        const playerPos = this.playerPaddle.position;
-        if (ballPos.x <= playerPos.x + 0.4 && ballPos.x >= playerPos.x - 0.4 &&
-          ballPos.z <= playerPos.z + 1.2 && ballPos.z >= playerPos.z - 1.2 &&
-          this.ballSpeed.x < 0) {
+	checkPaddleCollision() {
+	const ballPos = this.ball.position;
 
-          this.ballSpeed.x *= -1.1;
-          this.ballSpeed.z += (ballPos.z - playerPos.z) * 0.1;
-        }
+	// Player paddle collision
+	const playerPos = this.playerPaddle.position;
+	if (ballPos.x <= playerPos.x + 0.4 && ballPos.x >= playerPos.x - 0.4 &&
+		ballPos.z <= playerPos.z + 1.2 && ballPos.z >= playerPos.z - 1.2 &&
+		this.ballSpeed.x < 0) {
 
-        // AI paddle collision
-        const aiPos = this.aiPaddle.position;
-        if (ballPos.x >= aiPos.x - 0.4 && ballPos.x <= aiPos.x + 0.4 &&
-          ballPos.z <= aiPos.z + 1.2 && ballPos.z >= aiPos.z - 1.2 &&
-          this.ballSpeed.x > 0) {
+		this.ballSpeed.x *= -1.1;
+		this.ballSpeed.z += (ballPos.z - playerPos.z) * 0.1;
+	}
 
-          this.ballSpeed.x *= -1.1;
-          this.ballSpeed.z += (ballPos.z - aiPos.z) * 0.1;
-        }
-      }
+	// AI paddle collision
+	const aiPos = this.aiPaddle.position;
+	if (ballPos.x >= aiPos.x - 0.4 && ballPos.x <= aiPos.x + 0.4 &&
+		ballPos.z <= aiPos.z + 1.2 && ballPos.z >= aiPos.z - 1.2 &&
+		this.ballSpeed.x > 0) {
 
-      resetBall() {
-        this.ball.position = new Vector3(0, 0.25, 0);
-        this.ballSpeed.x = (Math.random() > 0.5 ? 1 : -1) * 0.3;
-        this.ballSpeed.z = (Math.random() - 0.5) * 0.4;
-      }
+		this.ballSpeed.x *= -1.1;
+		this.ballSpeed.z += (ballPos.z - aiPos.z) * 0.1;
+	}
+	}
 
-      updateScore() {
-        document.getElementById('playerScore').textContent = this.playerScore;
-        document.getElementById('aiScore').textContent = this.aiScore;
-      }
+	resetBall() {
+	this.ball.position = new Vector3(0, 0.25, 0);
+	this.ballSpeed.x = (Math.random() > 0.5 ? 1 : -1) * 0.3;
+	this.ballSpeed.z = (Math.random() - 0.5) * 0.4;
+	}
 
-      startGameLoop() {
-        this.engine.runRenderLoop(() => {
-          this.updatePlayerPaddle();
-          this.updateAIPaddle();
-          this.updateBall();
-          this.scene.render();
-        });
+	updateScore() {
+	document.getElementById('playerScore').textContent = this.playerScore;
+	document.getElementById('aiScore').textContent = this.aiScore;
+	}
 
-        window.addEventListener("resize", () => {
-          this.engine.resize();
-        });
-      }
+	startGameLoop() {
+	this.engine.runRenderLoop(() => {
+		this.updatePlayerPaddle();
+		this.updateAIPaddle();
+		this.updateBall();
+		this.scene.render();
+	});
 
-      dispose() {
-        if (this.engine) {
-          this.engine.dispose();
-        }
-      }
-    }
+	window.addEventListener("resize", () => {
+		this.engine.resize();
+	});
+	}
+
+	dispose() {
+	if (this.engine) {
+		this.engine.dispose();
+	}
+	}
+}
 
 // class App {
 //   private async _login(email: string, password: string): Promise<boolean> {
