@@ -1,7 +1,7 @@
 import { FastifyInstance } from "fastify";
 import speakeasy from 'speakeasy';
 import qrcode from 'qrcode';
-import { usersDb } from "../mock_db/db";
+import { usersDb } from "../database/db";
 
 
 export default async function twoFARoutes(fastify: FastifyInstance) {

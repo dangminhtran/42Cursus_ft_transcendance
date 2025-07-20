@@ -1,7 +1,7 @@
 // ROUTE DE TEST NE RESTERA PAS ICI DANS LE PROJET FINAL
 
 import { FastifyInstance } from 'fastify';
-import { usersDb } from "../mock_db/db";
+import { usersDb } from "../database/db";
 
 export default async function userRoutes(fastify: FastifyInstance) {
 
