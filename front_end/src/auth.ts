@@ -144,7 +144,6 @@ async function SignUp(email: string, password: string): Promise<boolean> {
 	}
 }
 
-
 async function Login(email: string, password: string) {
 	if (!email || !password) return false;
 
@@ -165,8 +164,10 @@ async function Login(email: string, password: string) {
 }
 
 function startPongGame() {
-  console.log('Starting Pong Game');
 	document.getElementById('authContainer')!.style.display = 'none';
 	document.getElementById('gameContainer')!.style.display = 'block';
-	(window as any).currentGame = new PongGame();
+
+	const game = new PongGame();
+	game.setupChat();
+	(window as any).currentGame = game;
 }

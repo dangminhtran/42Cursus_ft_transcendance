@@ -1,4 +1,3 @@
-
 interface Message {
     id: number;
     username: string;
@@ -42,20 +41,25 @@ export class ChatSystem {
         this.chatContainer = document.getElementById('chatContainer');
         
         this.initEventListeners();
-        this.simulateMessages(); // For demo purposes
+        this.simulateMessages(); // Test Minh - Simulation
     }
     
     private initEventListeners(): void {
-
+        // SEND BUTTON
         this.sendButton?.addEventListener('click', () => this.sendMessage());
 
+        // KEYPRESS ENTER
         this.messageInput?.addEventListener('keypress', (e: KeyboardEvent) => {
-            if (e.key === 'Enter') this.sendMessage();
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                this.sendMessage();
+            }
         });
         
-
+        // COLLAPSE WINDOW
         this.toggleButton?.addEventListener('click', () => this.toggleChat());
         
+        // Track typing state
         this.messageInput?.addEventListener('focus', () => {
             this.isTyping = true;
         });
@@ -63,10 +67,17 @@ export class ChatSystem {
         this.messageInput?.addEventListener('blur', () => {
             this.isTyping = false;
         });
+
+        // Also track typing state on input
+        this.messageInput?.addEventListener('input', () => {
+            this.isTyping = true;
+        });
     }
     
     public sendMessage(): void {
-        if (!this.messageInput) return;
+        if (!this.messageInput) {
+             return;
+        }
         
         const text = this.messageInput.value.trim();
         if (!text) return;
@@ -82,7 +93,7 @@ export class ChatSystem {
         this.addMessage(message);
         this.messageInput.value = '';
         
-        // Here you would send to your multiplayer server
+        // POUR LES MULTIPLAYERS ?
         // this.sendToServer(message);
     }
     
@@ -93,7 +104,6 @@ export class ChatSystem {
         
         const messageDiv = document.createElement('div');
         messageDiv.className = `message ${message.isOwn ? 'own' : 'other'}`;
-        
         messageDiv.innerHTML = `
             <div class="username">${message.username}</div>
             <div class="text">${this.escapeHtml(message.text)}</div>
@@ -125,6 +135,9 @@ export class ChatSystem {
         
         if (!this.isCollapsed) {
             this.hideNotification();
+            setTimeout(() => {
+                this.messageInput?.focus();
+            }, 100);
         }
     }
     
@@ -148,7 +161,7 @@ export class ChatSystem {
         return div.innerHTML;
     }
     
-    // Demo: Simulate incoming messages
+    // Test Minh: Simulate incoming messages
     private simulateMessages(): void {
         const demoMessages: DemoMessage[] = [
             { username: "GameMaster", text: "Welcome to the game!", isOwn: false },
@@ -174,7 +187,10 @@ export class ChatSystem {
                     "Great game!",
                     "Close one!",
                     "Good play",
-                    "Almost had it!"
+                    "Almost had it!",
+                    "GG!",
+                    "Well played",
+                    "That was close!"
                 ];
                 
                 this.addMessage({
@@ -187,8 +203,7 @@ export class ChatSystem {
             }
         }, 10000);
     }
-    
-    // Public methods for external control
+
     public getIsTyping(): boolean {
         return this.isTyping;
     }
@@ -214,7 +229,6 @@ export class ChatSystem {
         }
     }
     
-    // Method to receive messages from external sources (like multiplayer server)
     public receiveMessage(username: string, text: string): void {
         const message: Message = {
             id: Date.now(),
