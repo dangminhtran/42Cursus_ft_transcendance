@@ -6,9 +6,9 @@ Without framework : Typescript
 
 - Minor module : Tailwind CSS
 
-- Minor module : support on all devices
+- Minor module : support on all devices (OPTIONAL)
 
-- Minor module : accessibility for visually impaired users
+- Minor module : accessibility for visually impaired users (OPTIONAL)
 
 **GAMEPLAY AND USER EXPERIENCE**
 
@@ -42,9 +42,11 @@ Without framework : Typescript
 
 **Front-end :** 
 
-- Docker
-- render
-- game (websocket)
+TODO : 
+- Ecran qui permet de choisir entre les deux jeux
+- Ecran pour le user management
+- Live Chat dans le jeu : email, date, message
+- Tailwind CSS
 
 **Back-end :** 
 
