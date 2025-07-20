@@ -16,7 +16,6 @@ export class ChatSystem {
     private messages: Message[];
     private username: string;
     private isCollapsed: boolean;
-    private unreadCount: number;
     private isTyping: boolean;
     
     private messagesArea: HTMLElement | null;
@@ -31,7 +30,6 @@ export class ChatSystem {
         this.messages = [];
         this.username = "Player" + Math.floor(Math.random() * 1000);
         this.isCollapsed = false;
-        this.unreadCount = 0;
         this.isTyping = false;
         
         this.messagesArea = document.getElementById('messagesArea');

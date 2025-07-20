@@ -358,9 +358,9 @@ export class PongGame {
       this.updateScore();
       this.resetBall();
 
-      if (this.chat) {
-        this.chat.receiveMessage("System", "AI scored! 🤖");
-      }
+      // if (this.chat) {
+      //   this.chat.receiveMessage("System", "AI scored! 🤖");
+      // }
     }
   }
 

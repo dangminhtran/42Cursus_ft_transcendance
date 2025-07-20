@@ -22,7 +22,7 @@ Without framework : Typescript
 
 **BACK-END**
 
-- Major module : Framework - Fastify / Node.js
+- Major module : Framework - Fastify / Node.j
 - Minor module : Database in SQLite
 - Major module : Micro-services
 
@@ -45,7 +45,6 @@ Without framework : Typescript
 TODO : 
 - Ecran qui permet de choisir entre les deux jeux
 - Ecran pour le user management
-- Live Chat dans le jeu : email, date, message
 - Tailwind CSS
 
 **Back-end :** 
