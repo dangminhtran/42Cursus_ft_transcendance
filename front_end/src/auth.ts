@@ -1,5 +1,6 @@
 import axios from "axios";
 import { PongGame } from "./pong";
+import { TronGame } from "./tron";
 import { BASE_ADDRESS } from "./config";
 
 /* VARIABLES GLOBALES */
@@ -168,6 +169,15 @@ function startPongGame() {
 	document.getElementById('gameContainer')!.style.display = 'block';
 
 	const game = new PongGame();
+	game.setupChat();
+	(window as any).currentGame = game;
+}
+
+function startTronGame() {
+	document.getElementById('authContainer')!.style.display = 'none';
+	document.getElementById('gameContainer')!.style.display = 'block';
+
+	const game = new TronGame();
 	game.setupChat();
 	(window as any).currentGame = game;
 }
