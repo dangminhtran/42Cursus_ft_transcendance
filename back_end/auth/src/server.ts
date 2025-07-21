@@ -1,6 +1,7 @@
 import Fastify from 'fastify';
 import fastifyFormbody from '@fastify/formbody';
 import cors from '@fastify/cors'
+import fastifyMetrics from 'fastify-metrics';
 import jwtPlugin from './jwt';
 import twoFARoutes from './routes/2fa';
 import authRoutes from './routes/auth';
@@ -12,6 +13,11 @@ const fastify = Fastify({ logger: true });
 fastify.register(cors, {
   origin: true,
 })
+
+fastify.register(fastifyMetrics, {
+  endpoint: '/metrics',
+  routeMetrics: {}
+});
 
 fastify.register(fastifyFormbody);
 fastify.register(jwtPlugin);
