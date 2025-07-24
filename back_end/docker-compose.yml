@@ -31,6 +31,21 @@ services:
     volumes:
       - grafana-storage:/var/lib/grafana
 
+  waf:
+    build: ./modsecurity
+    container_name: waf
+    volumes:
+      - ./modsecurity/modsecurity.conf:/etc/modsecurity/modsecurity.conf
+      - ./modsecurity/nginx.conf:/usr/local/nginx/conf/nginx.conf
+      - ./modsecurity/crs:/etc/modsecurity/crs
+    ports:
+      - "8080:80"
+    depends_on:
+      - auth
+    networks:
+      - transcendance-net
+
+
 volumes:
   grafana-storage: {}
 
