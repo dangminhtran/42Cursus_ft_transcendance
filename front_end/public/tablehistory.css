@@ -1,15 +1,15 @@
 .history-table {
 	margin: 0 auto;
+	border: none;
 	width: 70%;
-	border-radius: 20%;
 	border-collapse: collapse;
 	margin-top: 16px;
 }
 
 .history-table th,
 .history-table td {
+	border: none;
 	padding: 8px 12px;
-	border: 1px solid #ddd;
 	text-align: center;
 }
 
@@ -20,10 +20,14 @@
 }
 
 .history-table tbody tr:nth-child(even) td {
-	background-color: #f7f7f7;
+	background: rgba(255, 255, 255, 0.568);
+	/* backdrop-filter: blur(10px); */
+	/* -webkit-backdrop-filter: blur(10px); */
 }
 
 .history-table tbody td {
-	background-color: #fff;
+	background: rgba(255, 255, 255, 0.4);
+	/* backdrop-filter: blur(10px); */
+	/* -webkit-backdrop-filter: blur(10px); */
 	color: #333;
 }

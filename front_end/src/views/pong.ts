@@ -292,9 +292,7 @@ export class PongGame {
 }
 
 function startPongGame() {
-
 	const game = new PongGame();
-	// game.setupChat();
 	setPongGame(game);
 }
 
