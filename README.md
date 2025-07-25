@@ -9,7 +9,7 @@ Without framework : Typescript - OK
 
 **GAMEPLAY AND USER EXPERIENCE**
 
-- Major module : Another game
+- Major module : Another game - OK
 
 - Major module : live chat - OK
 
@@ -54,3 +54,8 @@ TODO :
 - Game
 - Live chat
 
+export NVM_DIR="$HOME/.nvm" &&
+[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh" &&
+nvm install 20 &&
+nvm use 20 &&
+npm run dev
