@@ -1,0 +1,27 @@
+import { navigateTo } from "../router";
+import { clearPongGame } from "../state";
+
+export function renderNavbar() {
+	document.getElementById('navbar')!.innerHTML = `
+	<nav>
+		<ul>
+			<li><a class="nav-navlink" href="/">Home</a></li>
+			<li><a class="nav-navlink" href="/pong">Pong</a></li>
+			<li><a class="nav-navlink" href="/tron">Tron</a></li>
+			<li><a class="nav-navlink" href="/profile">Profile</a></li>
+		</ul>
+	</nav>
+	`;
+
+	const navlinks = document.querySelectorAll<HTMLAnchorElement>(".nav-navlink");
+	navlinks.forEach(link => {
+		link.addEventListener('click', e => {
+			e.preventDefault();
+			// clearGame
+			if (link.getAttribute("href") == "/pong")
+				clearPongGame();
+			navigateTo(link.getAttribute("href")!);
+		})
+	})
+	
+}
