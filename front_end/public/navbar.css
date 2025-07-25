@@ -1,0 +1,31 @@
+nav {
+	max-height: 10vh;
+	margin: 0 auto;
+	background: rgba(255, 255, 255, 0.1);
+	backdrop-filter: blur(10px);
+	-webkit-backdrop-filter: blur(10px);
+	border-radius: 16px;
+	border: 1px solid rgba(255, 255, 255, 0.2);
+	box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+	font-size: 15px;
+	font-weight: 700;
+	color: white;
+}
+
+ul {
+	width: 100%;
+	display: flex;
+	flex-direction: row;
+	gap: 10px;
+	justify-content: center;
+}
+
+li {
+	cursor: pointer;
+	border-radius: 10px;
+	margin: 5px 0;
+	padding: 0 20px;
+	background: linear-gradient(90deg, #501794, #3E70A1);
+	color: white;
+	box-shadow: 0 2px 8px rgba(80, 23, 148, 0.3);
+}
