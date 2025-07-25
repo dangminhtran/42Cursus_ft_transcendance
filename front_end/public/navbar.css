@@ -29,3 +29,7 @@ li {
 	color: white;
 	box-shadow: 0 2px 8px rgba(80, 23, 148, 0.3);
 }
+
+#disconnect-navlink {
+	background: linear-gradient(90deg, #aa1a07, #ec413b);
+}

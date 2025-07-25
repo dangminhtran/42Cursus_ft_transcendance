@@ -9,7 +9,9 @@ export function renderNavbar() {
 			<li><a class="nav-navlink" href="/">Home</a></li>
 			<li><a class="nav-navlink" href="/pong">Pong</a></li>
 			<li><a class="nav-navlink" href="/tron">Tron</a></li>
+			<li><a class="nav-navlink" href="/chat">Chat</a></li>
 			<li><a class="nav-navlink" href="/profile">Profile</a></li>
+			${window.sessionStorage.getItem('token') ? '<li id="disconnect-navlink"><a class="nav-navlink" href="#">Disconnect</a></li>' : ""}
 		</ul>
 	</nav>
 	`;
@@ -22,7 +24,14 @@ export function renderNavbar() {
 				clearPongGame();
 				clearTronGame();
 			navigateTo(link.getAttribute("href")!);
-		})
+		});
+	});
+
+	const disconnect = document.querySelector("#disconnect-navlink");
+	disconnect?.addEventListener("click", e => {
+		e.preventDefault();
+		window.sessionStorage.removeItem('token');
+		navigateTo("/login");
 	})
 	
 }

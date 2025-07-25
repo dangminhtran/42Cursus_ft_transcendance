@@ -8,7 +8,8 @@ export function renderLogin() {
 	const token: string | null = window.sessionStorage.getItem('token');
 	if (token)
 		return navigateTo("/");
-	
+	document.getElementById('navbar')!.innerHTML = "";
+
     document.getElementById('app')!.innerHTML = `
     	<div class="container" id="authContainer">
 		<h2 id="authTitle">LOG IN</h2>
