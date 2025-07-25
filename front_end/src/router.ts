@@ -1,3 +1,5 @@
+import { clearPongGame } from "./state";
+import { clearTronGame } from "./state";
 import { render404 } from "./views/404";
 
 type RouteHandler = () => void;
@@ -14,7 +16,12 @@ export function navigateTo(path: string) {
 
 export function renderRoute() {
     const handler = routes[location.pathname];
-    if (handler) handler();
+    if (handler)
+    {
+        clearPongGame();
+        clearTronGame();
+        handler();
+    }
     else renderNotFound();
 }
 

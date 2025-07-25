@@ -1,5 +1,6 @@
 import { navigateTo } from "../router";
 import { clearPongGame } from "../state";
+import { clearTronGame } from "../state";
 
 export function renderNavbar() {
 	document.getElementById('navbar')!.innerHTML = `
@@ -19,11 +20,9 @@ export function renderNavbar() {
 	navlinks.forEach(link => {
 		link.addEventListener('click', e => {
 			e.preventDefault();
-			if (location.pathname == "/pong")
-			{
-				console.log("clear game");
+			// clearGame
 				clearPongGame();
-			}
+				clearTronGame();
 			navigateTo(link.getAttribute("href")!);
 		});
 	});
