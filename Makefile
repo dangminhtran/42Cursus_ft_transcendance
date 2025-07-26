@@ -1,4 +1,20 @@
-all: up
+all: vault ssl up
+
+VAULT_ADDR=http://127.0.0.1:8200
+VAULT_SECRET_PATH=secret/ssl/certs
+SSL_PATH=back_end/modsecurity/ssl
+
+export VAULT_ADDR
+
+vault:
+	@./setup_vault_ssl.sh
+	@rm vault-dev.log
+
+ssl:
+	@echo "Fetching SSL certs from Vault..."
+	@vault kv get -field=cert $(VAULT_SECRET_PATH) > $(SSL_PATH)/cert.pem
+	@vault kv get -field=key $(VAULT_SECRET_PATH) > $(SSL_PATH)/key.pem
+	@echo "Certificates saved to $(SSL_PATH)/"
 
 up:
 	docker compose -f back_end/docker-compose.yml up --build -d

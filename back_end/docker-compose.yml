@@ -39,7 +39,7 @@ services:
       - ./modsecurity/nginx.conf:/usr/local/nginx/conf/nginx.conf
       - ./modsecurity/crs:/etc/modsecurity/crs
     ports:
-      - "8080:80"
+      - "8443:443"
     depends_on:
       - auth
     networks:

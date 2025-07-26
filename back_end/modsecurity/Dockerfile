@@ -30,6 +30,7 @@ RUN apt-get update && apt-get install -y \
 COPY modsecurity.conf /etc/nginx/modsec/modsecurity.conf
 COPY crs/crs-setup.conf /etc/nginx/modsec/crs-setup.conf
 COPY crs/rules/ /etc/nginx/modsec/rules/
+COPY ssl /etc/nginx/ssl
 
 # Compilation ModSecurity
 WORKDIR /opt
@@ -45,9 +46,9 @@ RUN git clone --depth 1 https://github.com/SpiderLabs/ModSecurity-nginx.git
 RUN wget http://nginx.org/download/nginx-${NGINX_VERSION}.tar.gz && \
     tar zxvf nginx-${NGINX_VERSION}.tar.gz && \
     cd nginx-${NGINX_VERSION} && \
-    ./configure --with-compat --add-dynamic-module=../ModSecurity-nginx && \
+    ./configure --with-compat --with-http_ssl_module --add-dynamic-module=../ModSecurity-nginx && \
     make -j$(nproc) && make install
 
 # Copier config NGINX + ModSecurity à l’intérieur si nécessaire via docker-compose
-EXPOSE 80
+EXPOSE 443
 CMD ["/usr/local/nginx/sbin/nginx", "-g", "daemon off;"]
