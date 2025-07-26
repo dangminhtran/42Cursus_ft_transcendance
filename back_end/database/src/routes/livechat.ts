@@ -1,39 +1,33 @@
-import { db } from '../database/db';
+import { FastifyInstance } from 'fastify';
 
-export const sendMessage = async (message: string, userId: number): Promise<boolean> => {
-	try {
-		const stmt = db.prepare(`
-			INSERT INTO chats (message, user_id)
-			VALUES (?, ?)
-		`);
-		const info = stmt.run(message, userId);
+export default async function chatRoutes(fastify: FastifyInstance) {
+	// Lire tous les messages
+	fastify.get('/chat/read', async (request, reply) => {
+		try {
+			const messages = fastify.readMessages();
+			reply.code(200).send(messages);
+		} catch (err) {
+			request.log.error(err);
+			reply.code(500).send({ error: 'Failed to read messages' });
+		}
+	});
 
-		return info.changes > 0;
-	} catch (error) {
-		console.error('Error sending message:', error);
-		return false;
-	}
-};
+	// Envoyer un message
+	fastify.post('/chat/send', async (request, reply) => {
+		const { message, userId } = request.body as {
+			message?: string;
+			userId?: number;
+		};
 
-export type ChatMessage = {
-	id: number;
-	message: string;
-	created_at: string;
-	user_id: number | null;
-	user_email: string | null;
-};
+		if (!message || userId === undefined) {
+			return reply.code(400).send({ error: 'Missing message or userId' });
+		}
 
-export const readMessages = (): ChatMessage[] => {
-	const stmt = db.prepare(`
-		SELECT 
-			chats.id,
-			chats.message,
-			chats.created_at,
-			users.id AS user_id,
-			users.email AS user_email
-		FROM chats
-		LEFT JOIN users ON users.id = chats.user_id
-		ORDER BY chats.created_at ASC
-	`);
-	return stmt.all() as ChatMessage[];
-};
+		const success = await fastify.sendMessage(message, userId);
+
+		if (success)
+			return reply.code(201).send({ message: 'Message sent' });
+		else
+			return reply.code(500).send({ error: 'Failed to send message' });
+	});
+}
