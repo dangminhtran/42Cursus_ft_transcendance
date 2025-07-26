@@ -30,3 +30,24 @@ db.exec(`
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
   );
 `)
+
+// db.exec(`
+//   CREATE TABLE IF NOT EXISTS chats (
+//     id INTEGER PRIMARY KEY AUTOINCREMENT,
+//     message TEXT NOT NULL UNIQUE,
+// 	user_id 
+//     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+//   );
+// `)
+
+// db.exec(`
+//   CREATE TABLE IF NOT EXISTS gameresult (
+//     id INTEGER PRIMARY KEY AUTOINCREMENT,
+//     player1 TEXT NOT NULL,
+// 	player2 TEXT NOT NULL,
+// 	player1score INTEGER,
+// 	player2score INTEGER,
+// 	user_id
+//     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+//   );
+// `)

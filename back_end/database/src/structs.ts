@@ -1,5 +1,6 @@
 export interface User {
   id: number
+  profilepicture: string,
   email: string
   password: string
   is2FAEnabled: boolean

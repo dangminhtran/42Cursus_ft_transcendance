@@ -1,12 +1,13 @@
 import fp from 'fastify-plugin';
 import Database from 'better-sqlite3';
-import { getUserByEmail, getUserByID, addUser } from './users/users';
+import { getUserByEmail, getUserByID, addUser, updateUser } from './users/users';
 
 export const db = new Database('./transcendence.db', { verbose: console.log });
 
 db.exec(`
   CREATE TABLE IF NOT EXISTS users (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
+	profilepicture TEXT,
 	email TEXT NOT NULL UNIQUE,
 	password TEXT NOT NULL,
 	is2FAEnabled INTEGER DEFAULT 0,
@@ -46,6 +47,7 @@ export default fp(async (fastify, opts) => {
 	fastify.decorate('getUserByEmail', getUserByEmail);
 	fastify.decorate('getUserByID', getUserByID);
 	fastify.decorate('addUser', addUser);
+	fastify.decorate('updateUser', updateUser);
 
 
 	fastify.addHook('onClose', (instance, done) => {

@@ -9,14 +9,12 @@ export default fp(async (fastify, opts) => {
 
 	fastify.decorate('db', db);
 
-	// 
 	fastify.decorate('getUserByEmail', getUserByEmail);
 	fastify.decorate('getUserByID', getUserByID);
 	fastify.decorate('addUser', addUser);
 	fastify.decorate('deleteUser', deleteUser);
 	fastify.decorate('updateUser', updateUser);
 	fastify.decorate('update2FASecret', update2FASecret);
-
 
 	fastify.addHook('onClose', (instance, done) => {
 		db.close();

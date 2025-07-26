@@ -3,6 +3,7 @@ import fastifyFormbody from '@fastify/formbody';
 import cors from '@fastify/cors'
 import fastifyMetrics from 'fastify-metrics';
 import authRoutes from './routes/user';
+import userManagmentRoutes from './routes/user_managment'
 import dbConnector from "./database/db";
 
 
@@ -20,6 +21,7 @@ fastify.register(fastifyMetrics, {
 
 fastify.register(dbConnector);
 fastify.register(authRoutes, { prefix: '/auth' });
+fastify.register(userManagmentRoutes, { prefix: '/user' });
 
 // Démarrer serveur
 fastify.listen({ port: 3001 , host: '0.0.0.0'}, (err: any, address: any) => {
