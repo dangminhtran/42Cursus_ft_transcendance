@@ -1,51 +1,53 @@
-import { db } from '../database/db';
+import { FastifyInstance } from 'fastify';
 
-export const addGameResult = (
-	player1: string,
-	player2: string,
-	player1score: number,
-	player2score: number,
-	user_id: number
-): boolean => {
-	try {
-		const stmt = db.prepare(`
-			INSERT INTO game_results (player1, player2, player1score, player2score, user_id)
-			VALUES (?, ?, ?, ?, ?)
-		`);
-		const info = stmt.run(player1, player2, player1score, player2score, user_id);
-		return info.changes > 0;
-	} catch (err) {
-		console.error('Failed to add game result:', err);
-		return false;
-	}
-};
+export default async function gameResultRoutes(fastify: FastifyInstance) {
 
-export type GameResult = {
-	id: number;
-	player1: string;
-	player2: string;
-	player1score: number;
-	player2score: number;
-	user_id: number;
-	created_at: string;
-};
+	fastify.post('/tournament/results', async (request, reply) => {
+		const { user_id } = request.query as { user_id?: string };
 
-export const getResultsByUserID = (user_id: number): GameResult[] => {
-	const stmt = db.prepare(`
-		SELECT *
-		FROM game_results
-		WHERE user_id = ?
-		ORDER BY created_at DESC
-	`);
-	return stmt.all(user_id) as GameResult[];
-};
+		if (!user_id)
+			return reply.code(400).send({ error: 'Missing user_id query parameter' });
 
-fastify.get('/tournament/results', async (request, reply) => {
-	const { user_id } = request.query as { user_id?: string };
+		const results = getResultsByUserID(Number(user_id));
+		return reply.send(results);
+	});
 
-	if (!user_id)
-		return reply.code(400).send({ error: 'Missing user_id query parameter' });
+	fastify.post('/tournament/add', async (request, reply) => {
+		const {
+			player1,
+			player2,
+			player1score,
+			player2score,
+			user_id,
+		} = request.body as {
+			player1?: string;
+			player2?: string;
+			player1score?: number;
+			player2score?: number;
+			user_id?: number;
+		};
 
-	const results = getResultsByUserID(Number(user_id));
-	return reply.send(results);
-});
+		// Validation simple
+		if (
+			!player1 || !player2 ||
+			player1score === undefined || player2score === undefined ||
+			user_id === undefined
+		) {
+			return reply.code(400).send({ error: 'Missing required fields' });
+		}
+
+		const success = addGameResult(
+			player1,
+			player2,
+			player1score,
+			player2score,
+			user_id
+		);
+
+		if (success)
+			return reply.code(201).send({ message: 'Game result added' });
+		else
+			return reply.code(500).send({ error: 'Failed to add game result' });
+	});
+
+}
