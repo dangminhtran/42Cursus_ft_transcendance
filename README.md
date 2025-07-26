@@ -6,12 +6,11 @@ Without framework : Typescript - OK
 
 - Minor module : Tailwind CSS
 
-
 **GAMEPLAY AND USER EXPERIENCE**
 
 - Major module : Another game - OK
 
-- Major module : live chat - OK
+- Major module : live chat
 
 **GRAPHICS**
 
@@ -21,20 +20,18 @@ Without framework : Typescript - OK
 
 - Major module : Framework - Fastify / Node.js - OK
 - Minor module : Database in SQLite - OK
-- Major module : Micro-services - OK
+- Major module : Micro-services
 
 **USER MANAGEMENT**
 
 - Major module : standard user management
 
-- Major module : Google sign-in
-
 **CYBER SCURITY**
 - Major module: 2FA and JWT - OK
+- Major module: WAF / Hashicorp - OK
 
-**BLOCKCHAIN**
-- Major module: Historique des tournois
-
+**DEV ops**
+- Minor module: Grafana Prometheus - OK
 
 **GITHUB**
 

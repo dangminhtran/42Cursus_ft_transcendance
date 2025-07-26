@@ -142,7 +142,7 @@ function initializeAuthHandlers() {
 	document.getElementById('googleBtn')?.addEventListener('click', () => {
 		console.log('Google authentication');
 		// Test Minh - SIMULATION
-		navigateTo("/");
+		//navigateTo("/");
 	});
 
 	// Gestion de la touche Entree
