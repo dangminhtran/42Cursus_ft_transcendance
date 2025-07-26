@@ -30,8 +30,8 @@ export class PongGame {
     this.aiScore = 0;
     this.ballSpeed = { x: 0.3, z: 0.2 };
     this.paddleSpeed = 0.5;
-	this.fieldWidth = 0;
-	this.fieldHeight = 0;
+    this.fieldWidth = 0;
+    this.fieldHeight = 0;
 
     this.inputStates = {
       wPressed: false,
@@ -256,7 +256,7 @@ export class PongGame {
   public clearGame() {
     this.engine.stopRenderLoop();
 
-    if (this.scene)  { this.scene.dispose();  }
+    if (this.scene) { this.scene.dispose(); }
     if (this.engine) { this.engine.dispose(); }
   }
 
@@ -292,13 +292,39 @@ export class PongGame {
 }
 
 function startPongGame() {
-	const game = new PongGame();
-	setPongGame(game);
+  const game = new PongGame();
+  setPongGame(game);
 }
 
 export function renderPong() {
-	renderNavbar();
-	document.getElementById('app')!.innerHTML = `
+  renderNavbar();
+  document.getElementById('app')!.innerHTML = `
+	<div class="flex flex-col justify-content items-center">
+    <div class="text-white font-bold text-4xl mb-10">How do you want to play ?</div>
+    <div class="w-full flex gap-10 justify-center align-items">
+      <div class="bg-indigo-950 text-white p-5 text-xl text-center font-semibold h-100 w-100" id="solo">
+      Solo
+      <img src="paddle.gif"/>
+      </div>
+      <div class="bg-white text-green-900 p-5 text-xl text-center font-semibold h-100 w-100" id="multiple">
+      With your friends
+       <img src="paddlesV2.gif"/>
+       </div>
+
+
+	</div>
+`;
+
+  const gameSolo = document.getElementById("solo")
+  gameSolo?.addEventListener('click', launchPongGame)
+
+  const gameMultiple = document.getElementById("multiple")
+  gameMultiple?.addEventListener('click', launchPongForMultiple)
+}
+
+export function launchPongGame() {
+  renderNavbar();
+  document.getElementById('app')!.innerHTML = `
 	<div id="gameContainer">
 		<canvas id="renderCanvas"></canvas>
 		<div id="gameUI">
@@ -309,5 +335,247 @@ export function renderPong() {
 		</div>
 	</div>
 `;
-	startPongGame();
+  startPongGame();
+}
+
+let currentTournament = {
+  players: [],
+  matches: [],
+  currentMatchIndex: 0,
+  winners: []
+};
+
+export function launchPongForMultiple() {
+  renderNavbar();
+  document.getElementById('app')!.innerHTML = `
+  <div class="flex flex-col -mt-60 justify-center">
+    <div class="text-white font-bold text-4xl mb-10">How many players ?</div>
+      <div class="card p-7">
+        <div class="w-full flex gap-10 justify-center align-items mb-10">
+          <div class="bg-indigo-950 text-white p-5 text-xl text-center font-semibold w-100" id="2players">
+            2 players
+          </div>
+          <div class="bg-white text-green-900 p-5 text-xl text-center font-semibold w-100" id="4players">
+            4 players
+          </div>
+          <div class="bg-green-950 text-white p-5 text-xl text-center font-semibold w-100" id="8players">
+            8 players
+          </div>
+      </div>
+    </div>
+
+  <div id="playerModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
+            <div class="bg-white rounded-lg p-8 max-w-md w-full mx-4">
+                <h2 class="text-2xl font-bold mb-6 text-center text-gray-800">Enter Player Names</h2>
+                <div id="playerInputs" class="space-y-4">
+                    <!-- Les inputs seront générés dynamiquement -->
+                </div>
+                <div class="flex gap-4 mt-6">
+                    <button id="cancelModal" class="flex-1 bg-gray-500 text-white py-2 px-4 rounded hover:bg-gray-600 transition-colors">
+                        Cancel
+                    </button>
+                    <button id="startTournament" class="flex-1 bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700 transition-colors">
+                        Start Tournament
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Modal pour afficher le match actuel -->
+        <div id="matchModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
+            <div class="bg-white rounded-lg p-8 max-w-md w-full mx-4">
+                <h2 class="text-2xl font-bold mb-6 text-center text-gray-800">Tournament Match</h2>
+                <div id="matchInfo" class="text-center mb-6">
+                    <!-- Info du match -->
+                </div>
+                <div class="flex gap-4">
+                    <button id="startMatch" class="flex-1 bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition-colors">
+                        Start Match
+                    </button>
+                </div>
+            </div>
+        </div>
+  `;
+
+  const twoPlayers = document.getElementById("2players")
+  const fourPlayers = document.getElementById("4players")
+  const eightPlayers = document.getElementById("8players")
+  twoPlayers?.addEventListener('click', () => openPlayerModal(2));
+  fourPlayers?.addEventListener('click', () => openPlayerModal(4));
+  eightPlayers?.addEventListener('click', () => openPlayerModal(8));
+
+  document.getElementById("cancelModal")?.addEventListener('click', closePlayerModal);
+  document.getElementById("startTournament")?.addEventListener('click', startTournament);
+  document.getElementById("startMatch")?.addEventListener('click', startCurrentMatch);
+}
+
+function openPlayerModal(playerCount: number) {
+  const modal = document.getElementById("playerModal");
+  const inputsContainer = document.getElementById("playerInputs");
+
+  if (inputsContainer != null) {
+    inputsContainer.innerHTML = '';
+    for (let i = 1; i <= playerCount; i++) {
+      inputsContainer.innerHTML += `
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Player ${i}</label>
+                <input 
+                    type="text" 
+                    id="player${i}" 
+                    placeholder="Enter player ${i} name"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    required
+                >
+            </div>
+        `;
+    }
+
+    modal?.classList.remove('hidden');
+  }
+
+  setTimeout(() => {
+    document.getElementById("player1")?.focus();
+  }, 100);
+}
+
+function closePlayerModal() {
+  document.getElementById("playerModal")?.classList.add('hidden');
+}
+
+function startTournament() {
+  const inputs = document.querySelectorAll('#playerInputs input');
+  const players: string[] = [];
+
+  inputs.forEach(input => {
+    const name = input.value.trim();
+    if (name) {
+      players.push(name);
+    }
+  });
+
+  if (players.length !== inputs.length) {
+    alert('Please fill in all player names!');
+    return;
+  }
+
+  const uniqueNames = new Set(players);
+  if (uniqueNames.size !== players.length) {
+    alert('Player names must be unique!');
+    return;
+  }
+
+  currentTournament.players = players;
+  currentTournament.matches = generateMatches(players);
+  currentTournament.currentMatchIndex = 0;
+  currentTournament.winners = [];
+
+  closePlayerModal();
+  showNextMatch();
+}
+
+function generateMatches(players) {
+  const matches = [];
+
+  // Pour un tournoi, on apparie les joueurs
+  for (let i = 0; i < players.length; i += 2) {
+    if (i + 1 < players.length) {
+      matches.push({
+        player1: players[i],
+        player2: players[i + 1],
+        winner: null
+      });
+    }
+  }
+
+  return matches;
+}
+
+function showNextMatch() {
+  if (currentTournament.currentMatchIndex >= currentTournament.matches.length) {
+    // Vérifier s'il faut créer la prochaine ronde
+    if (currentTournament.winners.length > 1) {
+      // Créer la prochaine ronde avec les gagnants
+      currentTournament.matches = generateMatches(currentTournament.winners);
+      currentTournament.currentMatchIndex = 0;
+      currentTournament.winners = [];
+      showNextMatch();
+    } else if (currentTournament.winners.length === 1) {
+      // Tournoi terminé !
+      showTournamentWinner();
+    }
+    return;
+  }
+
+  const currentMatch = currentTournament.matches[currentTournament.currentMatchIndex];
+  const modal = document.getElementById("matchModal");
+  const matchInfo = document.getElementById("matchInfo");
+
+  matchInfo.innerHTML = `
+        <div class="text-lg mb-4">
+            <strong>Round ${Math.ceil(Math.log2(currentTournament.players.length)) - Math.ceil(Math.log2(currentTournament.winners.length + currentTournament.matches.length)) + 1}</strong>
+        </div>
+        <div class="text-xl font-semibold text-blue-600">
+            ${currentMatch.player1}
+        </div>
+        <div class="text-lg text-gray-600 my-2">VS</div>
+        <div class="text-xl font-semibold text-red-600">
+            ${currentMatch.player2}
+        </div>
+    `;
+
+  modal.classList.remove('hidden');
+}
+
+function startCurrentMatch() {
+  const modal = document.getElementById("matchModal");
+  modal.classList.add('hidden');
+
+  launchPongGameWithPlayers(
+    currentTournament.matches[currentTournament.currentMatchIndex].player1,
+    currentTournament.matches[currentTournament.currentMatchIndex].player2
+  );
+}
+
+// TODO - A ENVOYER DANS LE BACK
+export function onMatchFinished(winner) {
+  currentTournament.matches[currentTournament.currentMatchIndex].winner = winner;
+  currentTournament.winners.push(winner);
+  currentTournament.currentMatchIndex++;
+
+  setTimeout(() => {
+    showNextMatch();
+  }, 2000);
+}
+
+function showTournamentWinner() {
+  const winner = currentTournament.winners[0];
+
+  document.getElementById('app')!.innerHTML = `
+        <div class="flex flex-col items-center justify-center min-h-screen text-center">
+            <div class="card p-10">
+                <h1 class="text-4xl font-bold text-yellow-400 mb-6">🏆 TOURNAMENT WINNER! 🏆</h1>
+                <div class="text-3xl font-bold text-white mb-8">${winner}</div>
+                <div class="flex gap-4">
+                    <button onclick="launchPongForMultiple()" class="bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 transition-colors">
+                        New Tournament
+                    </button>
+                    <button onclick="goToMainMenu()" class="bg-gray-600 text-white py-3 px-6 rounded-lg hover:bg-gray-700 transition-colors">
+                        Main Menu
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+function launchPongGameWithPlayers(player1Name: string, player2Name: string) {
+  // Tu peux modifier ta fonction launchPongGame() existante pour accepter ces paramètres
+  // ou créer une nouvelle version qui les utilise
+  console.log(`Starting match: ${player1Name} vs ${player2Name}`);
+
+  launchPongGame();
+
+  // TODO
+  // 1. Afficher les noms des joueurs dans l'interface
+  // 2. Appeler onMatchFinished(winner) quand le match se termine
 }

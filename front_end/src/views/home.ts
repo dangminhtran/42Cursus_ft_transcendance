@@ -40,7 +40,7 @@ export function renderHome() {
 
 	// Injection du HTML avec styles intégrés
 	document.getElementById('app')!.innerHTML = `
-		<table class="history-table">
+		<table class="w-5xl h-80 border-collapse border border-gray-700" id="history-table">
 		<thead>
 			<tr>
 			<th>Date</th>

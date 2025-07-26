@@ -4,14 +4,14 @@ import { clearTronGame } from "../state";
 
 export function renderNavbar() {
 	document.getElementById('navbar')!.innerHTML = `
-	<nav>
-		<ul>
-			<li><a class="nav-navlink" href="/">Home</a></li>
-			<li><a class="nav-navlink" href="/pong">Pong</a></li>
-			<li><a class="nav-navlink" href="/tron">Tron</a></li>
-			<li><a class="nav-navlink" href="/chat">Chat</a></li>
-			<li><a class="nav-navlink" href="/profile">Profile</a></li>
-			${window.sessionStorage.getItem('token') ? '<li id="disconnect-navlink"><a class="nav-navlink" href="#">Disconnect</a></li>' : ""}
+	<nav class=navHeader>
+		<ul class="w-screen h-full flex gap-5 justify-center items-center">
+			<li class="buttonNavStyle"><a class="nav-navlink" href="/">Home</a></li>
+			<li class="buttonNavStyle"><a class="nav-navlink" href="/pong">Pong</a></li>
+			<li class="buttonNavStyle"><a class="nav-navlink" href="/tron">Tron</a></li>
+			<li class="buttonNavStyle"><a class="nav-navlink" href="/chat">Chat</a></li>
+			<li class="buttonNavStyle"><a class="nav-navlink" href="/profile">Profile</a></li>
+			${window.sessionStorage.getItem('token') ? '<li class="buttonNavStyle" id="disconnect-navlink"><a class="nav-navlink" href="#">Disconnect</a></li>' : ""}
 		</ul>
 	</nav>
 	`;
