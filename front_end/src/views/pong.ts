@@ -1,170 +1,9 @@
+import { renderNavbar } from '../componentes/navbar';
 import "@babylonjs/core/Debug/debugLayer"
 import "@babylonjs/loaders/glTF"
 import { ArcRotateCamera, Color3, Engine, HemisphericLight, MeshBuilder, Scene, StandardMaterial, Vector3 } from "@babylonjs/core"
-import { ChatSystem } from "./chat"
-
-// /* VARIABLES GLOBALES */
-// let isLoginMode = true;
-
-// document.addEventListener('DOMContentLoaded', () => {
-// 	initializeAuthToggle();
-// 	initializeAuthHandlers();
-// 	initializeBackButton();
-// });
-
-// function initializeAuthToggle() {
-// 	const loginToggle = document.getElementById('loginToggle');
-// 	const signupToggle = document.getElementById('signupToggle');
-// 	const authTitle = document.getElementById('authTitle');
-// 	const authDescription = document.getElementById('authDescription');
-// 	const authBtn = document.getElementById('authBtn');
-// 	const signupFields = document.querySelectorAll('.signup-only');
-
-// 	function switchToLogin() {
-// 		isLoginMode = true;
-
-// 		loginToggle?.classList.add('active');
-// 		signupToggle?.classList.remove('active');
-
-// 		if (authTitle) authTitle.textContent = 'LOG IN';
-// 		if (authDescription) authDescription.textContent = 'Log in with email address';
-// 		if (authBtn) authBtn.textContent = 'Log In';
-
-// 		signupFields.forEach((field: Element) => {
-// 			const htmlField = field as HTMLElement;
-// 			htmlField.style.display = 'none';
-// 			if (field instanceof HTMLInputElement) {
-// 				field.required = false;
-// 			}
-// 		});
-// 	}
-
-// 	function switchToSignup() {
-// 		isLoginMode = false;
-
-// 		loginToggle?.classList.remove('active');
-// 		signupToggle?.classList.add('active');
-
-// 		if (authTitle) authTitle.textContent = 'SIGN IN';
-// 		if (authDescription) authDescription.textContent = 'Create your account';
-// 		if (authBtn) authBtn.textContent = 'Sign Up';
-
-// 		signupFields.forEach((field: Element) => {
-// 			const htmlField = field as HTMLElement;
-// 			htmlField.style.display = 'block';
-// 			if (field instanceof HTMLInputElement) {
-// 				field.required = true;
-// 			}
-// 		});
-// 	}
-
-// 	loginToggle?.addEventListener('click', switchToLogin);
-// 	signupToggle?.addEventListener('click', switchToSignup);
-// }
-
-// function initializeAuthHandlers() {
-
-// 	document.getElementById('authBtn')?.addEventListener('click', async () => {
-// 		const email = (document.getElementById('email') as HTMLInputElement)?.value;
-// 		const password = (document.getElementById('password') as HTMLInputElement)?.value;
-
-// 		if (isLoginMode) {
-// 			if (!email || !password) {
-// 				alert('Please fill in both email and password');
-// 				return;
-// 			}
-
-// 			const loginSuccessful = await Login(email, password);
-// 			if (loginSuccessful) {
-// 				startPongGame();
-// 			} else {
-// 				alert('Login failed. Please try again.');
-// 			}
-// 		} else {
-//       // Pour le sign in
-// 			if (!email || !password) {
-// 				alert('Please fill in all fields');
-// 				return;
-// 			}
-
-// 			const signupSuccessful = await SignUp(email, password);
-// 			if (signupSuccessful) {
-// 				alert('Account created successfully! Please sign in.');
-// 				document.getElementById('loginToggle')?.click();
-// 			} else {
-// 				alert('Sign up failed. Please try again.');
-// 			}
-// 		}
-// 	});
-
-
-// /* BOUTON GOOGLE */
-// 	document.getElementById('googleBtn')?.addEventListener('click', () => {
-// 		console.log('Google authentication');
-// 		// Test Minh - SIMULATION
-// 		startPongGame();
-// 	});
-
-// 	// Gestion de la touche Entree
-// 	document.addEventListener('keypress', (e) => {
-// 		if (e.key === 'Enter' && document.getElementById('authContainer')?.style.display !== 'none') {
-// 			document.getElementById('authBtn')?.click();
-// 		}
-// 	});
-// }
-
-// function initializeBackButton() {
-// 	document.getElementById('backBtn')?.addEventListener('click', () => {
-// 		document.getElementById('gameContainer')!.style.display = 'none';
-// 		document.getElementById('authContainer')!.style.display = 'flex';
-
-// 		if ((window as any).currentGame) {
-// 			(window as any).currentGame.dispose();
-// 			(window as any).currentGame = null;
-// 		}
-// 	});
-// }
-
-// async function SignUp(email: string, password: string): Promise<boolean> {
-// 	if (!email || !password) return false;
-
-// 	try {
-// 		const response = await axios.post(`${BASE_ADDRESS}/auth/register`, {
-// 			email,
-// 			password,
-// 		});
-// 		const token = response.data?.token;
-// 		if (token) {
-// 			window.sessionStorage.setItem("token", token);
-// 			return true;
-// 		}
-// 		return false;
-// 	} catch (err) {
-// 		console.error("Signup failed:", err);
-// 		return false;
-// 	}
-// }
-
-
-// async function Login(email: string, password: string) {
-// 	if (!email || !password) return false;
-
-// 	try {
-// 		const response = await axios.post(`${BASE_ADDRESS}/auth/login`,
-// 			{ email, password },
-// 		);
-// 		const token = response.data?.token;
-// 		if (token) {
-// 			window.sessionStorage.setItem("token", token);
-// 			return true;
-// 		}
-// 		return false;
-// 	} catch (err) {
-// 		console.error("Login failed:", err);
-// 		return false;
-// 	}
-// }
-
+import { ChatSystem } from "../componentes/chat"
+import { setPongGame } from '../state';
 
 export class PongGame {
   canvas: HTMLCanvasElement | any;
@@ -191,6 +30,8 @@ export class PongGame {
     this.aiScore = 0;
     this.ballSpeed = { x: 0.3, z: 0.2 };
     this.paddleSpeed = 0.5;
+	this.fieldWidth = 0;
+	this.fieldHeight = 0;
 
     this.inputStates = {
       wPressed: false,
@@ -357,10 +198,6 @@ export class PongGame {
       this.aiScore++;
       this.updateScore();
       this.resetBall();
-
-      // if (this.chat) {
-      //   this.chat.receiveMessage("System", "AI scored! 🤖");
-      // }
     }
   }
 
@@ -416,6 +253,13 @@ export class PongGame {
     });
   }
 
+  public clearGame() {
+    this.engine.stopRenderLoop();
+
+    if (this.scene)  { this.scene.dispose();  }
+    if (this.engine) { this.engine.dispose(); }
+  }
+
   dispose() {
     if (this.engine) {
       this.engine.dispose();
@@ -445,4 +289,25 @@ export class PongGame {
       this.chat.receiveMessage(sender, message);
     }
   }
+}
+
+function startPongGame() {
+	const game = new PongGame();
+	setPongGame(game);
+}
+
+export function renderPong() {
+	renderNavbar();
+	document.getElementById('app')!.innerHTML = `
+	<div id="gameContainer">
+		<canvas id="renderCanvas"></canvas>
+		<div id="gameUI">
+			<div>Player: <span id="playerScore">0</span> | AI: <span id="aiScore">0</span></div>
+		</div>
+		<div id="instructions">
+			Use W/S or Arrow Keys to move
+		</div>
+	</div>
+`;
+	startPongGame();
 }

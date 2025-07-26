@@ -1,7 +1,9 @@
 import "@babylonjs/core/Debug/debugLayer"
 import "@babylonjs/loaders/glTF"
 import { ArcRotateCamera, Color3, Engine, HemisphericLight, MeshBuilder, Scene, StandardMaterial, Vector3 } from "@babylonjs/core"
-import { ChatSystem } from "./chat"
+import { ChatSystem } from "../componentes/chat"
+import { renderNavbar } from '../componentes/navbar';
+import { setTronGame } from '../state';
 
 export class TronGame {
 	canvas: HTMLCanvasElement | any;
@@ -293,7 +295,7 @@ export class TronGame {
 	startGameLoop() {
 		this.engine.runRenderLoop(() => {
 			this.updatePlayerCar();
-			// this.updateAICar();
+		// if ( this.playerScore == 5 ) 
 			this.scene.render();
 		});
 
@@ -331,4 +333,33 @@ export class TronGame {
 			this.chat.receiveMessage(sender, message);
 		}
 	}
+
+	public clearGame() {
+		this.engine.stopRenderLoop();
+
+		if (this.scene)  { this.scene.dispose();  }
+		if (this.engine) { this.engine.dispose(); }
+	}
+}
+
+function startTronGame() {
+	const game = new TronGame();
+	// game.setupChat();
+	setTronGame(game);
+}
+
+export function renderTron() {
+	renderNavbar();
+	document.getElementById('app')!.innerHTML = `
+	<div id="gameContainer">
+		<canvas id="renderCanvas"></canvas>
+		<div id="gameUI">
+			<div>Player: <span id="playerScore">0</span> | AI: <span id="aiScore">0</span></div>
+		</div>
+		<div id="instructions">
+			Use W/S or Arrow Keys to move
+		</div>
+	</div>
+`;
+	startTronGame();
 }
