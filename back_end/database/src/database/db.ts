@@ -30,15 +30,13 @@ db.exec(`
 `);
 
 db.exec(`
-  CREATE TABLE IF NOT EXISTS game_results (
+  CREATE TABLE IF NOT EXISTS friends (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
-	player1 TEXT NOT NULL,
-	player2 TEXT NOT NULL,
-	player1score INTEGER,
-	player2score INTEGER,
 	user_id INTEGER,
+	friend_id INTEGER,
 	created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-	FOREIGN KEY(user_id) REFERENCES users(id)
+	FOREIGN KEY(user_id) REFERENCES users(id),
+	FOREIGN KEY(friend_id) REFERENCES users(id)
   );
 `)
 
