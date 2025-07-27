@@ -2,7 +2,6 @@ import { renderNavbar } from '../componentes/navbar';
 import "@babylonjs/core/Debug/debugLayer"
 import "@babylonjs/loaders/glTF"
 import { ArcRotateCamera, Color3, Engine, HemisphericLight, MeshBuilder, Scene, StandardMaterial, Vector3 } from "@babylonjs/core"
-import { ChatSystem } from "../componentes/chat"
 import { setPongGame } from '../state';
 
 export class PongGame {
@@ -12,7 +11,7 @@ export class PongGame {
   aiScore: number;
   ballSpeed: { x: number; z: number; };
   paddleSpeed: number;
-  inputStates: { wPressed: boolean; sPressed: boolean; };
+  inputStates: { wPressed: boolean; sPressed: boolean; upPressed: boolean; downPressed: boolean; };
   scene: any;
   camera: any;
   fieldWidth: number;
@@ -20,9 +19,14 @@ export class PongGame {
   ball: any;
   playerPaddle: any;
   aiPaddle: any;
-  chat: ChatSystem | null;
+  
+  // Multiplayer properties
+  isMultiplayer: boolean;
+  player1Name: string;
+  player2Name: string;
+  winningScore: number;
 
-  constructor() {
+  constructor(isMultiplayer: boolean = false, player1Name: string = "Player", player2Name: string = "AI") {
     this.canvas = document.getElementById("renderCanvas");
     this.engine = new Engine(this.canvas, true);
 
@@ -32,13 +36,18 @@ export class PongGame {
     this.paddleSpeed = 0.5;
     this.fieldWidth = 0;
     this.fieldHeight = 0;
+    this.winningScore = 5;
 
     this.inputStates = {
       wPressed: false,
-      sPressed: false
+      sPressed: false,
+      upPressed: false,
+      downPressed: false
     };
 
-    this.chat = null;
+    this.isMultiplayer = isMultiplayer;
+    this.player1Name = player1Name;
+    this.player2Name = player2Name;
 
     this.createScene();
     this.setupControls();
@@ -64,13 +73,11 @@ export class PongGame {
     const fieldWidth = 16;
     const fieldHeight = 10;
 
-    // Floor
     const ground = MeshBuilder.CreateGround("ground", { width: fieldWidth, height: fieldHeight }, this.scene);
     const groundMaterial = new StandardMaterial("groundMat", this.scene);
     groundMaterial.diffuseColor = new Color3(0.1, 0.1, 0.1);
     ground.material = groundMaterial;
 
-    // Center line
     const centerLine = MeshBuilder.CreateBox("centerLine", { width: 0.1, height: 0.1, depth: fieldHeight }, this.scene);
     centerLine.position = new Vector3(0, 0.05, 0);
     const lineMaterial = new StandardMaterial("lineMat", this.scene);
@@ -100,7 +107,7 @@ export class PongGame {
     playerMaterial.diffuseColor = new Color3(0, 0.8, 1);
     this.playerPaddle.material = playerMaterial;
 
-    // AI paddle (right)
+    // AI/Player2 paddle (right)
     this.aiPaddle = MeshBuilder.CreateBox("aiPaddle", { width: 0.3, height: 1, depth: 2 }, this.scene);
     this.aiPaddle.position = new Vector3(7, 0.5, 0);
 
@@ -111,47 +118,65 @@ export class PongGame {
 
   setupControls() {
     window.addEventListener('keydown', (event) => {
-      // Don't process game controls if player is typing in chat
-      if (this.isPlayerTyping()) {
-        return;
-      }
 
       switch (event.code) {
+        // Player 1 controls (left paddle)
         case 'KeyW':
-        case 'ArrowUp':
           this.inputStates.wPressed = true;
           break;
         case 'KeyS':
-        case 'ArrowDown':
           this.inputStates.sPressed = true;
+          break;
+        
+        // Player 2 controls (right paddle) - only in multiplayer
+        case 'ArrowUp':
+          if (this.isMultiplayer) {
+            this.inputStates.upPressed = true;
+          } else {
+            this.inputStates.wPressed = true; // Solo mode fallback
+          }
+          break;
+        case 'ArrowDown':
+          if (this.isMultiplayer) {
+            this.inputStates.downPressed = true;
+          } else {
+            this.inputStates.sPressed = true; // Solo mode fallback
+          }
           break;
       }
     });
 
     window.addEventListener('keyup', (event) => {
-      // Don't process game controls if player is typing in chat
-      if (this.isPlayerTyping()) {
-        return;
-      }
 
       switch (event.code) {
+        // Player 1 controls
         case 'KeyW':
-        case 'ArrowUp':
           this.inputStates.wPressed = false;
           break;
         case 'KeyS':
-        case 'ArrowDown':
           this.inputStates.sPressed = false;
+          break;
+        
+        // Player 2 controls
+        case 'ArrowUp':
+          if (this.isMultiplayer) {
+            this.inputStates.upPressed = false;
+          } else {
+            this.inputStates.wPressed = false; // Solo mode fallback
+          }
+          break;
+        case 'ArrowDown':
+          if (this.isMultiplayer) {
+            this.inputStates.downPressed = false;
+          } else {
+            this.inputStates.sPressed = false; // Solo mode fallback
+          }
           break;
       }
     });
   }
 
   updatePlayerPaddle() {
-    if (this.isPlayerTyping()) {
-      return;
-    }
-
     if (this.inputStates.wPressed && this.playerPaddle.position.z < this.fieldHeight / 2 - 1) {
       this.playerPaddle.position.z += this.paddleSpeed;
     }
@@ -161,14 +186,29 @@ export class PongGame {
   }
 
   updateAIPaddle() {
-    const ballZ = this.ball.position.z;
-    const paddleZ = this.aiPaddle.position.z;
-    const aiSpeed = this.paddleSpeed * 0.8;
+    if (this.isMultiplayer) {
+      this.updatePlayer2Paddle();
+    } else {
+      // AI controls in solo mode
+      const ballZ = this.ball.position.z;
+      const paddleZ = this.aiPaddle.position.z;
+      const aiSpeed = this.paddleSpeed * 0.8;
 
-    if (ballZ > paddleZ + 0.5 && this.aiPaddle.position.z < this.fieldHeight / 2 - 1) {
-      this.aiPaddle.position.z += aiSpeed;
-    } else if (ballZ < paddleZ - 0.5 && this.aiPaddle.position.z > -this.fieldHeight / 2 + 1) {
-      this.aiPaddle.position.z -= aiSpeed;
+      if (ballZ > paddleZ + 0.5 && this.aiPaddle.position.z < this.fieldHeight / 2 - 1) {
+        this.aiPaddle.position.z += aiSpeed;
+      } else if (ballZ < paddleZ - 0.5 && this.aiPaddle.position.z > -this.fieldHeight / 2 + 1) {
+        this.aiPaddle.position.z -= aiSpeed;
+      }
+    }
+  }
+
+  updatePlayer2Paddle() {
+
+    if (this.inputStates.upPressed && this.aiPaddle.position.z < this.fieldHeight / 2 - 1) {
+      this.aiPaddle.position.z += this.paddleSpeed;
+    }
+    if (this.inputStates.downPressed && this.aiPaddle.position.z > -this.fieldHeight / 2 + 1) {
+      this.aiPaddle.position.z -= this.paddleSpeed;
     }
   }
 
@@ -189,16 +229,72 @@ export class PongGame {
       this.updateScore();
       this.resetBall();
 
-      if (this.chat) {
-        this.chat.receiveMessage("System", "Player scored! 🎉");
+      // Check for win condition
+      if (this.playerScore >= this.winningScore) {
+        this.endMatch(this.player1Name);
       }
-
     }
     else if (this.ball.position.x < -this.fieldWidth / 2) {
       this.aiScore++;
       this.updateScore();
       this.resetBall();
+
+      // Check for win condition
+      if (this.aiScore >= this.winningScore) {
+        this.endMatch(this.player2Name);
+      }
     }
+  }
+
+  endMatch(winner: string) {
+    this.engine.stopRenderLoop();
+
+    this.showWinnerOverlay(winner);
+
+    // If this is a tournament match, call the callback
+    if (this.isMultiplayer && typeof window['onMatchFinished'] === 'function') {
+      setTimeout(() => {
+        window['onMatchFinished'](winner);
+      }, 3000);
+    }
+  }
+
+  showWinnerOverlay(winner: string) {
+    const overlay = document.createElement('div');
+    overlay.style.cssText = `
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      color: white;
+      font-size: 3rem;
+      font-weight: bold;
+      text-align: center;
+    `;
+    
+    overlay.innerHTML = `
+      <div>
+        <div style="color: #ffd700; margin-bottom: 20px;">🏆</div>
+        <div>${winner} Wins!</div>
+        <div style="font-size: 1.5rem; margin-top: 20px; opacity: 0.8;">
+          Final Score: ${this.playerScore} - ${this.aiScore}
+        </div>
+      </div>
+    `;
+
+    document.body.appendChild(overlay);
+
+    setTimeout(() => {
+      if (overlay.parentNode) {
+        overlay.parentNode.removeChild(overlay);
+      }
+    }, 3000);
   }
 
   checkPaddleCollision() {
@@ -214,7 +310,7 @@ export class PongGame {
       this.ballSpeed.z += (ballPos.z - playerPos.z) * 0.1;
     }
 
-    // AI paddle collision
+    // AI/Player2 paddle collision
     const aiPos = this.aiPaddle.position;
     if (ballPos.x >= aiPos.x - 0.4 && ballPos.x <= aiPos.x + 0.4 &&
       ballPos.z <= aiPos.z + 1.2 && ballPos.z >= aiPos.z - 1.2 &&
@@ -238,6 +334,11 @@ export class PongGame {
     let aiscore = document.getElementById('aiScore');
     if (aiscore)
       aiscore.textContent = this.aiScore as unknown as string;
+
+    let player1Label = document.getElementById('player1Label');
+    let player2Label = document.getElementById('player2Label');
+    if (player1Label) player1Label.textContent = this.player1Name;
+    if (player2Label) player2Label.textContent = this.player2Name;
   }
 
   startGameLoop() {
@@ -266,33 +367,11 @@ export class PongGame {
     }
   }
 
-  // Pour le chat
-  setupChat() {
-    try {
-      this.chat = new ChatSystem();
 
-      if (this.chat) {
-        this.chat.receiveMessage("System", "Welcome to Pong! Use W/S or Arrow keys to move your paddle.");
-      }
-    } catch (error) {
-      console.error("Failed to initialize chat system:", error);
-      this.chat = null;
-    }
-  }
-
-  isPlayerTyping(): boolean {
-    return this.chat ? this.chat.getIsTyping() : false;
-  }
-
-  sendChatMessage(sender: string, message: string) {
-    if (this.chat) {
-      this.chat.receiveMessage(sender, message);
-    }
-  }
 }
 
-function startPongGame() {
-  const game = new PongGame();
+function startPongGame(isMultiplayer: boolean = false, player1Name: string = "Player", player2Name: string = "AI") {
+  const game = new PongGame(isMultiplayer, player1Name, player2Name);
   setPongGame(game);
 }
 
@@ -328,7 +407,7 @@ export function launchPongGame() {
 	<div id="gameContainer">
 		<canvas id="renderCanvas"></canvas>
 		<div id="gameUI">
-			<div>Player: <span id="playerScore">0</span> | AI: <span id="aiScore">0</span></div>
+			<div><span id="player1Label">Player</span>: <span id="playerScore">0</span> | <span id="player2Label">AI</span>: <span id="aiScore">0</span></div>
 		</div>
 		<div id="instructions">
 			Use W/S or Arrow Keys to move
@@ -389,7 +468,7 @@ export function launchPongForMultiple() {
                     <!-- Info du match -->
                 </div>
                 <div class="flex gap-4">
-                    <button id="startMatch" class="flex-1 bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition-colors">
+                    <button id="startMatch" class="flex-1 bg-blue-600 text-white py-2 px-6 rounded hover:bg-blue-700 transition-colors">
                         Start Match
                     </button>
                 </div>
@@ -447,7 +526,7 @@ function startTournament() {
   const players: string[] = [];
 
   inputs.forEach(input => {
-    const name = input.value.trim();
+    const name = (input as HTMLInputElement).value.trim();
     if (name) {
       players.push(name);
     }
@@ -473,10 +552,9 @@ function startTournament() {
   showNextMatch();
 }
 
-function generateMatches(players) {
+function generateMatches(players: string[]) {
   const matches = [];
 
-  // Pour un tournoi, on apparie les joueurs
   for (let i = 0; i < players.length; i += 2) {
     if (i + 1 < players.length) {
       matches.push({
@@ -492,15 +570,12 @@ function generateMatches(players) {
 
 function showNextMatch() {
   if (currentTournament.currentMatchIndex >= currentTournament.matches.length) {
-    // Vérifier s'il faut créer la prochaine ronde
     if (currentTournament.winners.length > 1) {
-      // Créer la prochaine ronde avec les gagnants
       currentTournament.matches = generateMatches(currentTournament.winners);
       currentTournament.currentMatchIndex = 0;
       currentTournament.winners = [];
       showNextMatch();
     } else if (currentTournament.winners.length === 1) {
-      // Tournoi terminé !
       showTournamentWinner();
     }
     return;
@@ -510,7 +585,8 @@ function showNextMatch() {
   const modal = document.getElementById("matchModal");
   const matchInfo = document.getElementById("matchInfo");
 
-  matchInfo.innerHTML = `
+  if (matchInfo) {
+    matchInfo.innerHTML = `
         <div class="text-lg mb-4">
             <strong>Round ${Math.ceil(Math.log2(currentTournament.players.length)) - Math.ceil(Math.log2(currentTournament.winners.length + currentTournament.matches.length)) + 1}</strong>
         </div>
@@ -522,13 +598,14 @@ function showNextMatch() {
             ${currentMatch.player2}
         </div>
     `;
+  }
 
-  modal.classList.remove('hidden');
+  modal?.classList.remove('hidden');
 }
 
 function startCurrentMatch() {
   const modal = document.getElementById("matchModal");
-  modal.classList.add('hidden');
+  modal?.classList.add('hidden');
 
   launchPongGameWithPlayers(
     currentTournament.matches[currentTournament.currentMatchIndex].player1,
@@ -536,16 +613,18 @@ function startCurrentMatch() {
   );
 }
 
-// TODO - A ENVOYER DANS LE BACK
-export function onMatchFinished(winner) {
-  currentTournament.matches[currentTournament.currentMatchIndex].winner = winner;
-  currentTournament.winners.push(winner);
-  currentTournament.currentMatchIndex++;
+// Make this function available globally for the game to call
+window['onMatchFinished'] = function(winner: string) {
+  if (currentTournament.matches[currentTournament.currentMatchIndex]) {
+    currentTournament.matches[currentTournament.currentMatchIndex].winner = winner;
+    currentTournament.winners.push(winner);
+    currentTournament.currentMatchIndex++;
 
-  setTimeout(() => {
-    showNextMatch();
-  }, 2000);
-}
+    setTimeout(() => {
+      showNextMatch();
+    }, 1000);
+  }
+};
 
 function showTournamentWinner() {
   const winner = currentTournament.winners[0];
@@ -556,26 +635,36 @@ function showTournamentWinner() {
                 <h1 class="text-4xl font-bold text-yellow-400 mb-6">🏆 TOURNAMENT WINNER! 🏆</h1>
                 <div class="text-3xl font-bold text-white mb-8">${winner}</div>
                 <div class="flex gap-4">
-                    <button onclick="launchPongForMultiple()" class="bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 transition-colors">
+                    <button id="newTournament" class="bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 transition-colors">
                         New Tournament
                     </button>
-                    <button onclick="goToMainMenu()" class="bg-gray-600 text-white py-3 px-6 rounded-lg hover:bg-gray-700 transition-colors">
+                    <button id="mainMenu" class="bg-gray-600 text-white py-3 px-6 rounded-lg hover:bg-gray-700 transition-colors">
                         Main Menu
                     </button>
                 </div>
             </div>
         </div>
     `;
+
+  document.getElementById('newTournament')?.addEventListener('click', launchPongForMultiple);
+  document.getElementById('mainMenu')?.addEventListener('click', renderPong);
 }
 
 function launchPongGameWithPlayers(player1Name: string, player2Name: string) {
-  // Tu peux modifier ta fonction launchPongGame() existante pour accepter ces paramètres
-  // ou créer une nouvelle version qui les utilise
   console.log(`Starting match: ${player1Name} vs ${player2Name}`);
 
-  launchPongGame();
+  renderNavbar();
+  document.getElementById('app')!.innerHTML = `
+    <div id="gameContainer">
+      <canvas id="renderCanvas"></canvas>
+      <div id="gameUI">
+        <div><span id="player1Label">${player1Name}</span>: <span id="playerScore">0</span> | <span id="player2Label">${player2Name}</span>: <span id="aiScore">0</span></div>
+      </div>
+      <div id="instructions">
+        ${player1Name}: W/S keys | ${player2Name}: Arrow keys | First to 5 wins!
+      </div>
+    </div>
+  `;
 
-  // TODO
-  // 1. Afficher les noms des joueurs dans l'interface
-  // 2. Appeler onMatchFinished(winner) quand le match se termine
+  startPongGame(true, player1Name, player2Name);
 }

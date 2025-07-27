@@ -9,7 +9,6 @@ export function renderNavbar() {
 			<li class="buttonNavStyle"><a class="nav-navlink" href="/">Home</a></li>
 			<li class="buttonNavStyle"><a class="nav-navlink" href="/pong">Pong</a></li>
 			<li class="buttonNavStyle"><a class="nav-navlink" href="/tron">Tron</a></li>
-			<li class="buttonNavStyle"><a class="nav-navlink" href="/chat">Chat</a></li>
 			<li class="buttonNavStyle"><a class="nav-navlink" href="/profile">Profile</a></li>
 			${window.sessionStorage.getItem('token') ? '<li class="buttonNavStyle" id="disconnect-navlink"><a class="nav-navlink" href="#">Disconnect</a></li>' : ""}
 		</ul>
@@ -20,7 +19,6 @@ export function renderNavbar() {
 	navlinks.forEach(link => {
 		link.addEventListener('click', e => {
 			e.preventDefault();
-			// clearGame
 				clearPongGame();
 				clearTronGame();
 			navigateTo(link.getAttribute("href")!);

@@ -1,7 +1,6 @@
 import "@babylonjs/core/Debug/debugLayer"
 import "@babylonjs/loaders/glTF"
 import { ArcRotateCamera, Color3, Engine, HemisphericLight, MeshBuilder, Scene, StandardMaterial, Vector3 } from "@babylonjs/core"
-import { ChatSystem } from "../componentes/chat"
 import { renderNavbar } from '../componentes/navbar';
 import { setTronGame } from '../state';
 
@@ -21,7 +20,6 @@ export class TronGame {
 	ball: any;
 	playerCar: any;
 	aiCar: any;
-	chat: ChatSystem | null;
 
 	constructor() {
 		this.canvas = document.getElementById("renderCanvas");
@@ -45,8 +43,6 @@ export class TronGame {
 			downPressed: false,
 			rightPressed: false,
 		};
-
-		this.chat = null;
 
 		this.createScene();
 		this.setupControls();
@@ -110,10 +106,6 @@ export class TronGame {
 
 	setupControls() {
 		window.addEventListener('keydown', (event) => {
-			// Don't process game controls if player is typing in chat
-			if (this.isPlayerTyping()) {
-				return;
-			}
 
 			switch (event.code) {
 				case 'KeyW':
@@ -310,30 +302,6 @@ export class TronGame {
 		}
 	}
 
-	// Pour le chat
-	setupChat() {
-		try {
-			this.chat = new ChatSystem();
-
-			if (this.chat) {
-			this.chat.receiveMessage("System", "Welcome to Tron! Use A/D or Arrow Left an Right keys to move your paddle.");
-			}
-		} catch (error) {
-			console.error("Failed to initialize chat system:", error);
-			this.chat = null;
-		}
-	}
-
-	isPlayerTyping(): boolean {
-		return this.chat ? this.chat.getIsTyping() : false;
-	}
-
-	sendChatMessage(sender: string, message: string) {
-		if (this.chat) {
-			this.chat.receiveMessage(sender, message);
-		}
-	}
-
 	public clearGame() {
 		this.engine.stopRenderLoop();
 
@@ -344,7 +312,6 @@ export class TronGame {
 
 function startTronGame() {
 	const game = new TronGame();
-	// game.setupChat();
 	setTronGame(game);
 }
 
