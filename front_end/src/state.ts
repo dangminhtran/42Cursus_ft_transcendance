@@ -48,5 +48,6 @@ export function setTronGame(tronGame: TronGame) {
 }
 
 export function clearTronGame() {
+	
 	state.tron?.tron.clearGame();
 }

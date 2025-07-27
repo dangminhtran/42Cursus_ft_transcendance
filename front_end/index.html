@@ -6,19 +6,16 @@
 		<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
 			rel="stylesheet">
 		<link rel="stylesheet" href="style.css">
-		<link rel="stylesheet" href="navbar.css">
-		<link rel="stylesheet" href="tablehistory.css">
-		<link rel="stylesheet" href="profile.css">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 		<title>BOULOT</title>
 	</head>
 
-	<body>
-		<img class="background" src="/background.png" alt="Background Image" />
+	<body class="h-screen w-screen overflow-hidden">
+		<img class="absolute w-screen h-screen bg-cover bg-center -z-1" src="/background.png" alt="Background Image" />
 		<div id="navbar"></div>
-		<div id="app">
-			<div id="gameContainer"></div>
+		<div class="flex items-center justify-center " id="app">
+			<div class="w-screen h-screen bg-black z-1000" id="gameContainer"></div>
 		</div>
 		<script type="module" src="/src/main.ts"></script>
 	</body>

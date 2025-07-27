@@ -4,13 +4,11 @@
 
 Without framework : Typescript - OK
 
-- Minor module : Tailwind CSS
+- Minor module : Tailwind CSS - WIP
 
 **GAMEPLAY AND USER EXPERIENCE**
 
-- Major module : Another game - OK
-
-- Major module : live chat
+- Major module : Another game - WIP
 
 **GRAPHICS**
 
@@ -20,11 +18,12 @@ Without framework : Typescript - OK
 
 - Major module : Framework - Fastify / Node.js - OK
 - Minor module : Database in SQLite - OK
-- Major module : Micro-services
+- Major module : Micro-services - OK
 
 **USER MANAGEMENT**
 
-- Major module : standard user management
+- Major module : standard user management - WIP
+- Major module : OAuth Sign In
 
 **CYBER SCURITY**
 - Major module: 2FA and JWT - OK
@@ -32,6 +31,10 @@ Without framework : Typescript - OK
 
 **DEV ops**
 - Minor module: Grafana Prometheus - OK
+- Major module: Elastic Search - WIP
+
+**BLOCKCHAIN**
+- Major module: Stocker les resultats dans la blockchain
 
 **GITHUB**
 
@@ -40,16 +43,17 @@ Without framework : Typescript - OK
 **Front-end :** 
 
 TODO : 
-- Ecran qui permet de choisir entre les deux jeux
-- Ecran pour le user management
-- Tailwind CSS
+- Finir la page Home : 
+    - rajouter input pour ajouter un ami, liste des amis, remove un ami
+    - rajouter un tableau des scores
+
+- Terminer Tailwind CSS : tout passer en tailwind pour ne pas garder de CSS
 
 **Back-end :** 
 
 - Docker
 - User management
 - Game
-- Live chat
 
 export NVM_DIR="$HOME/.nvm" &&
 [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh" &&
