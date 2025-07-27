@@ -2,17 +2,17 @@ import { FastifyInstance } from 'fastify';
 
 export default async function gameResultRoutes(fastify: FastifyInstance) {
 
-	fastify.post('/tournament/results', async (request, reply) => {
-		const { user_id } = request.query as { user_id?: string };
+	fastify.post('/results', async (request, reply) => {
+		const { user_id } = request.body as { user_id?: number };
 
 		if (!user_id)
 			return reply.code(400).send({ error: 'Missing user_id query parameter' });
 
-		const results = getResultsByUserID(Number(user_id));
+		const results = await  fastify.getResultsByUserID(user_id);
 		return reply.send(results);
 	});
 
-	fastify.post('/tournament/add', async (request, reply) => {
+	fastify.post('/add', async (request, reply) => {
 		const {
 			player1,
 			player2,
@@ -36,7 +36,7 @@ export default async function gameResultRoutes(fastify: FastifyInstance) {
 			return reply.code(400).send({ error: 'Missing required fields' });
 		}
 
-		const success = addGameResult(
+		const success = await fastify.addGameResult(
 			player1,
 			player2,
 			player1score,

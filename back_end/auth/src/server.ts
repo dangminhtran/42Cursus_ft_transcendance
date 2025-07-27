@@ -6,12 +6,17 @@ import jwtPlugin from './jwt';
 import twoFARoutes from './routes/2fa';
 import authRoutes from './routes/auth';
 import {userRoutes} from './routes/users';
-import dbConnector from "./database/db";
+import dbServiceClient from './plugins/dbServiceClient';
 
 
 const fastify = Fastify({ logger: true });
 fastify.register(cors, {
   origin: true,
+})
+
+fastify.register(dbServiceClient, {
+	baseURL:    "http://127.0.0.1:3001/", //process.env.DB_SERVICE_URL!,
+	tokenHeader: 'authorization'
 })
 
 fastify.register(fastifyMetrics, {
@@ -21,7 +26,6 @@ fastify.register(fastifyMetrics, {
 
 fastify.register(fastifyFormbody);
 fastify.register(jwtPlugin);
-fastify.register(dbConnector);
 
 fastify.register(authRoutes, { prefix: '/auth' });
 fastify.register(twoFARoutes, { prefix: '/2fa' });
