@@ -1,6 +1,8 @@
 import fp from 'fastify-plugin';
 import Database from 'better-sqlite3';
-import { getUserByEmail, getUserByID, addUser, updateUser } from './users/users';
+import { getUserByEmail, getUserByID, addUser, updateUser } from './users';
+import { addMessage, readMessages } from './chat';
+import { addGameResult, getResultsByUserID } from './gameresult';
 
 export const db = new Database('./transcendence.db', { verbose: console.log });
 
@@ -48,6 +50,10 @@ export default fp(async (fastify, opts) => {
 	fastify.decorate('getUserByID', getUserByID);
 	fastify.decorate('addUser', addUser);
 	fastify.decorate('updateUser', updateUser);
+	fastify.decorate('addMessage', addMessage);
+	fastify.decorate('readMessages', readMessages);
+	fastify.decorate('getResultsByUserID', getResultsByUserID);
+	fastify.decorate('addGameResult', addGameResult);
 
 
 	fastify.addHook('onClose', (instance, done) => {

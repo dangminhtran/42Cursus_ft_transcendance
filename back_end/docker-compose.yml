@@ -10,6 +10,16 @@ services:
       - .env
     networks:
       - transcendance-net
+  
+  database:
+    image: database
+    build: database/
+    container_name: database
+    restart: always
+    env_file:
+      - .env
+    networks:
+      - transcendance-net
 
   prometheus:
     image: prom/prometheus
