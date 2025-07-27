@@ -28,8 +28,6 @@ export default async function userManagmentRoutes(fastify: FastifyInstance) {
 	fastify.post('/update/:userid', async (request: any, reply: any) => {
 		const userid = request.params.userid;
 		const { profilepicture, email, password, is2FAEnabled, twoFASecret } = request.body as { profilepicture: string, email: string, password: string, is2FAEnabled: number, twoFASecret: string};
-		if (!profilepicture || !email || !password )
-			return reply.code(404).send({ error: 'Missing user identifier.' });
 		let updateduser: User = {
 			id: userid,
 			profilepicture,
