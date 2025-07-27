@@ -1,5 +1,5 @@
 import { FastifyInstance } from 'fastify';
-import { User } from '../database/users/index'
+import { User } from '../structs'
 import bcrypt from "bcrypt";
 
 
@@ -8,14 +8,17 @@ export default async function authRoutes(fastify: FastifyInstance) {
     // -- REGISTER simple (sans hash, juste pour exemple)
     fastify.post('/register', async (request, reply) => {
         const { email, password } = request.body as { email: string, password: string };
-        let user: User | null = await fastify.getUserByEmail(email);
+        let user: User | null = await fastify.dbClient.post<User>('/user/getUserByEmail', { email });
 		if (user != null)
 			return {"message": "Email already used. Please login."};
-        let status: boolean = await fastify.addUser(email, password);
+
+		let hash = await bcrypt.hash(password, 10);
+
+        let status: boolean = await fastify.dbClient.post<boolean>('/auth/register', { email: email, password: hash });
 		if (!status)
 			return reply.code(401).send({ error: 'Unable to create user.' });
 		
-		let dbUser: User | null = await fastify.getUserByEmail(email);
+		let dbUser: User | null = await fastify.dbClient.post<User>('/user/getUserByEmail', { email });
 		if (!dbUser) {
             return reply.code(500).send({ error: 'Identifiants invalides' });
         }
@@ -26,7 +29,7 @@ export default async function authRoutes(fastify: FastifyInstance) {
     // -- LOGIN + issue JWT (sans 2FA)
     fastify.post('/login', async (request, reply) => {
         const { email, password } = request.body as { email: string, password: string };
-        const user: User | null = await fastify.getUserByEmail(email);
+        const user: User | null = await fastify.dbClient.post<User>('/user/getUserByEmail', { email });
 
         if (!user) {
             return reply.code(401).send({ error: 'Identifiants invalides' });
