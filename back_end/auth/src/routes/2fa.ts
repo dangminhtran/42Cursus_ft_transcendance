@@ -57,7 +57,7 @@ export default async function twoFARoutes(fastify: FastifyInstance) {
     // -- Vérifier code 2FA à la connexion et délivrer JWT final
     fastify.post('/login', async (request, reply) => {
         const { userid, token } = request.body as { userid: number, token: string };
-        const user = await fastify.getUserByID(userid);
+        const user: User | null = await fastify.dbClient.post<User>('/user/getUserByID', { userid });
         if (!user || !user.twoFASecret) return reply.code(400).send({ error: 'Utilisateur ou 2FA secret introuvable' });
         
         const verified = speakeasy.totp.verify({
