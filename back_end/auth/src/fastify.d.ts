@@ -8,6 +8,7 @@ declare module 'fastify' {
 		deleteUser(email: string, password: string): Promise<boolean>;
 		updateUser(email: string, password: string, data: UpdateUser): Promise<boolean>;
 		update2FASecret(id: number, secret: string) : Promise<boolean>;
+		update2FAEnabled(id: number) : Promise<boolean>;
     	authenticate: (request: any, reply: any) => Promise<void>;
   }
 }
