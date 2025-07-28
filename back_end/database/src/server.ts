@@ -5,7 +5,6 @@ import fastifyMetrics from 'fastify-metrics';
 import authRoutes from './routes/user';
 import userManagmentRoutes from './routes/user_managment'
 import dbConnector from "./database/db";
-import chatRoutes from './routes/livechat';
 import gameResultRoutes from './routes/gameresult';
 
 
@@ -24,7 +23,6 @@ fastify.register(fastifyMetrics, {
 fastify.register(dbConnector);
 fastify.register(authRoutes, { prefix: '/auth' });
 fastify.register(userManagmentRoutes, { prefix: '/user' });
-fastify.register(chatRoutes, { prefix: '/chat' });
 fastify.register(gameResultRoutes, { prefix: '/tournament'});
 
 // Démarrer serveur
