@@ -97,6 +97,15 @@ const users: User[] = [
 		avatar: '🌟',
 		joinDate: '2025-01-25',
 	},
+		{
+		id: 'oscar',
+		name: 'Oscar',
+		isOnline: true,
+		lastSeen: '2025-07-27T10:50:00Z',
+		stats: { wins: 19, losses: 1, draws: 2, totalGames: 22, winRate: 80.0 },
+		avatar: '🌟',
+		joinDate: '2025-01-19',
+	},
 ];
 
 // Mock friends data
