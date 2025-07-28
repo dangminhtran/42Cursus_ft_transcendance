@@ -45,6 +45,26 @@ export default async function userManagmentRoutes(fastify: FastifyInstance) {
 		if (!result)
 			return reply.code(500).send({ error: 'Internal server error.' });
 		
-		return reply.code(204).send({ message: 'User updated.' });
+		return reply.code(200).send({ message: 'User updated.' });
+	})
+
+	fastify.post('/update2FASecret', async (request: any, reply: any) => {
+		const { userid, twoFASecret } = request.body as { userid: number, twoFASecret: string};
+
+		const result: boolean = await fastify.update2FASecret(userid, twoFASecret);
+		if (!result)
+			return reply.code(500).send({ error: 'Internal server error.' });
+
+		return reply.code(200).send({ message: 'User twoFASecret was updated.' });
+	})
+
+	fastify.post('/update2FAEnabled', async (request: any, reply: any) => {
+		const { userid } = request.body as { userid: number };
+
+		const result: boolean = await fastify.update2FAEnabled(userid);
+		if (!result)
+			return reply.code(500).send({ error: 'Internal server error.' });
+
+		return reply.code(200).send({ message: 'User twoFAEnable set to true' });
 	})
 }

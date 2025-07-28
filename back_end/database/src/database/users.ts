@@ -1,5 +1,5 @@
 
-import { UpdateUser, User } from '../structs'
+import { User } from '../structs'
 import { db } from './db'
 import bcrypt from 'bcrypt'
 
@@ -58,6 +58,28 @@ export const updateUser = async (user: User) : Promise<boolean> => {
 	const info = stmt.run(user.profilepicture, user.email, user.password, user.is2FAEnabled ? 1 : 0, user.twoFASecret, user.id)
 	
 	console.log(info)
+	
+	return info.changes === 1;
+}
+
+export const update2FASecret = async (userid: number, twoFASecret: string): Promise<boolean> => {
+	const stmt = db.prepare(
+		`UPDATE users SET 
+		twoFASecret = ?
+		WHERE id = ?`);
+	
+	const info = stmt.run(twoFASecret, userid)
+	
+	return info.changes === 1;
+}
+
+export const update2FAEnabled = async (userid: number): Promise<boolean> => {
+	const stmt = db.prepare(
+		`UPDATE users SET 
+		is2FAEnabled = ?
+		WHERE id = ?`);
+	
+	const info = stmt.run(1, userid)
 	
 	return info.changes === 1;
 }

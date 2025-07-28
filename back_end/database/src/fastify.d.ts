@@ -8,9 +8,8 @@ declare module 'fastify' {
 		getUserByID(id: number): Promise<User | null>;
 		addUser(email: string, password: string): Promise<boolean>;
 		updateUser(user: User): Promise<boolean>;
-		// livechat
-		addMessage(userid: number, message: string): Promise<boolean>;
-		readMessages(): Promise<ChatMessage[]>;
+		update2FASecret(userid: number, twoFASecret: string): Promise<boolean>;
+		update2FAEnabled(userid: number): Promise<boolean>;
 		// gameresult
 		getResultsByUserID(id: number): Promise<GameResult[]>;
 		addGameResult(player1: string, player2: string, player1score: number, player2score: number, user_id: number): Promise<boolean>;
