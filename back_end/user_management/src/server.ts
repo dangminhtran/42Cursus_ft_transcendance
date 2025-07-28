@@ -24,7 +24,7 @@ fastify.register(fastifyMetrics, {
 fastify.register(fastifyFormbody);
 fastify.register(jwtPlugin);
 
-fastify.register(userRoutes, { prefix: '/user-managment' });
+fastify.register(userRoutes, { prefix: '/user-management' });
 
 // Démarrer serveur
 fastify.listen({ port: 3002 , host: '0.0.0.0'}, (err: any, address: any) => {
@@ -32,7 +32,7 @@ fastify.listen({ port: 3002 , host: '0.0.0.0'}, (err: any, address: any) => {
     fastify.log.error(err);
     process.exit(1);
   }
-  fastify.log.info(`User-managment service running on ${address}`);
+  fastify.log.info(`User-management service running on ${address}`);
 });
 
 

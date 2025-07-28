@@ -11,6 +11,18 @@ services:
     networks:
       - transcendance-net
 
+  user-management:
+    image: user-management
+    build: user_management/
+    container_name: user-management
+    ports:
+      - "3002:3002"
+    restart: always
+    env_file:
+      - .env
+    networks:
+      - transcendance-net
+
   database:
     image: database
     build: database/
