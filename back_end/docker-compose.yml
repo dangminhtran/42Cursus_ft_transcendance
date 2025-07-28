@@ -16,6 +16,8 @@ services:
     build: database/
     container_name: database
     restart: always
+    ports:
+      - "3001:3001"
     env_file:
       - .env
     networks:
@@ -48,7 +50,10 @@ services:
       - ${HOME}/vault:/vault
     networks:
       - transcendance-net
+    env_file:
+      - .env
     environment:
+      - VAULT_DEV_ROOT_TOKEN_ID=${VAULT_ROOT_TOKEN}
       - VAULT_DEV_LISTEN_ADDRESS=0.0.0.0:8200
       - VAULT_ADDR=http://0.0.0.0:8200
     command: vault server -dev
