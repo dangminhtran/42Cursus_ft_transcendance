@@ -10,7 +10,7 @@ export default async function authRoutes(fastify: FastifyInstance) {
         const { email, password } = request.body as { email: string, password: string };
         let user: User | null = await fastify.dbClient.post<User>('/user/getUserByEmail', { email });
 		if (user != null)
-			return {"message": "Email already used. Please login."};
+			return reply.code(409).send({message: "Email already used. Please login."});
 
 		let hash = await bcrypt.hash(password, 10);
 

@@ -1,4 +1,3 @@
-import fastify from 'fastify'
 import fp from 'fastify-plugin'
 
 export interface DbClientOptions {

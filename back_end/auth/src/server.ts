@@ -5,7 +5,6 @@ import fastifyMetrics from 'fastify-metrics';
 import jwtPlugin from './jwt';
 import twoFARoutes from './routes/2fa';
 import authRoutes from './routes/auth';
-import {userRoutes} from './routes/users';
 import dbServiceClient from './plugins/dbServiceClient';
 
 
@@ -29,7 +28,6 @@ fastify.register(jwtPlugin);
 
 fastify.register(authRoutes, { prefix: '/auth' });
 fastify.register(twoFARoutes, { prefix: '/2fa' });
-fastify.register(userRoutes, { prefix: '/2fa' });
 
 // Démarrer serveur
 fastify.listen({ port: 3000 , host: '0.0.0.0'}, (err: any, address: any) => {
