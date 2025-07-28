@@ -10,7 +10,7 @@ services:
       - .env
     networks:
       - transcendance-net
-  
+
   database:
     image: database
     build: database/
@@ -41,6 +41,25 @@ services:
     volumes:
       - grafana-storage:/var/lib/grafana
 
+  vault:
+    build: ./vault
+    container_name: vault
+    volumes:
+      - ${HOME}/vault:/vault
+    networks:
+      - transcendance-net
+    environment:
+      - VAULT_DEV_LISTEN_ADDRESS=0.0.0.0:8200
+      - VAULT_ADDR=http://0.0.0.0:8200
+    command: vault server -dev
+    healthcheck:
+      test: ["CMD", "curl", "-s", "--fail", "http://localhost:8200/v1/sys/health"]
+      interval: 5s
+      timeout: 2s
+      retries: 10
+    ports:
+      - "8200:8200"
+
   waf:
     build: ./modsecurity
     container_name: waf
@@ -48,13 +67,16 @@ services:
       - ./modsecurity/modsecurity.conf:/etc/modsecurity/modsecurity.conf
       - ./modsecurity/nginx.conf:/usr/local/nginx/conf/nginx.conf
       - ./modsecurity/crs:/etc/modsecurity/crs
+      - ./modsecurity/ssl:/etc/nginx/ssl
+      - ${HOME}/vault:/vault
     ports:
       - "8443:443"
     depends_on:
       - auth
+      - vault
     networks:
       - transcendance-net
-
+    entrypoint: ./entrypoint.sh
 
 volumes:
   grafana-storage: {}

@@ -27,6 +27,13 @@ RUN apt-get update && apt-get install -y \
   libmaxminddb-dev \
   && rm -rf /var/lib/apt/lists/*
 
+# Installer Vault CLI (version 1.15.2)
+RUN curl -fsSL https://releases.hashicorp.com/vault/1.15.2/vault_1.15.2_linux_amd64.zip -o vault.zip && \
+    apt-get update && apt-get install -y unzip && \
+    unzip vault.zip && mv vault /usr/local/bin/ && rm vault.zip && \
+    chmod +x /usr/local/bin/vault && \
+    apt-get remove -y unzip && apt-get autoremove -y
+
 COPY modsecurity.conf /etc/nginx/modsec/modsecurity.conf
 COPY crs/crs-setup.conf /etc/nginx/modsec/crs-setup.conf
 COPY crs/rules/ /etc/nginx/modsec/rules/
@@ -51,4 +58,7 @@ RUN wget http://nginx.org/download/nginx-${NGINX_VERSION}.tar.gz && \
 
 # Copier config NGINX + ModSecurity à l’intérieur si nécessaire via docker-compose
 EXPOSE 443
-CMD ["/usr/local/nginx/sbin/nginx", "-g", "daemon off;"]
+
+COPY entrypoint.sh entrypoint.sh
+RUN chmod +x entrypoint.sh
+ENTRYPOINT ["/entrypoint.sh"]
