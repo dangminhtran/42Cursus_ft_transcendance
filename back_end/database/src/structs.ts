@@ -1,6 +1,8 @@
 export interface User {
 	id: number
 	profilepicture: string,
+	displayname: string, // Jack added this (should be unique)
+	// UNIQUE contraint for db ?  =>  ALTER TABLE users ADD CONSTRAINT unique_displayname UNIQUE (displayname);
 	email: string
 	password: string
 	is2FAEnabled: boolean
