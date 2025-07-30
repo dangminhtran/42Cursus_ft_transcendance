@@ -458,10 +458,20 @@ function addEventListeners() {
 						historyContainer.outerHTML = renderMatchHistory();
 					}
 
+					// setTimeout(() => {
+					// 	const historySection = document.querySelector('.bg-gray-800:last-child');
+					// 	if (historySection) {
+					// 		historySection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+					// 	}
+					// }, 100);
+
 					setTimeout(() => {
 						const historySection = document.querySelector('.bg-gray-800:last-child');
 						if (historySection) {
-							historySection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+							historySection.scrollIntoView({ 
+								behavior: 'smooth', 
+								block: 'center' // This centers the element in the viewport
+							});
 						}
 					}, 100);
 				}
