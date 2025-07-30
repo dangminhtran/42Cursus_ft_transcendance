@@ -315,18 +315,47 @@ function startTronGame() {
 	setTronGame(game);
 }
 
+// export function renderTron() {
+// 	renderNavbar();
+// 	document.getElementById('app')!.innerHTML = `
+// 	<div id="gameContainer">
+// 		<canvas id="renderCanvas"></canvas>
+// 		<div id="gameUI">
+// 			<div>Player: <span id="playerScore">0</span> | AI: <span id="aiScore">0</span></div>
+// 		</div>
+// 		<div id="instructions">
+// 			Use W/S or Arrow Keys to move
+// 		</div>
+// 	</div>
+// `;
+// 	startTronGame();
+// }
+
 export function renderTron() {
 	renderNavbar();
 	document.getElementById('app')!.innerHTML = `
-	<div id="gameContainer">
-		<canvas id="renderCanvas"></canvas>
-		<div id="gameUI">
-			<div>Player: <span id="playerScore">0</span> | AI: <span id="aiScore">0</span></div>
+		<div class="flex flex-col justify-center items-center min-h-screen">
+			<div class="text-white font-bold text-4xl mb-10">Ready to play Tron?</div>
+			<button id="startTronBtn" class="bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 transition-colors text-2xl">
+				Start Game
+			</button>
 		</div>
-		<div id="instructions">
-			Use W/S or Arrow Keys to move
-		</div>
-	</div>
-`;
-	startTronGame();
+	`;
+
+	const startBtn = document.getElementById('startTronBtn');
+	startBtn?.addEventListener('click', () => {
+		renderNavbar();
+		document.getElementById('app')!.innerHTML = `
+			<div id="gameContainer">
+				<canvas id="renderCanvas"></canvas>
+				<div id="gameUI">
+					<div>Player: <span id="playerScore">0</span> | AI: <span id="aiScore">0</span></div>
+				</div>
+				<div id="instructions">
+					Use W/S/A/D or Arrow Keys to move
+				</div>
+			</div>
+		`;
+		startTronGame();
+	});
 }
