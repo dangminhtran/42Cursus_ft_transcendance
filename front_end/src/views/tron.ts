@@ -395,7 +395,7 @@ export function renderTron() {
 	renderNavbar();
 	document.getElementById('app')!.innerHTML = `
 		<div class="flex flex-col justify-center items-center min-h-screen">
-			<div class="text-white font-bold text-4xl mb-10">Ready to play Tron?</div>
+			<div class="text-black font-bold text-4xl mb-10">Ready to play Tron?</div>
 			<button id="startTronBtn" class="bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 transition-colors text-2xl">
 				Start Game
 			</button>
