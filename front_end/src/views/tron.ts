@@ -7,8 +7,9 @@ import { setTronGame } from '../state';
 export class TronGame {
 	canvas: HTMLCanvasElement | any;
 	engine: any;
-	playerScore: number;
-	aiScore: number;
+	playerOneScore: number;
+	playerTwoScore: number;
+	winningScore: number;
 	carSpeed: number;
 	inputStates: { wPressed: boolean, aPressed: boolean; sPressed: boolean, dPressed: boolean; };
 	aiStates: { upPressed: boolean, leftPressed: boolean; downPressed: boolean, rightPressed: boolean; };
@@ -26,8 +27,9 @@ export class TronGame {
 		this.engine = new Engine(this.canvas, true);
 		this.trail = [];
 
-		this.playerScore = 0;
-		this.aiScore = 0;
+		this.playerOneScore = 0;
+		this.playerTwoScore = 0;
+		this.winningScore = 5;
 		this.carSpeed = 1;
 
 		this.inputStates = {
@@ -239,14 +241,72 @@ export class TronGame {
 		{
 			this.resetGame();
 			if ( who == 0 )
-				this.aiScore += 1;
+				this.playerTwoScore += 1;
 			else
-				this.playerScore += 1;
+				this.playerOneScore += 1;
 			this.updateScore();
+
+			if (this.playerOneScore >= this.winningScore) {
+				this.endMatch("Player(blue)");
+				return true;
+			}
+			if (this.playerTwoScore >= this.winningScore) {
+				this.endMatch("Player(orange)");
+				return true;
+			}
 
 			return ( true );
 		}
 		return ( false );
+	}
+
+	endMatch(winner: string) {
+		this.engine.stopRenderLoop();
+
+		this.showWinnerOverlay(winner);
+
+		// Optionally, you can reset the game or go back to menu after a delay
+		setTimeout(() => {
+			renderTron(); // Go back to Tron menu
+		}, 3000);
+	}
+
+	showWinnerOverlay(winner: string) {
+		const overlay = document.createElement('div');
+		overlay.style.cssText = `
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background: rgba(0, 0, 0, 0.8);
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			z-index: 1000;
+			color: white;
+			font-size: 3rem;
+			font-weight: bold;
+			text-align: center;
+		`;
+
+		overlay.innerHTML = `
+			<div>
+				<div style="color: #ffd700; margin-bottom: 20px;">🏆</div>
+				<div>${winner} Wins!</div>
+				<div style="font-size: 1.5rem; margin-top: 20px; opacity: 0.8;">
+					Final Score: ${this.playerOneScore} - ${this.playerTwoScore}
+				</div>
+			</div>
+		`;
+
+		document.body.appendChild(overlay);
+
+		setTimeout(() => {
+			if (overlay.parentNode) {
+				overlay.parentNode.removeChild(overlay);
+			}
+		}, 3000);
 	}
 
 	resetGame() {
@@ -276,18 +336,18 @@ export class TronGame {
 	}
 
 	updateScore() {
-		let playerscore = document.getElementById('playerScore');
+		let playerscore = document.getElementById('playerOneScore');
 		if (playerscore)
-			playerscore.textContent = this.playerScore as unknown as string;
-		let aiscore = document.getElementById('aiScore');
+			playerscore.textContent = this.playerOneScore as unknown as string;
+		let aiscore = document.getElementById('playerTwoScore');
 		if (aiscore)
-			aiscore.textContent = this.aiScore as unknown as string;
+			aiscore.textContent = this.playerTwoScore as unknown as string;
 	}
 
 	startGameLoop() {
 		this.engine.runRenderLoop(() => {
 			this.updatePlayerCar();
-		// if ( this.playerScore == 5 ) 
+		// if ( this.playerOneScore == 5 ) 
 			this.scene.render();
 		});
 
@@ -321,7 +381,7 @@ function startTronGame() {
 // 	<div id="gameContainer">
 // 		<canvas id="renderCanvas"></canvas>
 // 		<div id="gameUI">
-// 			<div>Player: <span id="playerScore">0</span> | AI: <span id="aiScore">0</span></div>
+// 			<div>Player: <span id="playerOneScore">0</span> | AI: <span id="playerTwoScore">0</span></div>
 // 		</div>
 // 		<div id="instructions">
 // 			Use W/S or Arrow Keys to move
@@ -349,7 +409,7 @@ export function renderTron() {
 			<div id="gameContainer">
 				<canvas id="renderCanvas"></canvas>
 				<div id="gameUI">
-					<div>Player: <span id="playerScore">0</span> | AI: <span id="aiScore">0</span></div>
+					<div>Player1(blue): <span id="playerOneScore">0</span> | Player2(orange): <span id="playerTwoScore">0</span></div>
 				</div>
 				<div id="instructions">
 					Use W/S/A/D or Arrow Keys to move
