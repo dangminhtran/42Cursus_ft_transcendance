@@ -258,7 +258,10 @@ export class PongGame {
       }, 3000);
     }
     else {
-      renderPong();
+      setTimeout(() => {
+        window['onMatchFinished'](winner);
+        renderPong();
+      }, 3000);
     }
   }
 

@@ -287,8 +287,11 @@ export class TronGame {
 	startGameLoop() {
 		this.engine.runRenderLoop(() => {
 			this.updatePlayerCar();
-		// if ( this.playerScore == 5 ) 
-			this.scene.render();
+		if ( this.playerScore == 5 )
+			this.endMatch("Player 1");
+		else if ( this.aiScore == 5 )
+			this.endMatch("Player 2");
+		this.scene.render();
 		});
 
 		window.addEventListener("resize", () => {
@@ -300,6 +303,55 @@ export class TronGame {
 		if (this.engine) {
 			this.engine.dispose();
 		}
+	}
+
+	showWinnerOverlay(winner: string) {
+		const overlay = document.createElement('div');
+		overlay.style.cssText = `
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background: rgba(0, 0, 0, 0.8);
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			z-index: 1000;
+			color: white;
+			font-size: 3rem;
+			font-weight: bold;
+			text-align: center;
+		`;
+
+		overlay.innerHTML = `
+			<div>
+			<div style="color: #ffd700; margin-bottom: 20px;">🏆</div>
+			<div>${winner} Wins!</div>
+			<div style="font-size: 1.5rem; margin-top: 20px; opacity: 0.8;">
+				Final Score: ${this.playerScore} - ${this.aiScore}
+			</div>
+			</div>
+		`;
+
+		document.body.appendChild(overlay);
+
+		setTimeout(() => {
+			if (overlay.parentNode) {
+			overlay.parentNode.removeChild(overlay);
+			}
+		}, 3000);
+	}
+
+	endMatch(winner: string) {
+		this.engine.stopRenderLoop();
+
+		this.showWinnerOverlay(winner);
+
+		// If this is a tournament match, call the callback
+		setTimeout(() => {
+			renderTron();
+		}, 3000);
 	}
 
 	public clearGame() {
