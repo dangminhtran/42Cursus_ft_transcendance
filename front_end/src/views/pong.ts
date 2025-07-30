@@ -257,6 +257,9 @@ export class PongGame {
         window['onMatchFinished'](winner);
       }, 3000);
     }
+    else {
+      renderPong();
+    }
   }
 
   showWinnerOverlay(winner: string) {
@@ -620,9 +623,7 @@ window['onMatchFinished'] = function(winner: string) {
     currentTournament.winners.push(winner);
     currentTournament.currentMatchIndex++;
 
-    setTimeout(() => {
-      showNextMatch();
-    }, 1000);
+    showNextMatch();
   }
 };
 
