@@ -1,5 +1,15 @@
 import { FastifyInstance } from 'fastify';
 import { Match } from '../structs';
+import { db } from './db'
+
+// Type de match reçu
+interface MatchInput {
+  player1: string;
+  player2: string;
+  score1: number;
+  score2: number;
+  tournamentId: number; // id INTEGER
+}
 
 export default async function matchRoutes(fastify: FastifyInstance) {
 
@@ -10,4 +20,29 @@ export default async function matchRoutes(fastify: FastifyInstance) {
 			return reply.code(401).send({ error: 'Unable to create match.' });
 		return reply.code(200).send({ message: 'Match added to database.' });
 	});
+
+	fastify.post('/match', async (request, reply) => {
+		const {
+			player1,
+			player2,
+			score1,
+			score2,
+			tournamentId
+		} = request.body as MatchInput;
+
+		try {
+			const stmt = db.prepare(`
+				INSERT INTO matchs (player1, player2, player1_score, player2_score, tournament_id)
+				VALUES (?, ?, ?, ?, ?)
+			`);
+			stmt.run(player1, player2, score1, score2, tournamentId);
+			return reply.code(201).send({ message: 'Match enregistré avec succès.' });
+
+		} catch (err) {
+			console.error(err);
+			return reply.code(500).send({ error: 'Erreur serveur lors de l’enregistrement du match.' });
+		}
+	});
 }
+
+

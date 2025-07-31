@@ -20,6 +20,7 @@ db.exec(`
   );
 `);
 
+// utiliser id plutot que uuid 
 db.exec(`CREATE TABLE IF NOT EXISTS tournaments (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     uuid TEXT NOT NULL UNIQUE,
@@ -35,7 +36,7 @@ db.exec(`
 	player1_score INTEGER,
 	player2_score INTEGER,
 	user_id INTEGER references users(id),
-	tournament_id TEXT REFERENCES tournaments(id),
+	tournament_id INTEGER REFERENCES tournaments(id),
 	created_at DATETIME DEFAULT CURRENT_TIMESTAMP
   );
 `);
@@ -72,7 +73,7 @@ export default fp(async (fastify, opts) => {
 
 	// match
 
-
+	
 
 	fastify.addHook('onClose', (instance, done) => {
 		db.close();

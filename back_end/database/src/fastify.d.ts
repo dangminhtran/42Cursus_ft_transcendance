@@ -1,6 +1,7 @@
 import 'fastify';
 import { ChatMessage, GameResult } from './src/structs';
 import { Friend } from './structs';
+import Database from 'better-sqlite3';
 
 declare module 'fastify' {
   interface FastifyInstance {
