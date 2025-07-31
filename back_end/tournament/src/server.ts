@@ -9,13 +9,22 @@ import dbServiceClient from './plugins/dbServiceClient';
 
 const fastify = Fastify({ logger: true });
 fastify.register(cors, {
-  origin: true,
-})
+  origin: (origin, callback) => {
+    if (!origin) return callback(null, true);
+    
+    console.log(`CORS request from origin: ${origin}`);
+
+    callback(null, true);
+  },
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: '*'
+});
 
 fastify.register(dbServiceClient, {
-	baseURL:    "http://127.0.0.1:3001/", //process.env.DB_SERVICE_URL!,
+	baseURL: process.env.DATABASE_URL as string,
 	tokenHeader: 'authorization'
 })
+
 
 fastify.register(fastifyMetrics, {
   endpoint: '/metrics',
