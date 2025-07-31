@@ -1,31 +1,30 @@
 FROM debian:bookworm-slim
-
 ENV NGINX_VERSION=1.24.0
 ENV MODSECURITY_VERSION=v3.0.8
 
 # Dépendances
 RUN apt-get update && apt-get install -y \
-  build-essential \
-  git \
-  wget \
-  curl \
-  ca-certificates \
-  libpcre3-dev \
-  libssl-dev \
-  zlib1g-dev \
-  cmake \
-  automake \
-  libtool \
-  pkg-config \
-  libyajl-dev \
-  libgeoip-dev \
-  libcurl4-openssl-dev \
-  libxml2-dev \
-  libfuzzy-dev \
-  doxygen \
-  liblmdb-dev \
-  libmaxminddb-dev \
-  && rm -rf /var/lib/apt/lists/*
+    build-essential \
+    git \
+    wget \
+    curl \
+    ca-certificates \
+    libpcre3-dev \
+    libssl-dev \
+    zlib1g-dev \
+    cmake \
+    automake \
+    libtool \
+    pkg-config \
+    libyajl-dev \
+    libgeoip-dev \
+    libcurl4-openssl-dev \
+    libxml2-dev \
+    libfuzzy-dev \
+    doxygen \
+    liblmdb-dev \
+    libmaxminddb-dev \
+    && rm -rf /var/lib/apt/lists/*
 
 # Installer Vault CLI (version 1.15.2)
 RUN curl -fsSL https://releases.hashicorp.com/vault/1.15.2/vault_1.15.2_linux_amd64.zip -o vault.zip && \
@@ -34,7 +33,9 @@ RUN curl -fsSL https://releases.hashicorp.com/vault/1.15.2/vault_1.15.2_linux_am
     chmod +x /usr/local/bin/vault && \
     apt-get remove -y unzip && apt-get autoremove -y
 
+# Copier les fichiers de configuration ModSecurity
 COPY modsecurity.conf /etc/nginx/modsec/modsecurity.conf
+COPY cors-exclusions.conf /etc/nginx/modsec/cors-exclusions.conf
 COPY crs/crs-setup.conf /etc/nginx/modsec/crs-setup.conf
 COPY crs/rules/ /etc/nginx/modsec/rules/
 COPY ssl /etc/nginx/ssl
@@ -56,9 +57,8 @@ RUN wget http://nginx.org/download/nginx-${NGINX_VERSION}.tar.gz && \
     ./configure --with-compat --with-http_ssl_module --add-dynamic-module=../ModSecurity-nginx && \
     make -j$(nproc) && make install
 
-# Copier config NGINX + ModSecurity à l’intérieur si nécessaire via docker-compose
+# Copier config NGINX + ModSecurity à l'intérieur si nécessaire via docker-compose
 EXPOSE 443
-
 COPY entrypoint.sh entrypoint.sh
 RUN chmod +x entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]

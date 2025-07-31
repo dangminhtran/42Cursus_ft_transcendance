@@ -27,8 +27,9 @@ export default async function userManagmentRoutes(fastify: FastifyInstance) {
 	// send post request to user/update/:userid with json user info updated to update in Database
 	fastify.post('/update/:userid', async (request: any, reply: any) => {
 		const userid = request.params.userid;
-		const { profilepicture, email, password, is2FAEnabled, twoFASecret } = request.body as { profilepicture: string, email: string, password: string, is2FAEnabled: number, twoFASecret: string};
+		const { username, profilepicture, email, password, is2FAEnabled, twoFASecret } = request.body as { username:string, profilepicture: string, email: string, password: string, is2FAEnabled: number, twoFASecret: string};
 		let updateduser: User = {
+			username,
 			id: userid,
 			profilepicture,
 			email,
