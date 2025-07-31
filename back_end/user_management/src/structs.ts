@@ -1,5 +1,6 @@
 export interface User {
 	id: number
+	username: string,
 	profilepicture: string,
 	email: string
 	password: string
@@ -26,8 +27,9 @@ export type GameResult = {
 	created_at: string;
 };
 
-export interface ChatMessage {
-  id:      number;
-  message: string;
+export interface Friend {
+  username: string;
+  profilepicture: string;
   email:   string;
 };
+

@@ -21,19 +21,23 @@ export async function userRoutes(fastify: FastifyInstance) {
 
 	fastify.post('/update', { preValidation: [fastify.authenticate] },  async (request: any, reply) => {
 		const {
-			emailidentifier,
+			username,
 			profilepicture,
 			email,
 			password,
 			is2FAEnabled } = request.body as 
-			{ emailidentifier: string, profilepicture: string, email: string, password: string, is2FAEnabled: number };
+			{ username: string, profilepicture: string, email: string, password: string, is2FAEnabled: number };
 
+		const emailidentifier = request.user.email;
+		console.log(email);
 		const user: User | null = await fastify.dbClient.post<User>('/user/getUserByEmail', { email: emailidentifier });
 
 		if (!user)
 			return reply.code(404).send({ error: 'Utilisateur introuvable' });
 		if (profilepicture)
 			user.profilepicture = profilepicture;
+		if (username)
+			user.username = username;
 		if (email)
 			user.email = email;
 		if (password)
