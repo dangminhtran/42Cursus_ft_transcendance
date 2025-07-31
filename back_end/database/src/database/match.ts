@@ -11,6 +11,28 @@ interface MatchInput {
   tournamentId: number; // id INTEGER
 }
 
+export const AddMatch = (
+  player1: string,
+  player2: string,
+  score1: number,
+  score2: number,
+  tournamentId: number
+): boolean => {
+  try {
+    const stmt = db.prepare(`
+      INSERT INTO matchs (player1, player2, player1_score, player2_score, tournament_id)
+      VALUES (?, ?, ?, ?, ?)
+    `);
+
+    stmt.run(player1, player2, score1, score2, tournamentId);
+
+    return true;
+  } catch (error) {
+    console.error('Erreur lors de l\'ajout du match:', error);
+    return false;
+  }
+};
+
 export default async function matchRoutes(fastify: FastifyInstance) {
 
 	fastify.post('/add', async (request, reply) => {
@@ -22,27 +44,14 @@ export default async function matchRoutes(fastify: FastifyInstance) {
 	});
 
 	fastify.post('/match', async (request, reply) => {
-		const {
-			player1,
-			player2,
-			score1,
-			score2,
-			tournamentId
-		} = request.body as MatchInput;
+		const { player1, player2, score1, score2, tournamentId } = request.body as MatchInput;
 
-		try {
-			const stmt = db.prepare(`
-				INSERT INTO matchs (player1, player2, player1_score, player2_score, tournament_id)
-				VALUES (?, ?, ?, ?, ?)
-			`);
-			stmt.run(player1, player2, score1, score2, tournamentId);
-			return reply.code(201).send({ message: 'Match enregistré avec succès.' });
+		const success = fastify.AddMatch(player1, player2, score1, score2, tournamentId);
 
-		} catch (err) {
-			console.error(err);
-			return reply.code(500).send({ error: 'Erreur serveur lors de l’enregistrement du match.' });
+		if (success) {
+			reply.code(201).send({ message: 'Match enregistré avec succès.' });
+		} else {
+			reply.code(500).send({ error: 'Erreur lors de l\'enregistrement du match.' });
 		}
 	});
 }
-
-

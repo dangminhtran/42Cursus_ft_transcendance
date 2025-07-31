@@ -6,7 +6,7 @@ import jwtPlugin from './jwt';
 import twoFARoutes from './routes/2fa';
 import authRoutes from './routes/auth';
 import dbServiceClient from './plugins/dbServiceClient';
-
+import matchRoutes from '';
 
 const fastify = Fastify({ logger: true });
 fastify.register(cors, {

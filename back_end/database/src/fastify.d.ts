@@ -21,6 +21,13 @@ declare module 'fastify' {
 		AddFriend(userid: number, friendid: number): Promise<boolean>;
 		DeleteFriend(userid: number, friendid: number): Promise<boolean>;
 		FetchFriends(userid: number): Promise<Friend[]>;
+		AddMatch(
+			player1: string,
+			player2: string,
+			score1: number,
+			score2: number,
+			tournamentId: number
+		): boolean | Promise<boolean>;
 
 		// tournament
 		createTournament(uuid: string): Promise<boolean>;
