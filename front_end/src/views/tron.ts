@@ -394,11 +394,13 @@ function startTronGame() {
 export function renderTron() {
 	renderNavbar();
 	document.getElementById('app')!.innerHTML = `
-		<div class="flex flex-col justify-center items-center min-h-screen">
-			<div class="text-black font-bold text-4xl mb-10">Ready to play Tron?</div>
-			<button id="startTronBtn" class="bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 transition-colors text-2xl">
-				Start Game
-			</button>
+		<div class="flex flex-col justify-center items-center min-h-screen -mt-20">
+			<div class="card p-7">
+				<div class="text-purple-950 font-bold text-4xl mb-10">Ready to play Tron?</div>
+				<button id="startTronBtn">
+					Start Game
+				</button>
+			</div>
 		</div>
 	`;
 
