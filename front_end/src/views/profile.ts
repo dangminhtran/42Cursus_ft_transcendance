@@ -3,7 +3,7 @@ import { renderNavbar } from "../componentes/navbar";
 export function renderProfile() {
 	renderNavbar();
 	document.getElementById('app')!.innerHTML = `
-		<div class="profileContainer flex flex-col justify-center items-center gap-5 -mt-20 text-md text-indigo-950 font-semibold rounded-xl p-10">
+		<div class="bg-emerald-900 border border-white flex flex-col justify-center items-center gap-5 -mt-20 text-md text-indigo-950 rounded-xl p-10">
 			<div class="text-lg text-white text-xl font-semibold">Change your information here</div>	
 		
 			<!-- Avatar Preview Section -->
@@ -22,9 +22,9 @@ export function renderProfile() {
 			</div>
 
 			<div class="flex flex-col justify-center gap-2 w-full max-w-md">
-				<label for="pictureInput" class="text-white">Profile picture URL:</label>
+				<label for="pictureInput" class="text-white font-semibold">Profile picture URL:</label>
 				<input 
-					class="rounded-sm bg-indigo-950 text-xl text-white border border-teal-50 ease-in-out p-2" 
+					class="rounded-sm bg-indigo-950 text-lg text-white border border-teal-50 ease-in-out p-2" 
 					type="url" 
 					name="pictureInput" 
 					id="pictureInput"
@@ -39,9 +39,9 @@ export function renderProfile() {
 			</div>
 
 			<div class="flex flex-col justify-center gap-2 w-full max-w-md">
-				<label for="emailInput" class="text-red-700">Email:</label>
+				<label for="emailInput" class="text-white font-semibold">Email:</label>
 				<input 
-					class="rounded-sm bg-indigo-950 text-xl text-white border border-teal-50 ease-in-out p-2" 
+					class="rounded-sm bg-indigo-950 text-lg text-white border border-teal-50 ease-in-out p-2" 
 					type="email" 
 					name="emailInput" 
 					id="emailInput"
@@ -49,9 +49,9 @@ export function renderProfile() {
 			</div>
 			
 			<div class="flex flex-col justify-center gap-2 w-full max-w-md">
-				<label for="oldPassword" class="text-red-700">Old password:</label>
+				<label for="oldPassword" class="text-white font-semibold">Old password:</label>
 				<input 
-					class="rounded-sm bg-indigo-950 text-xl text-white border border-teal-50 ease-in-out p-2" 
+					class="rounded-sm bg-indigo-950 text-lg text-white border border-teal-50 ease-in-out p-2" 
 					type="password" 
 					name="oldPassword" 
 					id="oldPassword"
@@ -59,9 +59,9 @@ export function renderProfile() {
 			</div>
 			
 			<div class="flex flex-col justify-center gap-2 w-full max-w-md">
-				<label for="newPassword" class="text-red-700">New password:</label>
+				<label for="newPassword" class="text-white font-semibold">New password:</label>
 				<input 
-					class="rounded-sm bg-indigo-950 text-xl text-white border border-teal-50 ease-in-out p-2" 
+					class="rounded-sm bg-indigo-950 text-lg text-white border border-teal-50 ease-in-out p-2" 
 					type="password" 
 					name="newPassword" 
 					id="newPassword"
@@ -69,16 +69,19 @@ export function renderProfile() {
 			</div>
 			
 			<div class="flex justify-center items-center gap-2 w-full max-w-md">
-				<label for="2fa" class="text-red-700">Enable 2FA:</label>
+				<label for="2fa" class="text-white font-semibold">Enable 2FA:</label>
 				<input 
-					class="rounded-sm bg-indigo-950 text-xl text-white border border-teal-50 ease-in-out" 
+					class="rounded-sm bg-indigo-950 text-lg text-white border border-teal-50 ease-in-out" 
 					type="checkbox" 
 					name="2fa" 
 					id="2fa"
 				>
 			</div>
 			
-			<button id="saveChangesBtn" >
+			<button 
+				id="saveChangesBtn"
+				class="bg-green-600 text-white py-3 px-6 rounded-lg hover:bg-green-700 transition-colors font-semibold text-lg mt-4"
+			>
 				Save Changes
 			</button>
 		</div>

@@ -97,6 +97,15 @@ const users: User[] = [
 		avatar: '🌟',
 		joinDate: '2025-01-25',
 	},
+		{
+		id: 'oscar',
+		name: 'Oscar',
+		isOnline: true,
+		lastSeen: '2025-07-27T10:50:00Z',
+		stats: { wins: 19, losses: 1, draws: 2, totalGames: 22, winRate: 80.0 },
+		avatar: '🌟',
+		joinDate: '2025-01-19',
+	},
 ];
 
 // Mock friends data
@@ -229,7 +238,7 @@ function renderUserProfile(): string {
 
 function renderFriendsList(): string {
 	const friendsHtml = friends.map(friend => `
-		<div class="flex items-center justify-between p-3 bg-gray-700 rounded-lg hover:bg-gray-600 transition-colors">
+		<div class="flex items-center justify-between p-3 bg-gray-700 rounded-lg hover:bg-gray-600 transition-colors cursor-pointer friend-item">
 			<div class="flex items-center space-x-3">
 				<div class="text-2xl">${friend.user.avatar}</div>
 				<div>
@@ -255,7 +264,7 @@ function renderFriendsList(): string {
 		<div class="bg-gray-800 rounded-lg p-6 mb-6">
 			<div class="flex items-center justify-between mb-4">
 				<h2 class="text-2xl font-bold text-white">👥 Friends (${friends.length})</h2>
-				<button class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm transition-colors">
+				<button id="add-friend-btn" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm transition-colors">
 					+ Add Friend
 				</button>
 			</div>
@@ -394,7 +403,6 @@ function renderMatchHistory(): string {
 export function renderHome() {
 	renderNavbar();
 
-	// Main container with dark theme
 	document.getElementById('app')!.innerHTML = `
 		<div class="min-h-screen glassTouch text-white p-6">
 			<div class="max-w-7xl mx-auto">
@@ -419,6 +427,33 @@ export function renderHome() {
 	addEventListeners();
 }
 
+
+function refreshHomeDashboard() {
+	const mainContent = `
+		<div class="min-h-screen glassTouch text-white p-6">
+			<div class="max-w-7xl mx-auto">
+				<h1 class="text-4xl font-bold text-center mb-8 bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
+					🎮 Game Dashboard
+				</h1>
+				
+				<div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+					<div class="lg:col-span-2">
+						${renderUserProfile()}
+					</div>
+					<div>
+						${renderFriendsList()}
+					</div>
+				</div>
+				
+				${renderMatchHistory()}
+			</div>
+		</div>
+	`;
+	
+	document.getElementById('app')!.innerHTML = mainContent;
+	addEventListeners();
+}
+
 (window as any).switchHistoryView = function (view: string) {
 	currentHistoryView = view;
 	if (view !== 'my-games' && view !== 'all') {
@@ -428,104 +463,201 @@ export function renderHome() {
 		selectedFriend = null;
 	}
 
-	const historyContainer = document.querySelector('.bg-gray-800:last-child');
-	if (historyContainer) {
-		historyContainer.outerHTML = renderMatchHistory();
-	}
+	refreshHomeDashboard();
 };
 
 function addEventListeners() {
-	const addFriendBtn = document.querySelector('button');
+	const addFriendBtn = document.getElementById('add-friend-btn');
 	if (addFriendBtn) {
 		addFriendBtn.addEventListener('click', () => {
-			addFriends()
+			addFriends();
 		});
 	}
 
-	const friendElements = document.querySelectorAll('.bg-gray-700');
+	const friendElements = document.querySelectorAll('.friend-item');
 	friendElements.forEach(element => {
 		element.addEventListener('click', (e) => {
-			if ((e.target as HTMLElement).tagName !== 'BUTTON') {
-				const friendName = element.querySelector('.font-semibold')?.textContent;
-				if (friendName) {
-					// Show friend's match history
-					selectedFriend = friendName;
-					currentHistoryView = 'friend';
+			const friendName = element.querySelector('.font-semibold')?.textContent;
+			if (friendName) {
+				selectedFriend = friendName;
+				currentHistoryView = 'friend';
 
-					// Re-render the match history
-					const historyContainer = document.querySelector('.bg-gray-800:last-child');
-					if (historyContainer) {
-						historyContainer.outerHTML = renderMatchHistory();
+				refreshHomeDashboard();
+
+				// setTimeout(() => {
+				// 	const historySection = document.querySelector('.bg-gray-800:last-child');
+				// 	if (historySection) {
+				// 		historySection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+				// 	}
+				// }, 100);
+
+				setTimeout(() => {
+					const historySection = document.querySelector('.bg-gray-800:last-child');
+					if (historySection) {
+						historySection.scrollIntoView({ 
+							behavior: 'smooth', 
+							block: 'center' // This centers the element in the viewport
+						});
 					}
-
-					// setTimeout(() => {
-					// 	const historySection = document.querySelector('.bg-gray-800:last-child');
-					// 	if (historySection) {
-					// 		historySection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-					// 	}
-					// }, 100);
-
-					setTimeout(() => {
-						const historySection = document.querySelector('.bg-gray-800:last-child');
-						if (historySection) {
-							historySection.scrollIntoView({ 
-								behavior: 'smooth', 
-								block: 'center' // This centers the element in the viewport
-							});
-						}
-					}, 100);
-				}
+				}, 100);
 			}
 		});
 	});
 }
 
 export function addFriends() {
-	renderNavbar()
+	renderNavbar();
+	
 	document.getElementById('app')!.innerHTML = `
-  <div class="flex flex-col -mt-60 justify-center">
-  	<div class="card p-7">
-		<label class="block text-sm font-medium text-gray-700 mb-2">Put your friend's name</label>
-		<input 
-			type="text" 
-			placeholder="Enter friend name"
-			class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-			required
-		>
-      </div>
-    </div>
-  `;
+		<div class="glassTouch text-white p-6">
+			<div class="max-w-4xl mx-auto">
+				<div class="flex flex-col justify-center items-center min-h-[60vh]">
+					<div class="bg-gray-800 rounded-lg p-8 w-full max-w-md">
+						<h2 class="text-2xl font-bold text-white mb-6 text-center">👥 Add New Friend</h2>
+						<form id="add-friend-form">
+							<div class="mb-4">
+								<label class="block text-sm font-medium text-gray-300 mb-2">Friend's Name</label>
+								<input 
+									id="friend-name-input"
+									type="text" 
+									placeholder="Enter friend's name"
+									class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+									required
+								>
+							</div>
+							<div class="flex space-x-3">
+								<button 
+									type="submit"
+									class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-md transition-colors"
+								>
+									Add Friend
+								</button>
+								<button 
+									type="button"
+									id="cancel-add-friend"
+									class="flex-1 bg-gray-600 hover:bg-gray-700 text-white py-2 px-4 rounded-md transition-colors"
+								>
+									Cancel
+								</button>
+							</div>
+						</form>
+						
+						<!-- Available users to add -->
+						<div class="mt-6">
+							<h3 class="text-lg font-semibold text-white mb-3">Available Users</h3>
+							<div class="space-y-2 max-h-48 overflow-y-auto">
+								${getAvailableUsers().map(user => `
+									<div class="flex items-center justify-between p-2 bg-gray-700 rounded cursor-pointer hover:bg-gray-600 transition-colors available-user" data-user-name="${user.name}">
+										<div class="flex items-center space-x-3">
+											<span class="text-xl">${user.avatar}</span>
+											<div>
+												<span class="text-white font-medium">${user.name}</span>
+												<div class="text-xs text-gray-400">${user.stats.wins}W-${user.stats.losses}L (${user.stats.winRate}% WR)</div>
+											</div>
+										</div>
+										<button class="text-blue-400 hover:text-blue-300 text-sm">Add</button>
+									</div>
+								`).join('')}
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	`;
+
+	const form = document.getElementById('add-friend-form');
+	const cancelBtn = document.getElementById('cancel-add-friend');
+	const friendNameInput = document.getElementById('friend-name-input') as HTMLInputElement;
+	const availableUsers = document.querySelectorAll('.available-user');
+
+	if (form) {
+		form.addEventListener('submit', (e) => {
+			e.preventDefault();
+			const friendName = friendNameInput.value.trim();
+			if (friendName) {
+				handleAddFriend(friendName);
+			}
+		});
+	}
+
+	if (cancelBtn) {
+		cancelBtn.addEventListener('click', () => {
+			renderHome();
+		});
+	}
+
+	availableUsers.forEach(userElement => {
+		userElement.addEventListener('click', () => {
+			const userName = userElement.getAttribute('data-user-name');
+			if (userName) {
+				friendNameInput.value = userName;
+			}
+		});
+	});
+
+	// Focus on input
+	setTimeout(() => {
+		friendNameInput.focus();
+	}, 100);
 }
 
-// function openFriendsModal(playerCount: number) {
-//   const modal = document.getElementById("playerModal");
-//   const inputsContainer = document.getElementById("playerInputs");
+function getAvailableUsers(): User[] {
+	const friendIds = friends.map(friend => friend.user.id);
+	return users.filter(user => !friendIds.includes(user.id));
+}
 
-//   if (inputsContainer != null) {
-//     inputsContainer.innerHTML = '';
-//     for (let i = 1; i <= playerCount; i++) {
-//       inputsContainer.innerHTML += `
-//             <div>
-//                 <label class="block text-sm font-medium text-gray-700 mb-2">Player ${i}</label>
-//                 <input 
-//                     type="text" 
-//                     id="player${i}" 
-//                     placeholder="Enter player ${i} name"
-//                     class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-//                     required
-//                 >
-//             </div>
-//         `;
-//     }
+function handleAddFriend(friendName: string) {
+	const userToAdd = users.find(user => user.name.toLowerCase() === friendName.toLowerCase());
+	
+	if (!userToAdd) {
+		showMessage('User not found. Please check the name and try again.', 'error');
+		return;
+	}
 
-//     modal?.classList.remove('hidden');
-//   }
+	const isAlreadyFriend = friends.some(friend => friend.user.id === userToAdd.id);
+	if (isAlreadyFriend) {
+		showMessage(`${userToAdd.name} is already your friend!`, 'warning');
+		return;
+	}
 
-//   setTimeout(() => {
-//     document.getElementById("player1")?.focus();
-//   }, 100);
-// }
+	const newFriend: Friend = {
+		user: userToAdd,
+		status: userToAdd.isOnline ? 'online' : 'offline',
+		addedDate: new Date().toISOString().split('T')[0]
+	};
 
-// function closeFriendsModal() {
-//   document.getElementById("playerModal")?.classList.add('hidden');
-// }
+	friends.push(newFriend);
+	showMessage(`${userToAdd.name} has been added to your friends list!`, 'success');
+	
+	setTimeout(() => {
+		renderHome();
+	}, 1500);
+}
+
+function showMessage(message: string, type: 'success' | 'error' | 'warning') {
+
+	const existingMessage = document.getElementById('status-message');
+	if (existingMessage) {
+		existingMessage.remove();
+	}
+
+	const messageDiv = document.createElement('div');
+	messageDiv.id = 'status-message';
+	messageDiv.className = `fixed top-4 right-4 p-4 rounded-lg text-white z-50 transition-all duration-300 ${
+		type === 'success' ? 'bg-green-600' :
+		type === 'error' ? 'bg-red-600' :
+		'bg-yellow-600'
+	}`;
+	messageDiv.textContent = message;
+
+	document.body.appendChild(messageDiv);
+
+	setTimeout(() => {
+		messageDiv.style.opacity = '0';
+		messageDiv.style.transform = 'translateX(100%)';
+		setTimeout(() => {
+			messageDiv.remove();
+		}, 300);
+	}, 3000);
+}

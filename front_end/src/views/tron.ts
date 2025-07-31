@@ -13,7 +13,7 @@ export class TronGame {
 	carSpeed: number;
 	inputStates: { wPressed: boolean, aPressed: boolean; sPressed: boolean, dPressed: boolean; };
 	aiStates: { upPressed: boolean, leftPressed: boolean; downPressed: boolean, rightPressed: boolean; };
-	trail : any; // zgeg
+	trail : any;
 	scene: any;
 	camera: any;
 	fieldWidth: number;
@@ -374,22 +374,6 @@ function startTronGame() {
 	const game = new TronGame();
 	setTronGame(game);
 }
-
-// export function renderTron() {
-// 	renderNavbar();
-// 	document.getElementById('app')!.innerHTML = `
-// 	<div id="gameContainer">
-// 		<canvas id="renderCanvas"></canvas>
-// 		<div id="gameUI">
-// 			<div>Player: <span id="playerOneScore">0</span> | AI: <span id="playerTwoScore">0</span></div>
-// 		</div>
-// 		<div id="instructions">
-// 			Use W/S or Arrow Keys to move
-// 		</div>
-// 	</div>
-// `;
-// 	startTronGame();
-// }
 
 export function renderTron() {
 	renderNavbar();
