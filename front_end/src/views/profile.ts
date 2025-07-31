@@ -78,10 +78,7 @@ export function renderProfile() {
 				>
 			</div>
 			
-			<button 
-				id="saveChangesBtn"
-				class="bg-green-600 text-white py-3 px-6 rounded-lg hover:bg-green-700 transition-colors font-semibold text-lg mt-4"
-			>
+			<button id="saveChangesBtn" >
 				Save Changes
 			</button>
 		</div>
