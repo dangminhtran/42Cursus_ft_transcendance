@@ -308,7 +308,14 @@ function renderMatchHistory(): string {
 
 		let rowClass = '';
 		if (currentHistoryView === 'my-games' && isCurrentUserInvolved) {
-			rowClass = 'bg-blue-900 bg-opacity-30';
+			// Color based on win/loss for current user in "My Games" view
+			if (game.winner === currentUser.name) {
+				rowClass = 'bg-blue-900 bg-opacity-30'; // Victory in blue
+			} else if (game.winner === 'Draw') {
+				rowClass = 'bg-yellow-900 bg-opacity-30'; // Draw in yellow
+			} else {
+				rowClass = 'bg-red-900 bg-opacity-30'; // Defeat in red
+			}
 		} else if (currentHistoryView !== 'my-games' && isFriendInvolved) {
 			rowClass = 'bg-purple-900 bg-opacity-30';
 		}
