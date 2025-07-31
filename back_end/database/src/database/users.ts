@@ -1,4 +1,3 @@
-
 import { User } from '../structs'
 import { db } from './db'
 import bcrypt from 'bcrypt'

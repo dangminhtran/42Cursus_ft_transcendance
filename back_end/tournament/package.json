@@ -9,7 +9,6 @@
     "@fastify/formbody": "^8.0.2",
     "@fastify/jwt": "^9.1.0",
     "bcrypt": "^6.0.0",
-    "better-sqlite3": "^12.2.0",
     "fastify": "^5.4.0",
     "fastify-metrics": "^12.1.0",
     "fastify-plugin": "^5.0.1",
@@ -18,7 +17,6 @@
     "uuid": "^11.1.0"
   },
   "devDependencies": {
-    "@jest/globals": "^30.0.5",
     "@types/bcrypt": "^6.0.0",
     "@types/better-sqlite3": "^7.6.13",
     "@types/node": "^24.0.14",

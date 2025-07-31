@@ -5,6 +5,7 @@ import fastifyMetrics from 'fastify-metrics';
 import jwtPlugin from './jwt';
 import { userRoutes } from './routes/users';
 import dbServiceClient from './plugins/dbServiceClient';
+import { friendRoutes } from './routes/friends';
 
 const fastify = Fastify({ logger: true });
 fastify.register(cors, {
@@ -12,7 +13,7 @@ fastify.register(cors, {
 })
 
 fastify.register(dbServiceClient, {
-	baseURL:    "http://database:3001/", //process.env.DB_SERVICE_URL!,
+	baseURL:    "http://127.0.0.1:3001/", //process.env.DB_SERVICE_URL!,
 	tokenHeader: 'authorization'
 })
 
@@ -25,6 +26,7 @@ fastify.register(fastifyFormbody);
 fastify.register(jwtPlugin);
 
 fastify.register(userRoutes, { prefix: '/user-management' });
+fastify.register(friendRoutes, { prefix: '/friends' });
 
 // Démarrer serveur
 fastify.listen({ port: 3002 , host: '0.0.0.0'}, (err: any, address: any) => {
