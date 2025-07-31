@@ -642,7 +642,7 @@ function showMessage(message: string, type: 'success' | 'error' | 'warning') {
 
 	const messageDiv = document.createElement('div');
 	messageDiv.id = 'status-message';
-	messageDiv.className = `fixed top-4 right-4 p-4 rounded-lg text-white z-50 transition-all duration-300 ${
+	messageDiv.className = `fixed top-4 right-4 p-4 rounded-lg text-white z-1002 transition-all duration-300 ${
 		type === 'success' ? 'bg-green-600' :
 		type === 'error' ? 'bg-red-600' :
 		'bg-yellow-600'
