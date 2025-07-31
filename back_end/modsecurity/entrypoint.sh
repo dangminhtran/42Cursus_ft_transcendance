@@ -25,7 +25,7 @@ done
 echo "✅ Vault est prêt"
 
 # Récupérer secrets
-sleep 3
+sleep 8
 echo "⏳ Récupération des certificats depuis Vault..."
 cert=$(vault kv get -field=cert secret/ssl/certs)
 key=$(vault kv get -field=key secret/ssl/certs)
