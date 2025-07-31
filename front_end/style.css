@@ -189,7 +189,8 @@
 /* Game Canvas */
 #gameContainer {
 	width: 100vw;
-	height: 100vh;
+	/* height: 100vh; */
+	height: calc(100vh - 3vh); /* pour que ça n'ecrase pas navbar */
 	background: #000;
 	z-index: 1000;
 }
@@ -202,7 +203,8 @@
 
 #gameUI {
 	position: absolute;
-	top: 40px;
+	/* top: 40px; */
+	top: 80px; /* pour que ça n'ecrase pas navbar */
 	width: 100%;
 	text-align: center;
 	color: white;
@@ -238,4 +240,17 @@
 
 #backBtn:hover {
 	background: rgba(255, 255, 255, 0.3);
+}
+
+/* TRON BUTTON */
+#startTronBtn {
+	cursor: pointer;
+	border-radius: 10px;
+	margin: 5px 0;
+	height: 40px;
+	width: 90%;
+	padding: 0 20px;
+	background: linear-gradient(90deg, #501794, #3E70A1);
+	color: white;
+	box-shadow: 0 2px 8px rgba(80, 23, 148, 0.3);
 }
