@@ -149,19 +149,19 @@ async function SignUp(email: string, password: string): Promise<boolean> {
 async function Login(email: string, password: string) {
 	if (!email || !password) return false;
 
-	// try {
-	// 	const response = await axios.post(`${BASE_ADDRESS}/auth/login`,
-	// 		{ email, password },
-	// 	);
-	// 	const token = response.data?.token;
-	// 	if (token) {
-	// 		window.sessionStorage.setItem("token", token);
-	// 		return true;
-	// 	}
-	// 	return false;
-	// } catch (err) {
-	// 	console.error("Login failed:", err);
-	// 	return false;
-	// }
+	try {
+		const response = await axios.post(`${BASE_ADDRESS}/auth/login`,
+			{ email, password },
+		);
+		const token = response.data?.token;
+		if (token) {
+			window.sessionStorage.setItem("token", token);
+			return true;
+		}
+		return false;
+	} catch (err) {
+		console.error("Login failed:", err);
+		return false;
+	}
 	return true
 }
