@@ -95,25 +95,29 @@ function initializeAuthHandlers() {
 				return;
 			}
 
-			const loginSuccessful = await Login(email, password);
-			if (loginSuccessful) {
+			// const loginSuccessful = await Login(email, password);
+			// if (loginSuccessful) {
+			// 	navigateTo("/");
+			// } else {
+			// 	alert('Login failed. Please try again.');
+			// }
 				navigateTo("/");
-			} else {
-				alert('Login failed. Please try again.');
-			}
+
 		} else {
 			if (!email || !password) {
 				alert('Please fill in all fields');
 				return;
 			}
 
-			const signupSuccessful = await SignUp(email, password);
-			if (signupSuccessful) {
-				alert('Account created successfully! Please sign in.');
-				document.getElementById('loginToggle')?.click();
-			} else {
-				alert('Sign up failed. Please try again.');
-			}
+			// const signupSuccessful = await SignUp(email, password);
+			// if (signupSuccessful) {
+			// 	alert('Account created successfully! Please sign in.');
+			// 	document.getElementById('loginToggle')?.click();
+			// } else {
+			// 	alert('Sign up failed. Please try again.');
+			// }
+
+			document.getElementById('loginToggle')?.click();
 		}
 	});
 
