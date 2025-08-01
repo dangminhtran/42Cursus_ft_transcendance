@@ -163,5 +163,4 @@ async function Login(email: string, password: string) {
 		console.error("Login failed:", err);
 		return false;
 	}
-	return true
 }
