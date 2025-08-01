@@ -24,6 +24,18 @@ services:
     networks:
       - transcendance-net
 
+  tournament:
+    image: tournament
+    build: back_end/tournament/
+    container_name: tournament
+    ports:
+      - "3003:3003"
+    restart: always
+    env_file:
+      - .env
+    networks:
+      - transcendance-net
+
   database:
     image: database
     build: back_end/database/
@@ -55,6 +67,9 @@ services:
       - transcendance-net
     volumes:
       - grafana-storage:/var/lib/grafana
+    environment:
+      - GF_SERVER_ROOT_URL=http://localhost:3004/grafana
+      - GF_SERVER_SERVE_FROM_SUB_PATH=true
 
   vault:
     image: vault
