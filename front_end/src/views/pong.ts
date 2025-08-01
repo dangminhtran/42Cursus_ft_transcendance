@@ -381,48 +381,23 @@ function startPongGame(isMultiplayer: boolean = false, player1Name: string = "Pl
   setPongGame(game);
 }
 
-// export function renderPong() {
-//   renderNavbar();
-//   document.getElementById('app')!.innerHTML = `
-// 	<div class="flex flex-col justify-content items-center">
-//     <div class="text-white font-bold text-4xl mb-10">How do you want to play ?</div>
-//     <div class="w-full flex gap-10 justify-center align-items">
-//       <div class="bg-indigo-950 text-white p-5 text-xl text-center font-semibold h-100 w-100" id="solo">
-//       Solo
-//       <img src="paddle.gif"/>
-//       </div>
-//       <div class="bg-white text-green-900 p-5 text-xl text-center font-semibold h-100 w-100" id="multiple">
-//       With your friends
-//        <img src="paddlesV2.gif"/>
-//        </div>
-
-
-// 	</div>
-// `;
-
-//   const gameSolo = document.getElementById("solo")
-//   gameSolo?.addEventListener('click', launchPongGame)
-
-//   const gameMultiple = document.getElementById("multiple")
-//   gameMultiple?.addEventListener('click', launchPongForMultiple)
-// }
-
 export function renderPong() {
   renderNavbar();
   document.getElementById('app')!.innerHTML = `
-    <div class="flex flex-col justify-center items-center -mt-20 h-screen overflow-hidden">
-        <div class="text-white font-bold text-4xl mb-10">How do you want to play ?</div>
-        <div class="w-full flex gap-10 justify-center align-items">
-            <div class="bg-indigo-950 text-white p-5 text-xl text-center font-semibold h-100 w-100" id="solo">
-            Solo
-            <img src="paddle.gif"/>
-            </div>
-            <div class="bg-white text-green-900 p-5 text-xl text-center font-semibold h-100 w-100" id="multiple">
-            With your friends
-             <img src="paddlesV2.gif"/>
-             </div>
-        </div>
-    </div>
+	<div class="flex flex-col justify-content items-center">
+    <div class="text-white font-bold text-4xl mb-10">How do you want to play ?</div>
+    <div class="w-full flex gap-10 justify-center align-items">
+      <div class="bg-indigo-950 text-white p-5 text-xl text-center font-semibold h-100 w-100" id="solo">
+      Solo
+      <img src="paddle.gif"/>
+      </div>
+      <div class="bg-white text-green-900 p-5 text-xl text-center font-semibold h-100 w-100" id="multiple">
+      With your friends
+       <img src="paddlesV2.gif"/>
+       </div>
+
+
+	</div>
 `;
 
   const gameSolo = document.getElementById("solo")
@@ -432,34 +407,18 @@ export function renderPong() {
   gameMultiple?.addEventListener('click', launchPongForMultiple)
 }
 
-// export function launchPongGame() {
-//   renderNavbar();
-//   document.getElementById('app')!.innerHTML = `
-// 	<div id="gameContainer">
-// 		<canvas id="renderCanvas"></canvas>
-// 		<div id="gameUI">
-// 			<div><span id="player1Label">Player</span>: <span id="playerScore">0</span> | <span id="player2Label">AI</span>: <span id="aiScore">0</span></div>
-// 		</div>
-// 		<div id="instructions">
-// 			Use W/S or Arrow Keys to move
-// 		</div>
-// 	</div>
-// `;
-//   startPongGame();
-// }
-
 export function launchPongGame() {
   renderNavbar();
   document.getElementById('app')!.innerHTML = `
-    <div id="gameContainer" class="h-screen overflow-hidden">
-        <canvas id="renderCanvas"></canvas>
-        <div id="gameUI">
-            <div><span id="player1Label">Player</span>: <span id="playerScore">0</span> | <span id="player2Label">AI</span>: <span id="aiScore">0</span></div>
-        </div>
-        <div id="instructions">
-            Use W/S or Arrow Keys to move
-        </div>
-    </div>
+	<div id="gameContainer">
+		<canvas id="renderCanvas"></canvas>
+		<div id="gameUI">
+			<div><span id="player1Label">Player</span>: <span id="playerScore">0</span> | <span id="player2Label">AI</span>: <span id="aiScore">0</span></div>
+		</div>
+		<div id="instructions">
+			Use W/S or Arrow Keys to move
+		</div>
+	</div>
 `;
   startPongGame();
 }
@@ -471,74 +430,10 @@ let currentTournament = {
   winners: []
 };
 
-// export function launchPongForMultiple() {
-//   renderNavbar();
-//   document.getElementById('app')!.innerHTML = `
-//   <div class="flex flex-col -mt-60 justify-center">
-//     <div class="text-white font-bold text-4xl mb-10">How many players ?</div>
-//       <div class="card p-7">
-//         <div class="w-full flex gap-10 justify-center align-items mb-10">
-//           <div class="bg-indigo-950 text-white p-5 text-xl text-center font-semibold w-100" id="2players">
-//             2 players
-//           </div>
-//           <div class="bg-white text-green-900 p-5 text-xl text-center font-semibold w-100" id="4players">
-//             4 players
-//           </div>
-//           <div class="bg-green-950 text-white p-5 text-xl text-center font-semibold w-100" id="8players">
-//             8 players
-//           </div>
-//       </div>
-//     </div>
-
-//   <div id="playerModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
-//             <div class="bg-white rounded-lg p-8 max-w-md w-full mx-4">
-//                 <h2 class="text-2xl font-bold mb-6 text-center text-gray-800">Enter Player Names</h2>
-//                 <div id="playerInputs" class="space-y-4">
-//                     <!-- Les inputs seront générés dynamiquement -->
-//                 </div>
-//                 <div class="flex gap-4 mt-6">
-//                     <button id="cancelModal" class="flex-1 bg-gray-500 text-white py-2 px-4 rounded hover:bg-gray-600 transition-colors">
-//                         Cancel
-//                     </button>
-//                     <button id="startTournament" class="flex-1 bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700 transition-colors">
-//                         Start Tournament
-//                     </button>
-//                 </div>
-//             </div>
-//         </div>
-        
-//         <!-- Modal pour afficher le match actuel -->
-//         <div id="matchModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
-//             <div class="bg-white rounded-lg p-8 max-w-md w-full mx-4">
-//                 <h2 class="text-2xl font-bold mb-6 text-center text-gray-800">Tournament Match</h2>
-//                 <div id="matchInfo" class="text-center mb-6">
-//                     <!-- Info du match -->
-//                 </div>
-//                 <div class="flex gap-4">
-//                     <button id="startMatch" class="flex-1 bg-blue-600 text-white py-2 px-6 rounded hover:bg-blue-700 transition-colors">
-//                         Start Match
-//                     </button>
-//                 </div>
-//             </div>
-//         </div>
-//   `;
-
-//   const twoPlayers = document.getElementById("2players")
-//   const fourPlayers = document.getElementById("4players")
-//   const eightPlayers = document.getElementById("8players")
-//   twoPlayers?.addEventListener('click', () => openPlayerModal(2));
-//   fourPlayers?.addEventListener('click', () => openPlayerModal(4));
-//   eightPlayers?.addEventListener('click', () => openPlayerModal(8));
-
-//   document.getElementById("cancelModal")?.addEventListener('click', closePlayerModal);
-//   document.getElementById("startTournament")?.addEventListener('click', startTournament);
-//   document.getElementById("startMatch")?.addEventListener('click', startCurrentMatch);
-// }
-
 export function launchPongForMultiple() {
   renderNavbar();
   document.getElementById('app')!.innerHTML = `
-  <div class="flex flex-col justify-center items-center -mt-20 h-screen overflow-hidden">
+  <div class="flex flex-col -mt-60 justify-center">
     <div class="text-white font-bold text-4xl mb-10">How many players ?</div>
       <div class="card p-7">
         <div class="w-full flex gap-10 justify-center align-items mb-10">
@@ -585,7 +480,6 @@ export function launchPongForMultiple() {
                 </div>
             </div>
         </div>
-  </div>
   `;
 
   const twoPlayers = document.getElementById("2players")
