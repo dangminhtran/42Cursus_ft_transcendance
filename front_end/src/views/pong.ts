@@ -688,12 +688,33 @@ import "@babylonjs/loaders/glTF"
 import { ArcRotateCamera, Color3, Engine, HemisphericLight, MeshBuilder, Scene, StandardMaterial, Vector3 } from "@babylonjs/core"
 import { setPongGame } from '../state';
 
+// Add type declarations
+declare global {
+  interface Window {
+    pongGameInstance: any;
+    onMatchFinished: (winner: string) => void;
+  }
+}
+
+interface TournamentMatch {
+  player1: string;
+  player2: string;
+  winner: string | null;
+}
+
+interface Tournament {
+  players: string[];
+  matches: TournamentMatch[];
+  currentMatchIndex: number;
+  winners: string[];
+}
+
 export class PongGame {
   canvas: HTMLCanvasElement | any;
   engine: any;
   playerScore: number;
   aiScore: number;
-  ballSpeed: { x: number; z: number; };
+  ballSpeed: { x: number; z: number; } = { x: 0.15, z: 0.1 };
   paddleSpeed: number;
   inputStates: { wPressed: boolean; sPressed: boolean; upPressed: boolean; downPressed: boolean; };
   scene: any;
@@ -976,14 +997,25 @@ export class PongGame {
     this.engine.stopRenderLoop();
     this.showWinnerOverlay(winner);
 
-    // If this is a tournament match, call the callback
+    // console.log('endMatch called with:', {
+    //   winner,
+    //   isMultiplayer: this.isMultiplayer,
+    //   onMatchFinishedExists: typeof window['onMatchFinished'] === 'function',
+    //   windowOnMatchFinished: window['onMatchFinished']
+    // });
+
+    // Only call onMatchFinished for tournament matches
     if (this.isMultiplayer && typeof window['onMatchFinished'] === 'function') {
+      // console.log('Calling onMatchFinished in 3 seconds...');
       setTimeout(() => {
+        // console.log('About to call onMatchFinished with winner:', winner);
         this.dispose();
         window['onMatchFinished'](winner);
       }, 3000);
     }
     else {
+      // console.log('Not a tournament match, returning to main menu');
+      // Solo game - just return to main menu, don't call onMatchFinished
       setTimeout(() => {
         this.dispose();
         renderPong();
@@ -1233,7 +1265,7 @@ export function launchPongGame(difficulty: 'easy' | 'medium' | 'hard' = 'medium'
   startPongGame(false, "Player", "AI", difficulty);
 }
 
-let currentTournament = {
+let currentTournament: Tournament = {
   players: [],
   matches: [],
   currentMatchIndex: 0,
@@ -1386,26 +1418,52 @@ function generateMatches(players: string[]) {
 }
 
 function showNextMatch() {
+  // console.log('=== showNextMatch called ===');
+  // console.log('Tournament state in showNextMatch:', {
+  //   currentMatchIndex: currentTournament.currentMatchIndex,
+  //   totalMatches: currentTournament.matches.length,
+  //   matches: currentTournament.matches,
+  //   winners: currentTournament.winners
+  // });
+
+  // This function should only be called when there's a valid next match
   if (currentTournament.currentMatchIndex >= currentTournament.matches.length) {
+    console.error("showNextMatch called but no more matches in current round");
+    // console.log('Checking if we need to start next round...');
+    
+    // Check if we should progress to next round
     if (currentTournament.winners.length > 1) {
+      // console.log('Multiple winners, starting next round');
       currentTournament.matches = generateMatches(currentTournament.winners);
       currentTournament.currentMatchIndex = 0;
       currentTournament.winners = [];
-      showNextMatch();
+      
+      // console.log(`Generated new round with players:`, previousWinners);
+      showNextMatch(); // Recursive call for new round
+      return;
     } else if (currentTournament.winners.length === 1) {
+      // console.log('Single winner, tournament complete');
       showTournamentWinner();
+      return;
     }
+    
+    console.error('No valid tournament state found');
     return;
   }
 
   const currentMatch = currentTournament.matches[currentTournament.currentMatchIndex];
+  // console.log('Current match to display:', currentMatch);
+  
   const modal = document.getElementById("matchModal");
   const matchInfo = document.getElementById("matchInfo");
 
   if (matchInfo) {
+    const totalRounds = Math.ceil(Math.log2(currentTournament.players.length));
+    const currentRound = totalRounds - Math.ceil(Math.log2(currentTournament.matches.length)) + 1;
+    
     matchInfo.innerHTML = `
         <div class="text-lg mb-4">
-            <strong>Round ${Math.ceil(Math.log2(currentTournament.players.length)) - Math.ceil(Math.log2(currentTournament.winners.length + currentTournament.matches.length)) + 1}</strong>
+            <strong>Round ${currentRound}</strong>
         </div>
         <div class="text-xl font-semibold text-blue-600">
             ${currentMatch.player1}
@@ -1417,7 +1475,24 @@ function showNextMatch() {
     `;
   }
 
+  // console.log('Showing match modal');
+  // console.log('Modal element:', modal);
+  // console.log('Modal classes before removing hidden:', modal?.className);
   modal?.classList.remove('hidden');
+  // console.log('Modal classes after removing hidden:', modal?.className);
+  
+  // Force the modal to be visible
+  if (modal) {
+    modal.style.display = 'flex';
+    modal.style.visibility = 'visible';
+    modal.style.opacity = '1';
+    // console.log('Forced modal visibility');
+  } else {
+    console.error('Modal element not found! Recreating tournament UI...');
+    // If modal doesn't exist, recreate the tournament UI
+    launchPongForMultiple();
+    setTimeout(() => showNextMatch(), 100);
+  }
 }
 
 function startCurrentMatch() {
@@ -1432,22 +1507,57 @@ function startCurrentMatch() {
 
 // Make this function available globally for the game to call
 window['onMatchFinished'] = function(winner: string) {
-  console.log(`Match finished, winner: ${winner}`);
+  // console.log(`=== onMatchFinished called with winner: ${winner} ===`);
+  // console.log('Current tournament state before processing:', {
+  //   currentMatchIndex: currentTournament.currentMatchIndex,
+  //   totalMatches: currentTournament.matches.length,
+  //   winners: currentTournament.winners,
+  //   matches: currentTournament.matches
+  // });
   
   if (currentTournament.matches[currentTournament.currentMatchIndex]) {
     currentTournament.matches[currentTournament.currentMatchIndex].winner = winner;
     currentTournament.winners.push(winner);
     currentTournament.currentMatchIndex++;
 
-    console.log(`Tournament state:`, {
-      currentMatchIndex: currentTournament.currentMatchIndex,
-      totalMatches: currentTournament.matches.length,
-      winners: currentTournament.winners
-    });
+    // console.log(`Tournament state after processing:`, {
+    //   currentMatchIndex: currentTournament.currentMatchIndex,
+    //   totalMatches: currentTournament.matches.length,
+    //   winners: currentTournament.winners
+    // });
 
+    // Check if current round is complete
+    if (currentTournament.currentMatchIndex >= currentTournament.matches.length) {
+      // console.log('Round complete!');
+      // Round complete - check if tournament is over
+      if (currentTournament.winners.length === 1) {
+        // console.log('Tournament over! Winner:', currentTournament.winners[0]);
+        showTournamentWinner();
+        return;
+      } else if (currentTournament.winners.length > 1) {
+        // console.log('Starting next round with', currentTournament.winners.length, 'players');
+        // Start next round
+        setTimeout(() => {
+          currentTournament.matches = generateMatches(currentTournament.winners);
+          currentTournament.currentMatchIndex = 0;
+          currentTournament.winners = [];
+          
+          // console.log(`Starting new round with players:`, previousWinners);
+          showNextMatch();
+        }, 1000);
+        return;
+      }
+    }
+
+    // Continue with next match in current round
+    // console.log('Continuing to next match in current round');
+    // console.log('About to call showNextMatch in 500ms...');
     setTimeout(() => {
+      // console.log('Timeout executed, calling showNextMatch now');
       showNextMatch();
     }, 500);
+  } else {
+    console.error('No valid match found at current index:', currentTournament.currentMatchIndex);
   }
 };
 
@@ -1458,7 +1568,7 @@ function showTournamentWinner() {
         <div class="flex flex-col items-center justify-center h-screen overflow-hidden pt-20 text-center">
             <div class="card p-10">
                 <h1 class="text-4xl font-bold text-yellow-400 mb-6">🏆 TOURNAMENT WINNER! 🏆</h1>
-                <div class="text-3xl font-bold text-white mb-8">${winner}</div>
+                <div class="text-3xl font-bold text-purple-950 mb-8">${winner}</div>
                 <div class="flex gap-4">
                     <button id="newTournament" class="bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 transition-colors">
                         New Tournament
@@ -1476,7 +1586,7 @@ function showTournamentWinner() {
 }
 
 function launchPongGameWithPlayers(player1Name: string, player2Name: string) {
-  console.log(`Starting match: ${player1Name} vs ${player2Name}`);
+  // console.log(`Starting match: ${player1Name} vs ${player2Name}`);
 
   renderNavbar();
   
