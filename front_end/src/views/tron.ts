@@ -375,33 +375,64 @@ function startTronGame() {
 	setTronGame(game);
 }
 
-export function renderTron() {
-	renderNavbar();
-	document.getElementById('app')!.innerHTML = `
-		<div class="flex flex-col justify-center items-center min-h-screen -mt-20">
-			<div class="card p-7">
-				<div class="text-purple-950 font-bold text-4xl mb-10">Ready to play Tron?</div>
-				<button id="startTronBtn">
-					Start Game
-				</button>
-			</div>
-		</div>
-	`;
+// export function renderTron() {
+// 	renderNavbar();
+// 	document.getElementById('app')!.innerHTML = `
+// 		<div class="flex flex-col justify-center items-center min-h-screen -mt-20">
+// 			<div class="card p-7">
+// 				<div class="text-purple-950 font-bold text-4xl mb-10">Ready to play Tron?</div>
+// 				<button id="startTronBtn">
+// 					Start Game
+// 				</button>
+// 			</div>
+// 		</div>
+// 	`;
 
-	const startBtn = document.getElementById('startTronBtn');
-	startBtn?.addEventListener('click', () => {
-		renderNavbar();
-		document.getElementById('app')!.innerHTML = `
-			<div id="gameContainer">
-				<canvas id="renderCanvas"></canvas>
-				<div id="gameUI">
-					<div>Player1(blue): <span id="playerOneScore">0</span> | Player2(orange): <span id="playerTwoScore">0</span></div>
-				</div>
-				<div id="instructions">
-					Use W/S/A/D or Arrow Keys to move
-				</div>
-			</div>
-		`;
-		startTronGame();
-	});
+// 	const startBtn = document.getElementById('startTronBtn');
+// 	startBtn?.addEventListener('click', () => {
+// 		renderNavbar();
+// 		document.getElementById('app')!.innerHTML = `
+// 			<div id="gameContainer">
+// 				<canvas id="renderCanvas"></canvas>
+// 				<div id="gameUI">
+// 					<div>Player1(blue): <span id="playerOneScore">0</span> | Player2(orange): <span id="playerTwoScore">0</span></div>
+// 				</div>
+// 				<div id="instructions">
+// 					Use W/S/A/D or Arrow Keys to move
+// 				</div>
+// 			</div>
+// 		`;
+// 		startTronGame();
+// 	});
+// }
+
+export function renderTron() {
+    renderNavbar();
+    document.getElementById('app')!.innerHTML = `
+        <div class="flex flex-col justify-center items-center -mt-20 h-screen overflow-hidden">
+            <div class="card p-7">
+                <div class="text-purple-950 font-bold text-4xl mb-10">Ready to play Tron?</div>
+                <button id="startTronBtn">
+                    Start Game
+                </button>
+            </div>
+        </div>
+    `;
+
+    const startBtn = document.getElementById('startTronBtn');
+    startBtn?.addEventListener('click', () => {
+        renderNavbar();
+        document.getElementById('app')!.innerHTML = `
+            <div id="gameContainer">
+                <canvas id="renderCanvas"></canvas>
+                <div id="gameUI">
+                    <div>Player1(blue): <span id="playerOneScore">0</span> | Player2(orange): <span id="playerTwoScore">0</span></div>
+                </div>
+                <div id="instructions">
+                    Use W/S/A/D or Arrow Keys to move
+                </div>
+            </div>
+        `;
+        startTronGame();
+    });
 }
