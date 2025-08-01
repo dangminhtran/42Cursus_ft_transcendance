@@ -40,7 +40,7 @@ fclean:
 
 wipe:
 	@echo "💣 [WIPE] Removing all volumes..."
-	@docker volume ls -q | xargs -r docker volume rm -f > /dev/null 2>&1 && \
+	@docker volume rm $$(docker volume ls -q | grep -v 'ft_transcendance_grafana-storage') > /dev/null 2>&1 && \
 	echo "✅ All volumes deleted." || \
 	echo "⚠️ No volumes to delete."
 
