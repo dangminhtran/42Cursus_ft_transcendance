@@ -289,3 +289,34 @@
 	color: white;
 	box-shadow: 0 2px 8px rgba(80, 23, 148, 0.3);
 }
+
+/* Difficulty button styles */
+.difficulty-container {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    align-items: flex-start; /* Prevents vertical movement */
+    min-height: 60px; /* Reserve space for the buttons */
+}
+
+/* Difficulty button styles */
+.difficulty-btn {
+    opacity: 0.7;
+    transition: all 0.3s ease;
+    font-weight: 600;
+    /* Use box-shadow instead of transform to avoid layout shifts */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.difficulty-btn.active {
+    opacity: 1;
+    /* Remove transform: scale() and use box-shadow instead */
+    box-shadow: 0 6px 12px rgba(255, 255, 255, 0.3), 0 0 0 2px #ffffff;
+    border: 2px solid #ffffff !important;
+}
+
+.difficulty-btn:hover:not(.active) {
+    opacity: 0.9;
+    /* Remove transform here too */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
