@@ -45,6 +45,8 @@ services:
       - "3001:3001"
     env_file:
       - .env
+    volumes:
+      - db_storage:/var/lib/postgresql/data
     networks:
       - transcendance-net
 
@@ -124,6 +126,7 @@ services:
 
 volumes:
   grafana-storage: {}
+  db_storage: {}
 
 networks:
   transcendance-net:
