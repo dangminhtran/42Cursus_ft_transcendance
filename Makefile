@@ -39,10 +39,10 @@ fclean:
 	@echo "⚠️  Volumes not deleted by default. Use 'make wipe' to remove all volumes."
 
 wipe:
-	@echo "💣 [WIPE] Removing all volumes..."
-	@docker volume rm $$(docker volume ls -q | grep -v 'ft_transcendance_grafana-storage') > /dev/null 2>&1 && \
-	echo "✅ All volumes deleted." || \
-	echo "⚠️ No volumes to delete."
+	@echo "💣 [WIPE] Removing all volumes except grafana-storage and elasticsearch_data..."
+	@docker volume rm $$(docker volume ls -q | grep -v -e 'ft_transcendance_grafana-storage' -e 'ft_transcendance_elasticsearch_data') > /dev/null 2>&1 && \
+	echo "✅ Volumes deleted." || \
+	echo "⚠️ No volumes to delete or only excluded volumes present."
 
 ls:
 	@echo "📦 Images:" && docker image ls

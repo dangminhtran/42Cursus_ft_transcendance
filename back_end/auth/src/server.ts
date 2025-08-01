@@ -7,8 +7,23 @@ import twoFARoutes from './routes/2fa';
 import authRoutes from './routes/auth';
 import dbServiceClient from './plugins/dbServiceClient';
 
+import net from 'net';
 
-const fastify = Fastify({ logger: true });
+const logstashClient = net.createConnection({ port: 5000, host: 'logstash' });
+
+const fastify = Fastify({
+  logger: {
+    stream: logstashClient,
+    level: 'info',
+    timestamp: () => `,"@timestamp":"${new Date().toISOString()}"`,
+    formatters: {
+      level(label) {
+        return { level: label };
+      }
+    }
+  }
+});
+
 fastify.register(cors, {
   origin: (origin, callback) => {
     if (!origin) return callback(null, true);

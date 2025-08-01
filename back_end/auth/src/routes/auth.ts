@@ -32,13 +32,16 @@ export default async function authRoutes(fastify: FastifyInstance) {
         const user: User | null = await fastify.dbClient.post<User>('/user/getUserByEmail', { email });
 
         if (!user) {
+            fastify.log.warn(`Unauthorized: User trying to login with non-existing email: ${email}`);
             return reply.code(401).send({ error: 'Identifiants invalides' });
         }
 
 		const match: boolean = await bcrypt.compare(password, user.password);
 
-		if (!match)
+		if (!match) {
+			fastify.log.warn(`Unauthorized: User trying to login with incorrect password: ${email}`);
 			return reply.code(401).send({ error: 'Identifiants invalides' });
+        }
 
         if (user.is2FAEnabled) {
             // Si 2FA activé, demander code TOTP avant de délivrer JWT
