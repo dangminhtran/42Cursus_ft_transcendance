@@ -7,7 +7,6 @@ export function renderProfile() {
 	renderNavbar();
 	document.getElementById('app')!.innerHTML = `
 		<div class="bg-emerald-900 border border-white flex flex-col justify-center items-center gap-5 -mt-20 text-md text-indigo-950 rounded-xl p-10">
-		<div class="bg-emerald-900 border border-white flex flex-col justify-center items-center gap-5 -mt-20 text-md text-indigo-950 rounded-xl p-10">
 			<div class="text-lg text-white text-xl font-semibold">Change your information here</div>	
 		
 			<!-- Avatar Preview Section -->
@@ -27,9 +26,7 @@ export function renderProfile() {
 
 			<div class="flex flex-col justify-center gap-2 w-full max-w-md">
 				<label for="pictureInput" class="text-white font-semibold">Profile picture URL:</label>
-				<label for="pictureInput" class="text-white font-semibold">Profile picture URL:</label>
 				<input 
-					class="rounded-sm bg-indigo-950 text-lg text-white border border-teal-50 ease-in-out p-2" 
 					class="rounded-sm bg-indigo-950 text-lg text-white border border-teal-50 ease-in-out p-2" 
 					type="url" 
 					name="pictureInput" 
@@ -46,9 +43,7 @@ export function renderProfile() {
 
 			<div class="flex flex-col justify-center gap-2 w-full max-w-md">
 				<label for="emailInput" class="text-white font-semibold">Email:</label>
-				<label for="emailInput" class="text-white font-semibold">Email:</label>
 				<input 
-					class="rounded-sm bg-indigo-950 text-lg text-white border border-teal-50 ease-in-out p-2" 
 					class="rounded-sm bg-indigo-950 text-lg text-white border border-teal-50 ease-in-out p-2" 
 					type="email" 
 					name="emailInput" 
@@ -58,9 +53,7 @@ export function renderProfile() {
 			
 			<div class="flex flex-col justify-center gap-2 w-full max-w-md">
 				<label for="oldPassword" class="text-white font-semibold">Old password:</label>
-				<label for="oldPassword" class="text-white font-semibold">Old password:</label>
 				<input 
-					class="rounded-sm bg-indigo-950 text-lg text-white border border-teal-50 ease-in-out p-2" 
 					class="rounded-sm bg-indigo-950 text-lg text-white border border-teal-50 ease-in-out p-2" 
 					type="password" 
 					name="oldPassword" 
@@ -70,9 +63,7 @@ export function renderProfile() {
 			
 			<div class="flex flex-col justify-center gap-2 w-full max-w-md">
 				<label for="newPassword" class="text-white font-semibold">New password:</label>
-				<label for="newPassword" class="text-white font-semibold">New password:</label>
 				<input 
-					class="rounded-sm bg-indigo-950 text-lg text-white border border-teal-50 ease-in-out p-2" 
 					class="rounded-sm bg-indigo-950 text-lg text-white border border-teal-50 ease-in-out p-2" 
 					type="password" 
 					name="newPassword" 
