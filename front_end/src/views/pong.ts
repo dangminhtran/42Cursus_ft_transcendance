@@ -32,7 +32,8 @@ export class PongGame {
 
     this.playerScore = 0;
     this.aiScore = 0;
-    this.ballSpeed = { x: 0.3, z: 0.2 };
+    // this.ballSpeed = { x: 0.3, z: 0.2 };
+	this.ballSpeed = { x: 0.15, z: 0.1 };
     this.paddleSpeed = 0.5;
     this.fieldWidth = 0;
     this.fieldHeight = 0;
@@ -192,7 +193,7 @@ export class PongGame {
       // AI controls in solo mode
       const ballZ = this.ball.position.z;
       const paddleZ = this.aiPaddle.position.z;
-      const aiSpeed = this.paddleSpeed * 0.8;
+      const aiSpeed = this.paddleSpeed * 0.3; // was 0.8 (the lower the slower the AI)
 
       if (ballZ > paddleZ + 0.5 && this.aiPaddle.position.z < this.fieldHeight / 2 - 1) {
         this.aiPaddle.position.z += aiSpeed;
@@ -312,8 +313,8 @@ export class PongGame {
       ballPos.z <= playerPos.z + 1.2 && ballPos.z >= playerPos.z - 1.2 &&
       this.ballSpeed.x < 0) {
 
-      this.ballSpeed.x *= -1.1;
-      this.ballSpeed.z += (ballPos.z - playerPos.z) * 0.1;
+      this.ballSpeed.x *= -1.05; // was 1.1
+      this.ballSpeed.z += (ballPos.z - playerPos.z) * 0.05; // was 0.1
     }
 
     // AI/Player2 paddle collision
@@ -322,15 +323,15 @@ export class PongGame {
       ballPos.z <= aiPos.z + 1.2 && ballPos.z >= aiPos.z - 1.2 &&
       this.ballSpeed.x > 0) {
 
-      this.ballSpeed.x *= -1.1;
-      this.ballSpeed.z += (ballPos.z - aiPos.z) * 0.1;
+      this.ballSpeed.x *= -1.05; // was 1.1
+      this.ballSpeed.z += (ballPos.z - aiPos.z) * 0.05; // was 0.1
     }
   }
 
   resetBall() {
     this.ball.position = new Vector3(0, 0.25, 0);
-    this.ballSpeed.x = (Math.random() > 0.5 ? 1 : -1) * 0.3;
-    this.ballSpeed.z = (Math.random() - 0.5) * 0.4;
+    this.ballSpeed.x = (Math.random() > 0.5 ? 1 : -1) * 0.15; // was 0.3
+    this.ballSpeed.z = (Math.random() - 0.5) * 0.2; // was 0.4
   }
 
   updateScore() {
