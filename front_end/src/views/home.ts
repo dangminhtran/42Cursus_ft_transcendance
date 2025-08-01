@@ -197,82 +197,82 @@ function formatLastSeen(lastSeen: string): string {
 }
 
 function renderUserProfile(): string {
-	return `
-		<div class="bg-gray-800 rounded-lg p-6 mb-6">
-			<h2 class="text-2xl font-bold text-white mb-4">👤 Your Profile</h2>
-			<div class="flex items-center space-x-4 mb-4">
-				<div class="text-4xl">${currentUser.avatar}</div>
-				<div>
-					<h3 class="text-xl font-semibold text-white">${currentUser.name}</h3>
-					<p class="text-gray-400">Member since ${new Date(currentUser.joinDate).toLocaleDateString()}</p>
-					<div class="flex items-center space-x-2">
-						<span class="text-green-400">🟢 Online</span>
-					</div>
-				</div>
-			</div>
-			<div class="grid grid-cols-2 md:grid-cols-5 gap-4 text-center">
-				<div class="bg-gray-700 rounded p-3">
-					<div class="text-2xl font-bold text-green-400">${currentUser.stats.wins}</div>
-					<div class="text-gray-300 text-sm">Wins</div>
-				</div>
-				<div class="bg-gray-700 rounded p-3">
-					<div class="text-2xl font-bold text-red-400">${currentUser.stats.losses}</div>
-					<div class="text-gray-300 text-sm">Losses</div>
-				</div>
-				<div class="bg-gray-700 rounded p-3">
-					<div class="text-2xl font-bold text-yellow-400">${currentUser.stats.draws}</div>
-					<div class="text-gray-300 text-sm">Draws</div>
-				</div>
-				<div class="bg-gray-700 rounded p-3">
-					<div class="text-2xl font-bold text-blue-400">${currentUser.stats.totalGames}</div>
-					<div class="text-gray-300 text-sm">Total Games</div>
-				</div>
-				<div class="bg-gray-700 rounded p-3">
-					<div class="text-2xl font-bold text-purple-400">${currentUser.stats.winRate}%</div>
-					<div class="text-gray-300 text-sm">Win Rate</div>
-				</div>
-			</div>
-		</div>
-	`;
+    return `
+        <div class="bg-gray-800 rounded-lg p-6">
+            <h2 class="text-xl font-bold text-white mb-4">👤 Your Profile</h2>
+            <div class="flex items-center space-x-4 mb-4">
+                <div class="text-4xl">${currentUser.avatar}</div>
+                <div>
+                    <h3 class="text-xl font-semibold text-white">${currentUser.name}</h3>
+                    <p class="text-gray-400 text-base">Member since ${new Date(currentUser.joinDate).toLocaleDateString()}</p>
+                    <div class="flex items-center space-x-2 mt-1">
+                        <span class="text-green-400 text-base">🟢 Online</span>
+                    </div>
+                </div>
+            </div>
+            <div class="grid grid-cols-2 md:grid-cols-5 gap-3 text-center">
+                <div class="bg-gray-700 rounded p-3">
+                    <div class="text-xl font-bold text-green-400">${currentUser.stats.wins}</div>
+                    <div class="text-gray-300 text-sm">Wins</div>
+                </div>
+                <div class="bg-gray-700 rounded p-3">
+                    <div class="text-xl font-bold text-red-400">${currentUser.stats.losses}</div>
+                    <div class="text-gray-300 text-sm">Losses</div>
+                </div>
+                <div class="bg-gray-700 rounded p-3">
+                    <div class="text-xl font-bold text-yellow-400">${currentUser.stats.draws}</div>
+                    <div class="text-gray-300 text-sm">Draws</div>
+                </div>
+                <div class="bg-gray-700 rounded p-3">
+                    <div class="text-xl font-bold text-blue-400">${currentUser.stats.totalGames}</div>
+                    <div class="text-gray-300 text-sm">Total Games</div>
+                </div>
+                <div class="bg-gray-700 rounded p-3">
+                    <div class="text-xl font-bold text-purple-400">${currentUser.stats.winRate}%</div>
+                    <div class="text-gray-300 text-sm">Win Rate</div>
+                </div>
+            </div>
+        </div>
+    `;
 }
 
 function renderFriendsList(): string {
-	const friendsHtml = friends.map(friend => `
-		<div class="flex items-center justify-between p-3 bg-gray-700 rounded-lg hover:bg-gray-600 transition-colors cursor-pointer friend-item">
-			<div class="flex items-center space-x-3">
-				<div class="text-2xl">${friend.user.avatar}</div>
-				<div>
-					<div class="flex items-center space-x-2">
-						<span class="font-semibold text-white">${friend.user.name}</span>
-						<span class="text-sm">${getStatusIcon(friend.status)}</span>
-					</div>
-					<div class="text-sm text-gray-400">
-						${friend.status === 'online' ? 'Online' :
-			friend.status === 'in-game' ? 'In Game' :
-				`Last seen ${formatLastSeen(friend.user.lastSeen)}`}
-					</div>
-				</div>
-			</div>
-			<div class="text-right">
-				<div class="text-sm text-gray-300">${friend.user.stats.wins}W-${friend.user.stats.losses}L</div>
-				<div class="text-xs text-gray-500">${friend.user.stats.winRate}% WR</div>
-			</div>
-		</div>
-	`).join('');
+    const friendsHtml = friends.map(friend => `
+        <div class="flex items-center justify-between p-3 bg-gray-700 rounded-lg hover:bg-gray-600 transition-colors cursor-pointer friend-item">
+            <div class="flex items-center space-x-3">
+                <div class="text-2xl">${friend.user.avatar}</div>
+                <div>
+                    <div class="flex items-center space-x-2">
+                        <span class="font-semibold text-white text-base">${friend.user.name}</span>
+                        <span class="text-sm">${getStatusIcon(friend.status)}</span>
+                    </div>
+                    <div class="text-sm text-gray-400 mt-1">
+                        ${friend.status === 'online' ? 'Online' :
+            friend.status === 'in-game' ? 'In Game' :
+                `Last seen ${formatLastSeen(friend.user.lastSeen)}`}
+                    </div>
+                </div>
+            </div>
+            <div class="text-right">
+                <div class="text-sm text-gray-300">${friend.user.stats.wins}W-${friend.user.stats.losses}L</div>
+                <div class="text-sm text-gray-500">${friend.user.stats.winRate}% WR</div>
+            </div>
+        </div>
+    `).join('');
 
-	return `
-		<div class="bg-gray-800 rounded-lg p-6 mb-6">
-			<div class="flex items-center justify-between mb-4">
-				<h2 class="text-2xl font-bold text-white">👥 Friends (${friends.length})</h2>
-				<button id="add-friend-btn" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm transition-colors">
-					+ Add Friend
-				</button>
-			</div>
-			<div class="space-y-3">
-				${friendsHtml}
-			</div>
-		</div>
-	`;
+    return `
+        <div class="bg-gray-800 rounded-lg p-6 h-full flex flex-col">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-xl font-bold text-white">👥 Friends (${friends.length})</h2>
+                <button id="add-friend-btn" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm transition-colors">
+                    + Add Friend
+                </button>
+            </div>
+            <div class="space-y-3 flex-1 overflow-y-auto">
+                ${friendsHtml}
+            </div>
+        </div>
+    `;
 }
 
 function getFilteredGames(): GameScore[] {
@@ -301,157 +301,165 @@ function getHistoryTitle(): string {
 }
 
 function renderMatchHistory(): string {
-	const filteredGames = getFilteredGames();
-	const rowsHtml = filteredGames.map(game => {
-		const isCurrentUserInvolved = game.player1name === currentUser.name || game.player2name === currentUser.name;
-		const isFriendInvolved = game.player1name === selectedFriend || game.player2name === selectedFriend;
+    const filteredGames = getFilteredGames();
+    const rowsHtml = filteredGames.map(game => {
+        const isCurrentUserInvolved = game.player1name === currentUser.name || game.player2name === currentUser.name;
+        const isFriendInvolved = game.player1name === selectedFriend || game.player2name === selectedFriend;
 
-		let rowClass = '';
-		if (currentHistoryView === 'my-games' && isCurrentUserInvolved) {
-			rowClass = 'bg-blue-900 bg-opacity-30';
-		} else if (currentHistoryView !== 'my-games' && isFriendInvolved) {
-			rowClass = 'bg-purple-900 bg-opacity-30';
-		}
+        let rowClass = '';
+        if (currentHistoryView === 'my-games' && isCurrentUserInvolved) {
+            // Color based on win/loss for current user in "My Games" view
+            if (game.winner === currentUser.name) {
+                rowClass = 'bg-blue-900 bg-opacity-30'; // Victory in blue
+            } else if (game.winner === 'Draw') {
+                rowClass = 'bg-yellow-900 bg-opacity-30'; // Draw in yellow
+            } else {
+                rowClass = 'bg-red-900 bg-opacity-30'; // Defeat in red
+            }
+        } else if (currentHistoryView !== 'my-games' && isFriendInvolved) {
+            rowClass = 'bg-purple-900 bg-opacity-30';
+        }
 
-		return `
-			<tr class="${rowClass} hover:bg-gray-700 transition-colors">
-				<td class="p-3 border-b border-gray-600">${game.date}</td>
-				<td class="p-3 border-b border-gray-600">
-					<span class="${game.player1name === currentUser.name ? 'font-bold text-blue-400' :
-				game.player1name === selectedFriend ? 'font-bold text-purple-400' : ''
-			}">${game.player1name}</span>
-				</td>
-				<td class="p-3 border-b border-gray-600 text-center font-mono">${game.player1score}</td>
-				<td class="p-3 border-b border-gray-600 text-center text-gray-400">vs</td>
-				<td class="p-3 border-b border-gray-600 text-center font-mono">${game.player2score}</td>
-				<td class="p-3 border-b border-gray-600">
-					<span class="${game.player2name === currentUser.name ? 'font-bold text-blue-400' :
-				game.player2name === selectedFriend ? 'font-bold text-purple-400' : ''
-			}">${game.player2name}</span>
-				</td>
-				<td class="p-3 border-b border-gray-600 text-center">
-					<span class="px-2 py-1 bg-gray-600 rounded text-xs">${game.gameType}</span>
-				</td>
-				<td class="p-3 border-b border-gray-600 text-center text-gray-400 font-mono text-sm">${game.duration}</td>
-				<td class="p-3 border-b border-gray-600 text-center">
-					<span class="font-semibold ${game.winner === currentUser.name ? 'text-green-400' :
-				game.winner === selectedFriend ? 'text-purple-400' :
-					game.winner === 'Draw' ? 'text-yellow-400' : 'text-red-400'
-			}">${game.winner}</span>
-				</td>
-			</tr>
-		`;
-	}).join('');
+        return `
+            <tr class="${rowClass} hover:bg-gray-700 transition-colors">
+                <td class="p-3 border-b border-gray-600 text-sm">${game.date}</td>
+                <td class="p-3 border-b border-gray-600 text-sm">
+                    <span class="${game.player1name === currentUser.name ? 'font-bold text-blue-400' :
+                game.player1name === selectedFriend ? 'font-bold text-purple-400' : ''
+            }">${game.player1name}</span>
+                </td>
+                <td class="p-3 border-b border-gray-600 text-center font-mono text-sm">${game.player1score}</td>
+                <td class="p-3 border-b border-gray-600 text-center text-gray-400 text-sm">vs</td>
+                <td class="p-3 border-b border-gray-600 text-center font-mono text-sm">${game.player2score}</td>
+                <td class="p-3 border-b border-gray-600 text-sm">
+                    <span class="${game.player2name === currentUser.name ? 'font-bold text-blue-400' :
+                game.player2name === selectedFriend ? 'font-bold text-purple-400' : ''
+            }">${game.player2name}</span>
+                </td>
+                <td class="p-3 border-b border-gray-600 text-center">
+                    <span class="px-2 py-1 bg-gray-600 rounded text-sm">${game.gameType}</span>
+                </td>
+                <td class="p-3 border-b border-gray-600 text-center text-gray-400 font-mono text-sm">${game.duration}</td>
+                <td class="p-3 border-b border-gray-600 text-center">
+                    <span class="font-semibold text-sm ${game.winner === currentUser.name ? 'text-green-400' :
+                game.winner === selectedFriend ? 'text-purple-400' :
+                    game.winner === 'Draw' ? 'text-yellow-400' : 'text-red-400'
+            }">${game.winner}</span>
+                </td>
+            </tr>
+        `;
+    }).join('');
 
-	return `
-		<div class="bg-gray-800 rounded-lg p-6">
-			<div class="flex items-center justify-between mb-4">
-				<h2 class="text-2xl font-bold text-white">${getHistoryTitle()}</h2>
-				<div class="flex space-x-2">
-					<button onclick="switchHistoryView('my-games')" 
-							class="px-3 py-1 rounded text-sm transition-colors ${currentHistoryView === 'my-games' ? 'bg-blue-600 text-white' : 'bg-gray-600 text-gray-300 hover:bg-gray-500'
-		}">
-						My Games
-					</button>
-					<button onclick="switchHistoryView('all')" 
-							class="px-3 py-1 rounded text-sm transition-colors ${currentHistoryView === 'all' ? 'bg-blue-600 text-white' : 'bg-gray-600 text-gray-300 hover:bg-gray-500'
-		}">
-						All Games
-					</button>
-					${currentHistoryView !== 'my-games' && currentHistoryView !== 'all' ? `
-						<button onclick="switchHistoryView('my-games')" 
-								class="px-3 py-1 rounded text-sm bg-gray-600 text-gray-300 hover:bg-gray-500 transition-colors">
-							← Back
-						</button>
-					` : ''}
-				</div>
-			</div>
-			<div class="overflow-x-auto">
-				<table class="w-full border-collapse">
-					<thead>
-						<tr class="bg-gray-700">
-							<th class="p-3 text-left text-white font-semibold border-b border-gray-600">Date</th>
-							<th class="p-3 text-left text-white font-semibold border-b border-gray-600">Player 1</th>
-							<th class="p-3 text-center text-white font-semibold border-b border-gray-600">Score</th>
-							<th class="p-3 text-center text-white font-semibold border-b border-gray-600"></th>
-							<th class="p-3 text-center text-white font-semibold border-b border-gray-600">Score</th>
-							<th class="p-3 text-left text-white font-semibold border-b border-gray-600">Player 2</th>
-							<th class="p-3 text-center text-white font-semibold border-b border-gray-600">Type</th>
-							<th class="p-3 text-center text-white font-semibold border-b border-gray-600">Duration</th>
-							<th class="p-3 text-center text-white font-semibold border-b border-gray-600">Winner</th>
-						</tr>
-					</thead>
-					<tbody class="text-gray-300">
-						${rowsHtml}
-						${filteredGames.length === 0 ? `
-							<tr>
-								<td colspan="9" class="p-6 text-center text-gray-400">
-									No games found for this filter
-								</td>
-							</tr>
-						` : ''}
-					</tbody>
-				</table>
-			</div>
-			<div class="mt-4 text-sm text-gray-400 text-center">
-				Showing ${filteredGames.length} game${filteredGames.length !== 1 ? 's' : ''}
-			</div>
-		</div>
-	`;
+    return `
+        <div class="bg-gray-800 rounded-lg p-6 h-full flex flex-col">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-2xl font-bold text-white">${getHistoryTitle()}</h2>
+                <div class="flex space-x-2">
+                    <button onclick="switchHistoryView('my-games')" 
+                            class="px-3 py-2 rounded text-sm transition-colors ${currentHistoryView === 'my-games' ? 'bg-blue-600 text-white' : 'bg-gray-600 text-gray-300 hover:bg-gray-500'
+        }">
+                        My Games
+                    </button>
+                    <button onclick="switchHistoryView('all')" 
+                            class="px-3 py-2 rounded text-sm transition-colors ${currentHistoryView === 'all' ? 'bg-blue-600 text-white' : 'bg-gray-600 text-gray-300 hover:bg-gray-500'
+        }">
+                        All Games
+                    </button>
+                    ${currentHistoryView !== 'my-games' && currentHistoryView !== 'all' ? `
+                        <button onclick="switchHistoryView('my-games')" 
+                                class="px-3 py-2 rounded text-sm bg-gray-600 text-gray-300 hover:bg-gray-500 transition-colors">
+                            ← Back
+                        </button>
+                    ` : ''}
+                </div>
+            </div>
+            <div class="flex-1 overflow-auto">
+                <table class="w-full border-collapse text-base">
+                    <thead class="sticky top-0 bg-gray-700">
+                        <tr>
+                            <th class="p-3 text-left text-white font-semibold border-b border-gray-600">Date</th>
+                            <th class="p-3 text-left text-white font-semibold border-b border-gray-600">Player 1</th>
+                            <th class="p-3 text-center text-white font-semibold border-b border-gray-600">Score</th>
+                            <th class="p-3 text-center text-white font-semibold border-b border-gray-600"></th>
+                            <th class="p-3 text-center text-white font-semibold border-b border-gray-600">Score</th>
+                            <th class="p-3 text-left text-white font-semibold border-b border-gray-600">Player 2</th>
+                            <th class="p-3 text-center text-white font-semibold border-b border-gray-600">Type</th>
+                            <th class="p-3 text-center text-white font-semibold border-b border-gray-600">Duration</th>
+                            <th class="p-3 text-center text-white font-semibold border-b border-gray-600">Winner</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-gray-300">
+                        ${rowsHtml}
+                        ${filteredGames.length === 0 ? `
+                            <tr>
+                                <td colspan="9" class="p-4 text-center text-gray-400">
+                                    No games found for this filter
+                                </td>
+                            </tr>
+                        ` : ''}
+                    </tbody>
+                </table>
+            </div>
+            <div class="mt-3 text-sm text-gray-400 text-center">
+                Showing ${filteredGames.length} game${filteredGames.length !== 1 ? 's' : ''}
+            </div>
+        </div>
+    `;
 }
 
 export function renderHome() {
-	renderNavbar();
+    renderNavbar();
 
-	document.getElementById('app')!.innerHTML = `
-		<div class="min-h-screen glassTouch text-white p-6">
-			<div class="max-w-7xl mx-auto">
-				<h1 class="text-4xl font-bold text-center mb-8 bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
-					🎮 Game Dashboard
-				</h1>
-				
-				<div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-					<div class="lg:col-span-2">
-						${renderUserProfile()}
-					</div>
-					<div>
-						${renderFriendsList()}
-					</div>
-				</div>
-				
-				${renderMatchHistory()}
-			</div>
-		</div>
-	`;
+    document.getElementById('app')!.innerHTML = `
+        <div class="flex flex-col justify-center items-center -mt-20 h-screen overflow-hidden pt-15">
+            <div class="w-full max-w-7xl mx-auto p-6 h-full flex flex-col">				
+                <h1 class="text-4xl font-bold text-center mb-6 bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
+                    🎮 Game Dashboard
+                </h1>
+                
+                <div class="flex-1 grid grid-cols-1 lg:grid-cols-3 gap-6 overflow-hidden">
+                    <div class="lg:col-span-2 flex flex-col space-y-6 overflow-hidden">
+                        ${renderUserProfile()}
+                        <div class="flex-1 overflow-hidden">
+                            ${renderMatchHistory()}
+                        </div>
+                    </div>
+                    <div class="overflow-y-auto">
+                        ${renderFriendsList()}
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
 
-	addEventListeners();
+    addEventListeners();
 }
 
-
 function refreshHomeDashboard() {
-	const mainContent = `
-		<div class="min-h-screen glassTouch text-white p-6">
-			<div class="max-w-7xl mx-auto">
-				<h1 class="text-4xl font-bold text-center mb-8 bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
-					🎮 Game Dashboard
-				</h1>
-				
-				<div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-					<div class="lg:col-span-2">
-						${renderUserProfile()}
-					</div>
-					<div>
-						${renderFriendsList()}
-					</div>
-				</div>
-				
-				${renderMatchHistory()}
-			</div>
-		</div>
-	`;
-	
-	document.getElementById('app')!.innerHTML = mainContent;
-	addEventListeners();
+    const mainContent = `
+        <div class="flex flex-col justify-center items-center -mt-20 h-screen overflow-hidden pt-15">
+            <div class="w-full max-w-7xl mx-auto p-6 h-full flex flex-col">
+                <h1 class="text-4xl font-bold text-center mb-6 bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
+                    🎮 Game Dashboard
+                </h1>
+
+                <div class="flex-1 grid grid-cols-1 lg:grid-cols-3 gap-6 overflow-hidden">
+                    <div class="lg:col-span-2 flex flex-col space-y-6 overflow-hidden">
+                        ${renderUserProfile()}
+                        <div class="flex-1 overflow-hidden">
+                            ${renderMatchHistory()}
+                        </div>
+                    </div>
+                    <div class="overflow-y-auto">
+                        ${renderFriendsList()}
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    document.getElementById('app')!.innerHTML = mainContent;
+    addEventListeners();
 }
 
 (window as any).switchHistoryView = function (view: string) {
@@ -476,7 +484,7 @@ function addEventListeners() {
 
 	const friendElements = document.querySelectorAll('.friend-item');
 	friendElements.forEach(element => {
-		element.addEventListener('click', (e) => {
+		element.addEventListener('click', () => {
 			const friendName = element.querySelector('.font-semibold')?.textContent;
 			if (friendName) {
 				selectedFriend = friendName;
@@ -484,10 +492,20 @@ function addEventListeners() {
 
 				refreshHomeDashboard();
 
+				// setTimeout(() => {
+				// 	const historySection = document.querySelector('.bg-gray-800:last-child');
+				// 	if (historySection) {
+				// 		historySection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+				// 	}
+				// }, 100);
+
 				setTimeout(() => {
 					const historySection = document.querySelector('.bg-gray-800:last-child');
 					if (historySection) {
-						historySection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+						historySection.scrollIntoView({ 
+							behavior: 'smooth', 
+							block: 'center' // This centers the element in the viewport
+						});
 					}
 				}, 100);
 			}
@@ -499,57 +517,53 @@ export function addFriends() {
 	renderNavbar();
 	
 	document.getElementById('app')!.innerHTML = `
-		<div class="glassTouch text-white p-6">
-			<div class="max-w-4xl mx-auto">
-				<div class="flex flex-col justify-center items-center min-h-[60vh]">
-					<div class="bg-gray-800 rounded-lg p-8 w-full max-w-md">
-						<h2 class="text-2xl font-bold text-white mb-6 text-center">👥 Add New Friend</h2>
-						<form id="add-friend-form">
-							<div class="mb-4">
-								<label class="block text-sm font-medium text-gray-300 mb-2">Friend's Name</label>
-								<input 
-									id="friend-name-input"
-									type="text" 
-									placeholder="Enter friend's name"
-									class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-									required
-								>
-							</div>
-							<div class="flex space-x-3">
-								<button 
-									type="submit"
-									class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-md transition-colors"
-								>
-									Add Friend
-								</button>
-								<button 
-									type="button"
-									id="cancel-add-friend"
-									class="flex-1 bg-gray-600 hover:bg-gray-700 text-white py-2 px-4 rounded-md transition-colors"
-								>
-									Cancel
-								</button>
-							</div>
-						</form>
-						
-						<!-- Available users to add -->
-						<div class="mt-6">
-							<h3 class="text-lg font-semibold text-white mb-3">Available Users</h3>
-							<div class="space-y-2 max-h-48 overflow-y-auto">
-								${getAvailableUsers().map(user => `
-									<div class="flex items-center justify-between p-2 bg-gray-700 rounded cursor-pointer hover:bg-gray-600 transition-colors available-user" data-user-name="${user.name}">
-										<div class="flex items-center space-x-3">
-											<span class="text-xl">${user.avatar}</span>
-											<div>
-												<span class="text-white font-medium">${user.name}</span>
-												<div class="text-xs text-gray-400">${user.stats.wins}W-${user.stats.losses}L (${user.stats.winRate}% WR)</div>
-											</div>
-										</div>
-										<button class="text-blue-400 hover:text-blue-300 text-sm">Add</button>
+		<div class="flex flex-col justify-center items-center -mt-20 h-screen">
+			<div class="bg-gray-800 rounded-lg p-8 w-full max-w-md">
+				<h2 class="text-2xl font-bold text-white mb-6 text-center">👥 Add New Friend</h2>
+				<form id="add-friend-form">
+					<div class="mb-4">
+						<label class="block text-sm font-medium text-gray-300 mb-2">Friend's Name</label>
+						<input 
+							id="friend-name-input"
+							type="text" 
+							placeholder="Enter friend's name"
+							class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+							required
+						>
+					</div>
+					<div class="flex space-x-3">
+						<button 
+							type="submit"
+							class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-md transition-colors"
+						>
+							Add Friend
+						</button>
+						<button 
+							type="button"
+							id="cancel-add-friend"
+							class="flex-1 bg-gray-600 hover:bg-gray-700 text-white py-2 px-4 rounded-md transition-colors"
+						>
+							Cancel
+						</button>
+					</div>
+				</form>
+				
+				<!-- Available users to add -->
+				<div class="mt-6">
+					<h3 class="text-lg font-semibold text-white mb-3">Available Users</h3>
+					<div class="space-y-2 max-h-48 overflow-y-auto">
+						${getAvailableUsers().map(user => `
+							<div class="flex items-center justify-between p-2 bg-gray-700 rounded cursor-pointer hover:bg-gray-600 transition-colors available-user" data-user-name="${user.name}">
+								<div class="flex items-center space-x-3">
+									<span class="text-xl">${user.avatar}</span>
+									<div>
+										<span class="text-white font-medium">${user.name}</span>
+										<div class="text-xs text-gray-400">${user.stats.wins}W-${user.stats.losses}L (${user.stats.winRate}% WR)</div>
 									</div>
-								`).join('')}
+								</div>
+								<button class="text-blue-400 hover:text-blue-300 text-sm">Add</button>
 							</div>
-						</div>
+						`).join('')}
 					</div>
 				</div>
 			</div>
@@ -634,7 +648,7 @@ function showMessage(message: string, type: 'success' | 'error' | 'warning') {
 
 	const messageDiv = document.createElement('div');
 	messageDiv.id = 'status-message';
-	messageDiv.className = `fixed top-4 right-4 p-4 rounded-lg text-white z-50 transition-all duration-300 ${
+	messageDiv.className = `fixed top-4 right-4 p-4 rounded-lg text-white z-1002 transition-all duration-300 ${
 		type === 'success' ? 'bg-green-600' :
 		type === 'error' ? 'bg-red-600' :
 		'bg-yellow-600'
