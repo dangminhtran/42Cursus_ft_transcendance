@@ -109,7 +109,8 @@ function initializeAuthHandlers() {
 
 			const signupSuccessful = await SignUp(email, password);
 			if (signupSuccessful) {
-				navigateTo("/");
+								alert('Account created successfully! Please sign in.');
+				document.getElementById('loginToggle')?.click();
 			} else {
 				alert('Sign up failed. Please try again.');
 			}
