@@ -57,6 +57,7 @@ services:
       - grafana-storage:/var/lib/grafana
 
   vault:
+    image: vault
     build: back_end/vault
     container_name: vault
     volumes:
@@ -79,6 +80,7 @@ services:
       - "8200:8200"
 
   waf:
+    image: waf
     build: back_end/modsecurity
     container_name: waf
     volumes:
@@ -97,6 +99,7 @@ services:
     entrypoint: ./entrypoint.sh
 
   front_end:
+    image: front_end
     build: front_end/
     container_name: front_end
     ports:
