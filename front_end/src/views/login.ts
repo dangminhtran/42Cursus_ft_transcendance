@@ -22,7 +22,7 @@ export function renderLogin() {
 			<div class="w-full flex flex-col items-center" id="authForm">
 				<p class="font-bold text-lg mb-5" id="authDescription">Sign in with email address</p>
 				<input class="w-80 p-3 m-4 bg-indigo-950 text-md font-normal rounded-md border border-slate-700" type="email" id="email" placeholder="Yourname@gmail.com" />
-				<input class="w-80 p-3 m-4 bg-indigo-950 text-md font-normal rounded-md border border-slate-700" type="text" id="username" placeholder="Your username" />
+				<input class="w-80 p-3 m-4 bg-indigo-950 text-md font-normal rounded-md border border-slate-700 signup-only" type="text" id="username" placeholder="Your username" style="display: none;" />
 				<input class="w-80 p-3 m-4 bg-indigo-950 text-md font-normal rounded-md border border-slate-700" type="password" id="password" placeholder="Your password" />
 				<button id="authBtn">Log In</button>
 				</div>
@@ -49,7 +49,7 @@ function initializeAuthToggle() {
 		signupToggle?.classList.remove('active');
 		
 		if (authTitle) authTitle.textContent = 'LOG IN';
-		if (authDescription) authDescription.textContent = 'Log in with email address';
+		if (authDescription) authDescription.textContent = 'Sign in with email address';
 		if (authBtn) authBtn.textContent = 'Log In';
 		
 		signupFields.forEach((field: Element) => {
@@ -105,7 +105,7 @@ function initializeAuthHandlers() {
 			}
 
 		} else {
-			if (!email || !password) {
+			if (!email || !password || !username) {
 				alert('Please fill in all fields');
 				return;
 			}

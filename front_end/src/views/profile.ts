@@ -1,9 +1,9 @@
 import { renderNavbar } from "../componentes/navbar";
 import axios from "axios";
 import { navigateTo } from "../router";
-import { BASE_ADDRESS } from "../config";
+import { BASE_ADDRESS, TEST_ADDRESS } from "../config";
 
-export function renderProfile() {
+export async function renderProfile() {
 	renderNavbar();
 	document.getElementById('app')!.innerHTML = `
 		<div class="bg-emerald-900 border border-white flex flex-col justify-center items-center gap-5 -mt-20 text-md text-indigo-950 rounded-xl p-10">
@@ -15,7 +15,7 @@ export function renderProfile() {
 				<div class="relative">
 					<img 
 						id="avatarPreview" 
-						src="https://www.gravatar.com/avatar/default?s=150&d=mp" 
+						src="https://www.gravatar.com/avatar/default?s=150&d=mp"
 						alt="Avatar Preview" 
 						class="w-32 h-32 rounded-full object-cover border-4 border-white shadow-lg"
 						onerror="this.src='https://via.placeholder.com/150/4338ca/ffffff?text=No+Image'"
@@ -97,6 +97,7 @@ export function renderProfile() {
 	enable2Fa();
 }
 
+
 function setupEventListeners() {
 	const saveBtn = document.getElementById("saveChangesBtn");
 	const previewBtn = document.getElementById("previewBtn");
@@ -119,24 +120,26 @@ function setupEventListeners() {
 		const oldPassword = (document.getElementById("oldPassword") as HTMLInputElement)?.value || '';
 		const newPassword = (document.getElementById("newPassword") as HTMLInputElement)?.value || '';
 		const twofa = (document.getElementById("2fa") as HTMLInputElement)?.checked || false;
-		const profilePicture = (document.getElementById("pictureInput") as HTMLInputElement)?.value || '';
+		const profilepicture = (document.getElementById("pictureInput") as HTMLInputElement)?.value || '';
 
-		if (profilePicture && !isValidUrl(profilePicture)) {
+		if (profilepicture && !isValidUrl(profilepicture)) {
 			alert('Please enter a valid image URL');
 			return;
 		}
 
-		const json = JSON.stringify({ username, email, oldPassword, newPassword, twofa, profilePicture })
-
+		console.log('profile picture dans le front', profilepicture)
+		//const json = JSON.stringify({ username, profilepicture, email, oldPassword, newPassword, twofa })
+		const data = { username, profilepicture, email, oldPassword, newPassword, twofa}
 		try {
-			axios.post(`${BASE_ADDRESS}/user-management/update`, json, {
+			axios.post(`${TEST_ADDRESS}/user-management/update`, data, {
 				headers: {
 					'Authorization': `Bearer ${window.sessionStorage.getItem("token")}`
 				}
 			}).then(response => {
 				if (response.status === 200) {
-					alert('Profile updated successfully!');
-					navigateTo('/profile');
+					alert('Profile updated successfully!')
+					window.sessionStorage.removeItem('token')
+					navigateTo('/login');
 				} else {
 					alert('Failed to update profile. Please try again.');
 				}
@@ -152,124 +155,124 @@ function setupEventListeners() {
 }
 
 function previewAvatar() {
-			const pictureInput = document.getElementById("pictureInput") as HTMLInputElement;
-			const avatarPreview = document.getElementById("avatarPreview") as HTMLImageElement;
-			const imageUrl = pictureInput?.value.trim();
+	const pictureInput = document.getElementById("pictureInput") as HTMLInputElement;
+	const avatarPreview = document.getElementById("avatarPreview") as HTMLImageElement;
+	const imageUrl = pictureInput?.value.trim();
 
-			if (!imageUrl) {
-				// Reset to default if empty
-				avatarPreview.src = "https://via.placeholder.com/150/4338ca/ffffff?text=Avatar";
-				updateAvatarStatus('default');
-				return;
-			}
+	if (!imageUrl) {
+		// Reset to default if empty
+		avatarPreview.src = "https://via.placeholder.com/150/4338ca/ffffff?text=Avatar";
+		updateAvatarStatus('default');
+		return;
+	}
 
-			if (!isValidUrl(imageUrl)) {
-				alert('Please enter a valid URL');
-				updateAvatarStatus('error');
-				return;
-			}
+	if (!isValidUrl(imageUrl)) {
+		alert('Please enter a valid URL');
+		updateAvatarStatus('error');
+		return;
+	}
 
-			const testImage = new Image();
+	const testImage = new Image();
 
-			testImage.onload = () => {
-				avatarPreview.src = imageUrl;
-				updateAvatarStatus('success');
-			};
+	testImage.onload = () => {
+		avatarPreview.src = imageUrl;
+		updateAvatarStatus('success');
+	};
 
-			testImage.onerror = () => {
-				alert('Failed to load image. Please check the URL.');
-				updateAvatarStatus('error');
-			};
+	testImage.onerror = () => {
+		alert('Failed to load image. Please check the URL.');
+		updateAvatarStatus('error');
+	};
 
-			updateAvatarStatus('loading');
-			testImage.src = imageUrl;
+	updateAvatarStatus('loading');
+	testImage.src = imageUrl;
+}
+
+function updateAvatarStatus(status: 'success' | 'error' | 'loading' | 'default') {
+	const avatarStatus = document.getElementById("avatarStatus");
+	if (!avatarStatus) return;
+
+	switch (status) {
+		case 'success':
+			avatarStatus.className = "absolute bottom-0 right-0 bg-green-500 w-4 h-4 rounded-full border-2 border-white";
+			avatarStatus.title = "Avatar loaded successfully";
+			break;
+		case 'error':
+			avatarStatus.className = "absolute bottom-0 right-0 bg-red-500 w-4 h-4 rounded-full border-2 border-white";
+			avatarStatus.title = "Failed to load avatar";
+			break;
+		case 'loading':
+			avatarStatus.className = "absolute bottom-0 right-0 bg-yellow-500 w-4 h-4 rounded-full border-2 border-white animate-pulse";
+			avatarStatus.title = "Loading avatar...";
+			break;
+		case 'default':
+			avatarStatus.className = "absolute bottom-0 right-0 bg-gray-500 w-4 h-4 rounded-full border-2 border-white";
+			avatarStatus.title = "Default avatar";
+			break;
+	}
+}
+
+function isValidUrl(string: string): boolean {
+	try {
+		const url = new URL(string);
+		return url.protocol === 'http:' || url.protocol === 'https:';
+	} catch (_) {
+		return false;
+	}
+}
+
+export function loadUserProfile(userData: any) {
+
+	setTimeout(() => {
+		const emailInput = document.getElementById("emailInput") as HTMLInputElement;
+		const pictureInput = document.getElementById("pictureInput") as HTMLInputElement;
+		const twofaInput = document.getElementById("2fa") as HTMLInputElement;
+
+		if (emailInput && userData.email) {
+			emailInput.value = userData.email;
 		}
 
-		function updateAvatarStatus(status: 'success' | 'error' | 'loading' | 'default') {
-			const avatarStatus = document.getElementById("avatarStatus");
-			if (!avatarStatus) return;
-
-			switch (status) {
-				case 'success':
-					avatarStatus.className = "absolute bottom-0 right-0 bg-green-500 w-4 h-4 rounded-full border-2 border-white";
-					avatarStatus.title = "Avatar loaded successfully";
-					break;
-				case 'error':
-					avatarStatus.className = "absolute bottom-0 right-0 bg-red-500 w-4 h-4 rounded-full border-2 border-white";
-					avatarStatus.title = "Failed to load avatar";
-					break;
-				case 'loading':
-					avatarStatus.className = "absolute bottom-0 right-0 bg-yellow-500 w-4 h-4 rounded-full border-2 border-white animate-pulse";
-					avatarStatus.title = "Loading avatar...";
-					break;
-				case 'default':
-					avatarStatus.className = "absolute bottom-0 right-0 bg-gray-500 w-4 h-4 rounded-full border-2 border-white";
-					avatarStatus.title = "Default avatar";
-					break;
-			}
+		if (pictureInput && userData.profilePicture) {
+			pictureInput.value = userData.profilePicture;
+			previewAvatar();
 		}
 
-		function isValidUrl(string: string): boolean {
-			try {
-				const url = new URL(string);
-				return url.protocol === 'http:' || url.protocol === 'https:';
-			} catch (_) {
-				return false;
-			}
+		if (twofaInput && userData.twofa !== undefined) {
+			twofaInput.checked = userData.twofa;
 		}
+	}, 100);
+}
 
-		export function loadUserProfile(userData: any) {
+async function get2Fa(jwt: string) {
+	try {
+		const response = await axios.post(`${TEST_ADDRESS}/2fa/setup`, {}, {
+			headers: { Authorization: `Bearer ${jwt}` }
+		});
+		console.log('2FA setup response:', response.data);
 
-			setTimeout(() => {
-				const emailInput = document.getElementById("emailInput") as HTMLInputElement;
-				const pictureInput = document.getElementById("pictureInput") as HTMLInputElement;
-				const twofaInput = document.getElementById("2fa") as HTMLInputElement;
-
-				if (emailInput && userData.email) {
-					emailInput.value = userData.email;
-				}
-
-				if (pictureInput && userData.profilePicture) {
-					pictureInput.value = userData.profilePicture;
-					previewAvatar();
-				}
-
-				if (twofaInput && userData.twofa !== undefined) {
-					twofaInput.checked = userData.twofa;
-				}
-			}, 100);
+		if (response.data.qrCodeDataURL) {
+			const qrCodeDataURL = response.data.qrCodeDataURL;
+			create2FAModal(qrCodeDataURL, jwt);
+		} else {
+			alert('Failed to generate QR code. Please try again.');
 		}
+	} catch (error) {
+		console.error('Error enabling 2FA:', error);
+		alert('An error occurred while enabling 2FA. Please try again.');
+	}
+}
 
-		async function get2Fa(jwt: string) {
-			try {
-				const response = await axios.post(`${BASE_ADDRESS}/2fa/setup`, {}, {
-					headers: { Authorization: `Bearer ${jwt}` }
-				});
-				console.log('2FA setup response:', response.data);
+function create2FAModal(qrCodeDataURL: string, jwt: string) {
+	const existingModal = document.getElementById('twofa-modal');
+	if (existingModal) {
+		existingModal.remove();
+	}
 
-				if (response.data.qrCodeDataURL) {
-					const qrCodeDataURL = response.data.qrCodeDataURL;
-					create2FAModal(qrCodeDataURL, jwt);
-				} else {
-					alert('Failed to generate QR code. Please try again.');
-				}
-			} catch (error) {
-				console.error('Error enabling 2FA:', error);
-				alert('An error occurred while enabling 2FA. Please try again.');
-			}
-		}
+	const modal = document.createElement('div');
+	modal.id = 'twofa-modal';
+	modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
 
-		function create2FAModal(qrCodeDataURL: string, jwt: string) {
-			const existingModal = document.getElementById('twofa-modal');
-			if (existingModal) {
-				existingModal.remove();
-			}
-
-			const modal = document.createElement('div');
-			modal.id = 'twofa-modal';
-			modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
-
-			modal.innerHTML = `
+	modal.innerHTML = `
 		<div class="bg-white rounded-lg p-8 max-w-md w-full mx-4">
 			<div class="text-center">
 				<h2 class="text-2xl font-bold mb-4 text-gray-800">Setup 2FA</h2>
@@ -310,69 +313,69 @@ function previewAvatar() {
 		</div>
 	`;
 
-			document.body.appendChild(modal);
+	document.body.appendChild(modal);
 
-			const verifyBtn = document.getElementById('verify-2fa-btn');
-			const cancelBtn = document.getElementById('cancel-2fa-btn');
-			const codeInput = document.getElementById('twofa-code') as HTMLInputElement;
+	const verifyBtn = document.getElementById('verify-2fa-btn');
+	const cancelBtn = document.getElementById('cancel-2fa-btn');
+	const codeInput = document.getElementById('twofa-code') as HTMLInputElement;
 
-			verifyBtn?.addEventListener('click', async () => {
-				const token = codeInput.value.trim();
-				if (!token || token.length !== 6) {
-					alert('Please enter a valid 6-digit code');
-					return;
-				}
+	verifyBtn?.addEventListener('click', async () => {
+		const token = codeInput.value.trim();
+		if (!token || token.length !== 6) {
+			alert('Please enter a valid 6-digit code');
+			return;
+		}
 
-				try {
-					verifyBtn.textContent = 'Verifying...';
-					verifyBtn.setAttribute('disabled', 'true');
+		try {
+			verifyBtn.textContent = 'Verifying...';
+			verifyBtn.setAttribute('disabled', 'true');
 
-					const verifyResponse = await axios.post(`${BASE_ADDRESS}/2fa/verify-setup`, {
-						token,
-					}, {
-						headers: { Authorization: `Bearer ${jwt}` }
-					});
-
-					if (verifyResponse.data.success) {
-						alert('2FA setup successful!');
-						modal.remove();
-						navigateTo('/');
-					} else {
-						alert('Invalid code. Please try again.');
-						verifyBtn.textContent = 'Verify & Enable';
-						verifyBtn.removeAttribute('disabled');
-					}
-				} catch (error) {
-					console.error('Error verifying 2FA code:', error);
-					alert('An error occurred while verifying the 2FA code. Please try again.');
-					verifyBtn.textContent = 'Verify & Enable';
-					verifyBtn.removeAttribute('disabled');
-				}
+			const verifyResponse = await axios.post(`${TEST_ADDRESS}/2fa/verify-setup`, {
+				token,
+			}, {
+				headers: { Authorization: `Bearer ${jwt}` }
 			});
 
-			cancelBtn?.addEventListener('click', () => {
+			if (verifyResponse.data.success) {
+				alert('2FA setup successful!');
 				modal.remove();
-				navigateTo('/profile');
-			});
-
-			modal.addEventListener('click', (e) => {
-				if (e.target === modal) {
-					modal.remove();
-				}
-			});
-
-			codeInput.focus();
+				navigateTo('/');
+			} else {
+				alert('Invalid code. Please try again.');
+				verifyBtn.textContent = 'Verify & Enable';
+				verifyBtn.removeAttribute('disabled');
+			}
+		} catch (error) {
+			console.error('Error verifying 2FA code:', error);
+			alert('An error occurred while verifying the 2FA code. Please try again.');
+			verifyBtn.textContent = 'Verify & Enable';
+			verifyBtn.removeAttribute('disabled');
 		}
+	});
 
+	cancelBtn?.addEventListener('click', () => {
+		modal.remove();
+		navigateTo('/profile');
+	});
 
-		function enable2Fa() {
-			const twofaInput = document.getElementById("enable2FABtn") as HTMLInputElement;
-			twofaInput.addEventListener('click', () => {
-				const jwt = window.sessionStorage.getItem("token")
-				if (!jwt) {
-					alert('You must be logged in to enable 2FA.');
-					return;
-				}
-				get2Fa(jwt);
-			})
+	modal.addEventListener('click', (e) => {
+		if (e.target === modal) {
+			modal.remove();
 		}
+	});
+
+	codeInput.focus();
+}
+
+
+function enable2Fa() {
+	const twofaInput = document.getElementById("enable2FABtn") as HTMLInputElement;
+	twofaInput.addEventListener('click', () => {
+		const jwt = window.sessionStorage.getItem("token")
+		if (!jwt) {
+			alert('You must be logged in to enable 2FA.');
+			return;
+		}
+		get2Fa(jwt);
+	})
+}

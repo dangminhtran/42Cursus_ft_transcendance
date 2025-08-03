@@ -6,13 +6,15 @@ import bcrypt from 'bcrypt'
 export async function userRoutes(fastify: FastifyInstance) {
 	// -- GET User
 	fastify.post('/profile', { preValidation: [fastify.authenticate] },  async (request: any, reply) => {
-		const { email } = request.body as { email: string };
+		const email = request.user.email
+		console.log('email ?', email)
 		const user: User | null = await fastify.dbClient.post<User>('/user/getUserByEmail', { email });
-
+		console.log(user)
 		if (!user)
 			return reply.code(404).send({ error: 'Utilisateur introuvable' });
 		return {
 			id:           user.id,
+			username:     user.username,
 			email:        user.email,
 			is2FAEnabled: user.is2FAEnabled,
 			profilepicture: user.profilepicture
@@ -20,14 +22,18 @@ export async function userRoutes(fastify: FastifyInstance) {
 	});
 
 	fastify.post('/update', { preValidation: [fastify.authenticate] },  async (request: any, reply) => {
+		console.log("COUCOU ?")
 		const {
 			username,
 			profilepicture,
 			email,
-			password,
+			oldPassword,
+			newPassword,
 			is2FAEnabled } = request.body as 
-			{ username: string, profilepicture: string, email: string, password: string, is2FAEnabled: number };
+			{ username: string, profilepicture: string, email: string, newPassword: string, oldPassword: string, is2FAEnabled: number };
 
+		console.log('request.body', request.body)
+		console.log("profile picture en back end", profilepicture)
 		const emailidentifier = request.user.email;
 		console.log(email);
 		const user: User | null = await fastify.dbClient.post<User>('/user/getUserByEmail', { email: emailidentifier });
@@ -40,11 +46,16 @@ export async function userRoutes(fastify: FastifyInstance) {
 			user.username = username;
 		if (email)
 			user.email = email;
-		if (password)
-			user.password = await bcrypt.hash(password, 10);
+		if (newPassword && oldPassword)
+		{
+			const match = await bcrypt.compare(oldPassword, user.password);
+			if (!match)
+				return reply.code(404).send({ error: 'Invalid password' });
+			user.password = await bcrypt.hash(newPassword, 10);
+		}
 		if (is2FAEnabled)
 			user.is2FAEnabled = is2FAEnabled == 1 ? true : false;
-
+		console.log('user in back', user)
 		const result = await fastify.dbClient.post<boolean>(`/user/update/${user.id}`, {...user});
 		
 		if (!result)

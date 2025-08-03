@@ -5,8 +5,8 @@
 Without framework : Typescript - OK
 
 - 0.5 - Minor module : Tailwind CSS - OK
-- 0.5 - Internationalisation - WIP
-- 0.5 - Accessibility - WIP
+- 0.5 - Internationalisation - OK
+- 0.5 - Accessibility - OK
 
 **GAMEPLAY AND USER EXPERIENCE**
 
