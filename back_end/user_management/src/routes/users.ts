@@ -29,7 +29,6 @@ export async function userRoutes(fastify: FastifyInstance) {
 			{ username: string, profilepicture: string, email: string, password: string, is2FAEnabled: number };
 
 		const emailidentifier = request.user.email;
-		console.log(email);
 		const user: User | null = await fastify.dbClient.post<User>('/user/getUserByEmail', { email: emailidentifier });
 
 		if (!user)
