@@ -9,11 +9,11 @@ import dbServiceClient from './plugins/dbServiceClient';
 
 import net from 'net';
 
-const logstashClient = net.createConnection({ port: 5000, host: 'logstash' });
+// const logstashClient = net.createConnection({ port: 5000, host: 'logstash' });
 
 const fastify = Fastify({
   logger: {
-    stream: logstashClient,
+    // stream: logstashClient,
     level: 'info',
     timestamp: () => `,"@timestamp":"${new Date().toISOString()}"`,
     formatters: {
@@ -37,7 +37,7 @@ fastify.register(cors, {
 });
 
 fastify.register(dbServiceClient, {
-	baseURL: process.env.DATABASE_URL as string,
+	baseURL: process.env.DATABASE_URL as string || "http://localhost:3001/",
 	tokenHeader: 'authorization'
 })
 
