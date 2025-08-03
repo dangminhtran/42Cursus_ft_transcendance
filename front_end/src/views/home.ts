@@ -1,4 +1,6 @@
+import axios from 'axios';
 import { renderNavbar } from '../componentes/navbar';
+import { TEST_ADDRESS } from '../config';
 
 type GameScore = {
 	player1name: string,
@@ -32,7 +34,7 @@ type Friend = {
 	addedDate: string,
 };
 
-// Mock current user data
+// Mock current user data - À remplacer par un appel API si nécessaire
 const currentUser: User = {
 	id: 'current-user',
 	name: 'Alice',
@@ -49,14 +51,14 @@ const currentUser: User = {
 	joinDate: '2025-01-15',
 };
 
-// Mock users data
+// Mock users data - À remplacer par un appel API
 const users: User[] = [
 	{
 		id: 'bob',
 		name: 'Bob',
 		isOnline: true,
 		lastSeen: '2025-07-27T10:25:00Z',
-		stats: { wins: 8, losses: 12, draws: 1, totalGames: 21, winRate: 38.1 },
+		stats: { wins: 8, losses: 12, draws: 1, totalGames: 21, winRate: (21 / 8) * 100 },
 		avatar: '🎯',
 		joinDate: '2025-02-01',
 	},
@@ -96,7 +98,7 @@ const users: User[] = [
 		avatar: '🌟',
 		joinDate: '2025-01-25',
 	},
-		{
+	{
 		id: 'oscar',
 		name: 'Oscar',
 		isOnline: true,
@@ -107,31 +109,11 @@ const users: User[] = [
 	},
 ];
 
-// Mock friends data
-const friends: Friend[] = [
-	{
-		user: users.find(u => u.id === 'bob')!,
-		status: 'online',
-		addedDate: '2025-07-20',
-	},
-	{
-		user: users.find(u => u.id === 'charlie')!,
-		status: 'offline',
-		addedDate: '2025-07-18',
-	},
-	{
-		user: users.find(u => u.id === 'eve')!,
-		status: 'in-game',
-		addedDate: '2025-07-15',
-	},
-	{
-		user: users.find(u => u.id === 'mallory')!,
-		status: 'online',
-		addedDate: '2025-07-22',
-	},
-];
+// Variables globales pour les données chargées
+let friends = [];
+let isLoading = true;
 
-// Mock - All games in the system
+// Mock - All games in the system - À remplacer par un appel API
 const allGameHistory: GameScore[] = [
 	// Alice's games
 	{ player1name: "Alice", player1score: 5, player2name: "Bot", player2score: 3, date: "2025-07-24", gameType: "1v1", winner: "Alice" },
@@ -169,6 +151,85 @@ const allGameHistory: GameScore[] = [
 // Current view - can be 'all', 'my-games', or a specific friend's name
 let currentHistoryView = 'my-games';
 let selectedFriend: string | null = null;
+
+function getAuthToken(): string | null {
+	return sessionStorage.getItem('token');
+}
+
+function getAuthHeaders() {
+	const token = getAuthToken();
+	return token ? { Authorization: `Bearer ${token}` } : {};
+}
+
+
+async function loadFriends(): Promise<void> {
+
+	try {
+		isLoading = true;
+		 const response = await axios.post(
+            `${TEST_ADDRESS}/friends/fetch`,
+            {},
+            {
+                headers: {
+                    'Authorization': `Bearer ${sessionStorage.getItem('token')}`,
+                    'Content-Type': 'application/json'
+                }
+            }
+        )
+		console.log('response.data', response.data)
+		if (response.data == null)
+		{
+			friends = []
+			isLoading = false
+		} else {
+		friends = response.data
+		isLoading = false
+
+		}
+	} catch (error) {
+		console.error('Erreur lors du chargement des amis:', error);
+		isLoading = false;
+		friends = [];
+		showMessage('Erreur lors du chargement des amis', 'error');
+	}
+}
+
+
+async function addFriendAPI(friendId: number): Promise<boolean> {
+	try {
+		await axios.post(
+			`${TEST_ADDRESS}/friends/add`,
+			{ friend_id: 2 },
+			{
+                headers: {
+                    'Authorization': `Bearer ${sessionStorage.getItem('token')}`,
+                    'Content-Type': 'application/json'
+                }
+            }
+		);
+		return true;
+	} catch (error) {
+		console.error('Erreur lors de l\'ajout de l\'ami:', error);
+		return false;
+	}
+}
+
+// Fonction pour supprimer un ami via l'API
+async function deleteFriendAPI(friendId: number): Promise<boolean> {
+	try {
+		await axios.post(
+			`${TEST_ADDRESS}/friends/delete`,
+			{ friend_id: friendId },
+			{
+				headers: getAuthHeaders()
+			}
+		);
+		return true;
+	} catch (error) {
+		console.error('Erreur lors de la suppression de l\'ami:', error);
+		return false;
+	}
+}
 
 function getStatusIcon(status: string): string {
 	switch (status) {
@@ -236,6 +297,45 @@ function renderUserProfile(): string {
 }
 
 function renderFriendsList(): string {
+    if (isLoading) {
+        return `
+            <div class="bg-gray-800 rounded-lg p-6 h-full flex flex-col">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-xl font-bold text-white">👥 Friends</h2>
+                    <button id="add-friend-btn" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm transition-colors">
+                        + Add Friend
+                    </button>
+                </div>
+                <div class="flex-1 flex items-center justify-center">
+                    <div class="text-gray-400 text-center">
+                        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-400 mx-auto mb-2"></div>
+                        Loading friends...
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    if (friends.length == 0) {
+        return `
+            <div class="bg-gray-800 rounded-lg p-6 h-full flex flex-col">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-xl font-bold text-white">👥 Friends (0)</h2>
+                    <button id="add-friend-btn" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm transition-colors">
+                        + Add Friend
+                    </button>
+                </div>
+                <div class="flex-1 flex items-center justify-center">
+                    <div class="text-gray-400 text-center">
+                        <div class="text-4xl mb-2">👥</div>
+                        <p>No friends yet</p>
+                        <p class="text-sm">Add some friends to get started!</p>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
     const friendsHtml = friends.map(friend => `
         <div class="flex items-center justify-between p-3 bg-gray-700 rounded-lg hover:bg-gray-600 transition-colors cursor-pointer friend-item">
             <div class="flex items-center space-x-3">
@@ -255,6 +355,13 @@ function renderFriendsList(): string {
             <div class="text-right">
                 <div class="text-sm text-gray-300">${friend.user.stats.wins}W-${friend.user.stats.losses}L</div>
                 <div class="text-sm text-gray-500">${friend.user.stats.winRate}% WR</div>
+                <button 
+                    class="delete-friend-btn text-red-400 hover:text-red-300 text-xs mt-1 transition-colors"
+                    data-friend-id="${friend.user.id}"
+                    onclick="event.stopPropagation()"
+                >
+                    Remove
+                </button>
             </div>
         </div>
     `).join('');
@@ -338,7 +445,6 @@ function renderMatchHistory(): string {
                 <td class="p-3 border-b border-gray-600 text-center">
                     <span class="px-2 py-1 bg-gray-600 rounded text-sm">${game.gameType}</span>
                 </td>
-                <td class="p-3 border-b border-gray-600 text-center text-gray-400 font-mono text-sm">${game.duration}</td>
                 <td class="p-3 border-b border-gray-600 text-center">
                     <span class="font-semibold text-sm ${game.winner === currentUser.name ? 'text-green-400' :
                 game.winner === selectedFriend ? 'text-purple-400' :
@@ -383,7 +489,6 @@ function renderMatchHistory(): string {
                             <th class="p-3 text-center text-white font-semibold border-b border-gray-600">Score</th>
                             <th class="p-3 text-left text-white font-semibold border-b border-gray-600">Player 2</th>
                             <th class="p-3 text-center text-white font-semibold border-b border-gray-600">Type</th>
-                            <th class="p-3 text-center text-white font-semibold border-b border-gray-600">Duration</th>
                             <th class="p-3 text-center text-white font-semibold border-b border-gray-600">Winner</th>
                         </tr>
                     </thead>
@@ -406,8 +511,11 @@ function renderMatchHistory(): string {
     `;
 }
 
-export function renderHome() {
+export async function renderHome() {
     renderNavbar();
+
+    // Charger les amis au début
+    await loadFriends();
 
     document.getElementById('app')!.innerHTML = `
         <div class="flex flex-col justify-center items-center -mt-20 h-screen overflow-hidden pt-15">
@@ -434,7 +542,7 @@ export function renderHome() {
     addEventListeners();
 }
 
-function refreshHomeDashboard() {
+async function refreshHomeDashboard() {
     const mainContent = `
         <div class="flex flex-col justify-center items-center -mt-20 h-screen overflow-hidden pt-15">
             <div class="w-full max-w-7xl mx-auto p-6 h-full flex flex-col">
@@ -481,6 +589,25 @@ function addEventListeners() {
 		});
 	}
 
+	// Event listeners pour supprimer des amis
+	const deleteFriendBtns = document.querySelectorAll('.delete-friend-btn');
+	deleteFriendBtns.forEach(btn => {
+		btn.addEventListener('click', async (e) => {
+			e.stopPropagation();
+			const friendId = parseInt(btn.getAttribute('data-friend-id') || '0');
+			if (friendId && confirm('Are you sure you want to remove this friend?')) {
+				const success = await deleteFriendAPI(friendId);
+				if (success) {
+					showMessage('Friend removed successfully', 'success');
+					await loadFriends(); // Recharger la liste
+					refreshHomeDashboard();
+				} else {
+					showMessage('Failed to remove friend', 'error');
+				}
+			}
+		});
+	});
+
 	const friendElements = document.querySelectorAll('.friend-item');
 	friendElements.forEach(element => {
 		element.addEventListener('click', () => {
@@ -490,14 +617,6 @@ function addEventListeners() {
 				currentHistoryView = 'friend';
 
 				refreshHomeDashboard();
-
-				// setTimeout(() => {
-				// 	const historySection = document.querySelector('.bg-gray-800:last-child');
-				// 	if (historySection) {
-				// 		historySection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-				// 	}
-				// }, 100);
-
 				setTimeout(() => {
 					const historySection = document.querySelector('.bg-gray-800:last-child');
 					if (historySection) {
@@ -579,7 +698,7 @@ export function addFriends() {
 			e.preventDefault();
 			const friendName = friendNameInput.value.trim();
 			if (friendName) {
-				handleAddFriend(friendName);
+				addFriendAPI(4);
 			}
 		});
 	}
