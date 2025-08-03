@@ -22,7 +22,8 @@ export function renderLogin() {
 			<div class="w-full flex flex-col items-center" id="authForm">
 				<p class="font-bold text-lg mb-5" id="authDescription">Sign in with email address</p>
 				<input class="w-80 p-3 m-4 bg-indigo-950 text-md font-normal rounded-md border border-slate-700" type="email" id="email" placeholder="Yourname@gmail.com" />
-				<input class="w-80 p-3 m-4 bg-indigo-950 text-md font-normal rounded-md border border-slate-700" type="password" id="password" placeholder="YourPassword" />
+				<input class="w-80 p-3 m-4 bg-indigo-950 text-md font-normal rounded-md border border-slate-700 signup-only" type="text" id="username" placeholder="Your username" style="display: none;" />
+				<input class="w-80 p-3 m-4 bg-indigo-950 text-md font-normal rounded-md border border-slate-700" type="password" id="password" placeholder="Your password" />
 				<button id="authBtn">Log In</button>
 				</div>
 			</div>
@@ -48,7 +49,7 @@ function initializeAuthToggle() {
 		signupToggle?.classList.remove('active');
 		
 		if (authTitle) authTitle.textContent = 'LOG IN';
-		if (authDescription) authDescription.textContent = 'Log in with email address';
+		if (authDescription) authDescription.textContent = 'Sign in with email address';
 		if (authBtn) authBtn.textContent = 'Log In';
 		
 		signupFields.forEach((field: Element) => {
@@ -87,6 +88,7 @@ function initializeAuthHandlers() {
 
 	document.getElementById('authBtn')?.addEventListener('click', async () => {
 		const email = (document.getElementById('email') as HTMLInputElement)?.value;
+		const username = (document.getElementById('username') as HTMLInputElement)?.value;
 		const password = (document.getElementById('password') as HTMLInputElement)?.value;
 
 		if (isLoginMode) {
@@ -103,12 +105,12 @@ function initializeAuthHandlers() {
 			}
 
 		} else {
-			if (!email || !password) {
+			if (!email || !password || !username) {
 				alert('Please fill in all fields');
 				return;
 			}
 
-			const signupSuccessful = await SignUp(email, password);
+			const signupSuccessful = await SignUp(email, password, username);
 			if (signupSuccessful) {
 				alert('Account created successfully! Please sign in.');
 				document.getElementById('loginToggle')?.click();
@@ -128,12 +130,13 @@ function initializeAuthHandlers() {
 	});
 }
 
-async function SignUp(email: string, password: string): Promise<boolean> {
+async function SignUp(email: string, password: string, username: string): Promise<boolean> {
 	if (!email || !password) return false;
 
 	try {
 		const response = await axios.post(`${BASE_ADDRESS}/auth/register`, {
 			email,
+			username,
 			password,
 		});
 		const token = response.data?.token;
@@ -220,6 +223,7 @@ async function Login(email: string, password: string): Promise<boolean> {
 		
 		return false;
 	}
+//	return true
 }
 
 

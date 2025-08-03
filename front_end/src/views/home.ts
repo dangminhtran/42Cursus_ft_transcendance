@@ -1,64 +1,57 @@
+import axios from 'axios';
 import { renderNavbar } from '../componentes/navbar';
+import { TEST_ADDRESS, TOURNAMENT_ADDRESS } from '../config';
+import type { User } from '../../../back_end/database/src/structs';
+import { navigateTo } from '../router';
+import type { Match } from '../../../back_end/database/src/structs'
 import { i18n, t } from '../i18n';
 
-type GameScore = {
-	player1name: string,
-	player1score: number,
-	player2name: string,
-	player2score: number,
-	date: string,
-	gameType: '1v1' | 'tournament',
-	duration: string,
-	winner: string,
-};
 
-type User = {
-	id: string,
-	name: string,
-	isOnline: boolean,
-	lastSeen: string,
-	stats: {
-		wins: number,
-		losses: number,
-		draws: number,
-		totalGames: number,
-		winRate: number,
-	},
-	avatar: string,
-	joinDate: string,
-};
+let currentUser: any = {}
+const getCurrentUser = async () => {
+	try {
+		const token = sessionStorage.getItem("token");
+		console.log('Token used for profile:', token);
 
-type Friend = {
-	user: User,
-	status: 'online' | 'offline' | 'in-game',
-	addedDate: string,
-};
+		if (!token) {
+			console.error('No token found in sessionStorage');
+			return null;
+		}
 
-// Mock current user data
-const currentUser: User = {
-	id: 'current-user',
-	name: 'Alice',
-	isOnline: true,
-	lastSeen: '2025-07-27T10:30:00Z',
-	stats: {
-		wins: 12,
-		losses: 8,
-		draws: 2,
-		totalGames: 22,
-		winRate: 54.5,
-	},
-	avatar: '🎮',
-	joinDate: '2025-01-15',
-};
+		const response = await axios.post(
+			`${TEST_ADDRESS}/user-management/profile`,
+			{},
+			{
+				headers:
+				{
+					'Authorization': `Bearer ${token}`,
+					'Content-Type': 'application/json'
+				}
+			}
+		);
+		currentUser = response.data;
+		console.log('Current user loaded:', currentUser);
+		return currentUser;
+	} catch (error: any) {
+		console.error('Error loading current user:', error);
+		if (error.response) {
+			console.error('Response status:', error.response.status);
+			console.error('Response data:', error.response.data);
+		}
+		return null;
+	}
+}
 
-// Mock users data
+console.log('currentUser ?', currentUser)
+
+// Mock users data - À remplacer par un appel API
 const users: User[] = [
 	{
 		id: 'bob',
 		name: 'Bob',
 		isOnline: true,
 		lastSeen: '2025-07-27T10:25:00Z',
-		stats: { wins: 8, losses: 12, draws: 1, totalGames: 21, winRate: 38.1 },
+		stats: { wins: 8, losses: 12, draws: 1, totalGames: 21, winRate: (21 / 8) * 100 },
 		avatar: '🎯',
 		joinDate: '2025-02-01',
 	},
@@ -98,7 +91,7 @@ const users: User[] = [
 		avatar: '🌟',
 		joinDate: '2025-01-25',
 	},
-		{
+	{
 		id: 'oscar',
 		name: 'Oscar',
 		isOnline: true,
@@ -109,68 +102,93 @@ const users: User[] = [
 	},
 ];
 
-// Mock friends data
-const friends: Friend[] = [
-	{
-		user: users.find(u => u.id === 'bob')!,
-		status: 'online',
-		addedDate: '2025-07-20',
-	},
-	{
-		user: users.find(u => u.id === 'charlie')!,
-		status: 'offline',
-		addedDate: '2025-07-18',
-	},
-	{
-		user: users.find(u => u.id === 'eve')!,
-		status: 'in-game',
-		addedDate: '2025-07-15',
-	},
-	{
-		user: users.find(u => u.id === 'mallory')!,
-		status: 'online',
-		addedDate: '2025-07-22',
-	},
-];
-
-// Mock - All games in the system
-const allGameHistory: GameScore[] = [
-	// Alice's games
-	{ player1name: "Alice", player1score: 5, player2name: "Bot", player2score: 3, date: "2025-07-24", gameType: "1v1", duration: "12:34", winner: "Alice" },
-	{ player1name: "Eve", player1score: 1, player2name: "Alice", player2score: 5, date: "2025-07-21", gameType: "1v1", duration: "09:12", winner: "Alice" },
-	{ player1name: "Alice", player1score: 3, player2name: "Charlie", player2score: 5, date: "2025-07-19", gameType: "1v1", duration: "14:25", winner: "Charlie" },
-	{ player1name: "Bob", player1score: 1, player2name: "Alice", player2score: 5, date: "2025-07-17", gameType: "1v1", duration: "11:08", winner: "Alice" },
-
-	// Bob's games
-	{ player1name: "Bob", player1score: 2, player2name: "Eve", player2score: 5, date: "2025-07-23", gameType: "1v1", duration: "08:45", winner: "Eve" },
-	{ player1name: "Peggy", player1score: 5, player2name: "Bob", player2score: 2, date: "2025-07-16", gameType: "1v1", duration: "14:33", winner: "Peggy" },
-	{ player1name: "Bob", player1score: 4, player2name: "Charlie", player2score: 3, date: "2025-07-14", gameType: "1v1", duration: "16:45", winner: "Bob" },
-	{ player1name: "Bob", player1score: 5, player2name: "Mallory", player2score: 2, date: "2025-07-12", gameType: "1v1", duration: "09:33", winner: "Bob" },
-
-	// Charlie's games
-	{ player1name: "Charlie", player1score: 4, player2name: "Dave", player2score: 4, date: "2025-07-22", gameType: "1v1", duration: "15:20", winner: "Draw" },
-	{ player1name: "Trent", player1score: 2, player2name: "Charlie", player2score: 5, date: "2025-07-18", gameType: "1v1", duration: "13:42", winner: "Charlie" },
-	{ player1name: "Charlie", player1score: 5, player2name: "Eve", player2score: 3, date: "2025-07-13", gameType: "1v1", duration: "12:18", winner: "Charlie" },
-	{ player1name: "Charlie", player1score: 2, player2name: "Mallory", player2score: 5, date: "2025-07-11", gameType: "1v1", duration: "10:27", winner: "Mallory" },
-
-	// Eve's games
-	{ player1name: "Eve", player1score: 5, player2name: "Dave", player2score: 2, date: "2025-07-20", gameType: "1v1", duration: "11:55", winner: "Eve" },
-	{ player1name: "Eve", player1score: 4, player2name: "Mallory", player2score: 3, date: "2025-07-15", gameType: "1v1", duration: "13:12", winner: "Eve" },
-	{ player1name: "Oscar", player1score: 2, player2name: "Eve", player2score: 5, date: "2025-07-10", gameType: "1v1", duration: "08:44", winner: "Eve" },
-
-	// Mallory's games
-	{ player1name: "Mallory", player1score: 3, player2name: "Trent", player2score: 5, date: "2025-07-20", gameType: "1v1", duration: "11:28", winner: "Trent" },
-	{ player1name: "Victor", player1score: 4, player2name: "Mallory", player2score: 5, date: "2025-07-17", gameType: "1v1", duration: "10:55", winner: "Mallory" },
-	{ player1name: "Mallory", player1score: 5, player2name: "Dave", player2score: 1, date: "2025-07-09", gameType: "1v1", duration: "07:22", winner: "Mallory" },
-
-	// Other games
-	{ player1name: "Oscar", player1score: 5, player2name: "Peggy", player2score: 0, date: "2025-07-19", gameType: "1v1", duration: "06:15", winner: "Oscar" },
-	{ player1name: "Dave", player1score: 3, player2name: "Oscar", player2score: 5, date: "2025-07-15", gameType: "1v1", duration: "07:48", winner: "Oscar" },
-];
+// Variables globales pour les données chargées
+let friends = [];
+let isLoading = true;
 
 // Current view - can be 'all', 'my-games', or a specific friend's name
 let currentHistoryView = 'my-games';
 let selectedFriend: string | null = null;
+
+function getAuthToken(): string | null {
+	return sessionStorage.getItem('token');
+}
+
+function getAuthHeaders() {
+	const token = getAuthToken();
+	return token ? { Authorization: `Bearer ${token}` } : {};
+}
+
+
+async function loadFriends(): Promise<void> {
+
+	try {
+		isLoading = true;
+		const response = await axios.post(
+			`${TEST_ADDRESS}/friends/fetch`,
+			{},
+			{
+				headers: {
+					'Authorization': `Bearer ${sessionStorage.getItem('token')}`,
+					'Content-Type': 'application/json'
+				}
+			}
+		)
+		console.log('response.data', response.data)
+		if (response.data == null) {
+			friends = []
+			isLoading = false
+		} else {
+			friends = response.data
+			isLoading = false
+
+		}
+	} catch (error) {
+		console.error('Erreur lors du chargement des amis:', error);
+		isLoading = false;
+		friends = [];
+		showMessage('Erreur lors du chargement des amis', 'error');
+	}
+}
+
+
+async function addFriendAPI(email: string): Promise<boolean> {
+	try {
+		console.log(email)
+		await axios.post(
+			`${TEST_ADDRESS}/friends/add`,
+			{ email: email },
+			{
+				headers: {
+					'Authorization': `Bearer ${sessionStorage.getItem('token')}`,
+					'Content-Type': 'application/json'
+				}
+			}
+		);
+		navigateTo('/');
+		return true;
+	} catch (error) {
+		console.error('Erreur lors de l\'ajout de l\'ami:', error);
+		return false;
+	}
+}
+
+// Fonction pour supprimer un ami via l'API
+async function deleteFriendAPI(friendId: number): Promise<boolean> {
+	try {
+		await axios.post(
+			`${TEST_ADDRESS}/friends/delete`,
+			{ friend_id: friendId },
+			{
+				headers: getAuthHeaders()
+			}
+		);
+		return true;
+	} catch (error) {
+		console.error('Erreur lors de la suppression de l\'ami:', error);
+		return false;
+	}
+}
 
 function getStatusIcon(status: string): string {
 	switch (status) {
@@ -181,30 +199,26 @@ function getStatusIcon(status: string): string {
 	}
 }
 
-function formatLastSeen(lastSeen: string): string {
-	const date = new Date(lastSeen);
-	const now = new Date();
-	const diffMs = now.getTime() - date.getTime();
-	const diffMins = Math.floor(diffMs / (1000 * 60));
-
-	if (diffMins < 1) return 'Just now';
-	if (diffMins < 60) return `${diffMins}m ago`;
-
-	const diffHours = Math.floor(diffMins / 60);
-	if (diffHours < 24) return `${diffHours}h ago`;
-
-	const diffDays = Math.floor(diffHours / 24);
-	return `${diffDays}d ago`;
-}
-
 function renderUserProfile(): string {
-    return `
+	if (!currentUser || !currentUser.username) {
+		return `
+            <div class="bg-gray-800 rounded-lg p-6">
+                <h2 class="text-xl font-bold text-white mb-4">👤 Your Profile</h2>
+                <div class="flex items-center justify-center h-32">
+                    <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-400"></div>
+                    <span class="ml-2 text-gray-400">Loading profile...</span>
+                </div>
+            </div>
+        `;
+	}
+
+	return `
         <div class="bg-gray-800 rounded-lg p-6">
             <h2 class="text-xl font-bold text-white mb-4">👤 ${t('home.yourProfile')}</h2>
             <div class="flex items-center space-x-4 mb-4">
-                <div class="text-4xl">${currentUser.avatar}</div>
+                <img class="h-12 w-12 rounded-full" src="${currentUser.profilepicture ? currentUser.profilepicture : "https://www.gravatar.com/avatar/default?s=150&d=mp"}" alt="User profile picture">
                 <div>
-                    <h3 class="text-xl font-semibold text-white">${currentUser.name}</h3>
+                    <h3 class="text-xl font-semibold text-white">${currentUser.username}</h3>
                     <p class="text-gray-400 text-base">${t('home.memberSince')} ${new Date(currentUser.joinDate).toLocaleDateString()}</p>
                     <div class="flex items-center space-x-2 mt-1">
                         <span class="text-green-400 text-base">🟢 ${t('home.online')}</span>
@@ -213,6 +227,7 @@ function renderUserProfile(): string {
             </div>
             <div class="grid grid-cols-2 md:grid-cols-5 gap-3 text-center">
                 <div class="bg-gray-700 rounded p-3">
+
                     <div class="text-xl font-bold text-green-400">${currentUser.stats.wins}</div>
                     <div class="text-gray-300 text-sm">${t('home.wins')}</div>
                 </div>
@@ -238,15 +253,39 @@ function renderUserProfile(): string {
 }
 
 function renderFriendsList(): string {
-    const friendsHtml = friends.map(friend => `
-        <div class="flex items-center justify-between p-3 bg-gray-700 rounded-lg hover:bg-gray-600 transition-colors cursor-pointer friend-item">
-            <div class="flex items-center space-x-3">
-                <div class="text-2xl">${friend.user.avatar}</div>
-                <div>
-                    <div class="flex items-center space-x-2">
-                        <span class="font-semibold text-white text-base">${friend.user.name}</span>
-                        <span class="text-sm">${getStatusIcon(friend.status)}</span>
+	if (isLoading) {
+		return `
+            <div class="bg-gray-800 rounded-lg p-6 h-full flex flex-col">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-xl font-bold text-white">👥 Friends</h2>
+                    <button id="add-friend-btn" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm transition-colors">
+                        + Add Friend
+                    </button>
+                </div>
+                <div class="flex-1 flex items-center justify-center">
+                    <div class="text-gray-400 text-center">
+                        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-400 mx-auto mb-2"></div>
+                        Loading friends...
                     </div>
+                </div>
+            </div>
+        `;
+	}
+
+	if (friends.length == 0) {
+		return `
+            <div class="bg-gray-800 rounded-lg p-6 h-full flex flex-col">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-xl font-bold text-white">👥 Friends (0)</h2>
+                    <button id="add-friend-btn" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm transition-colors">
+                        + Add Friend
+                    </button>
+                </div>
+                <div class="flex-1 flex items-center justify-center">
+                    <div class="text-gray-400 text-center">
+                        <div class="text-4xl mb-2">👥</div>
+                        <p>No friends yet</p>
+                        <p class="text-sm">Add some friends to get started!</p>
                     <div class="text-sm text-gray-400 mt-1">
                         ${friend.status === 'online' ? t('home.online') :
             friend.status === 'in-game' ? t('home.inGame') :
@@ -254,14 +293,25 @@ function renderFriendsList(): string {
                     </div>
                 </div>
             </div>
-            <div class="text-right">
-                <div class="text-sm text-gray-300">${friend.user.stats.wins}W-${friend.user.stats.losses}L</div>
-                <div class="text-sm text-gray-500">${friend.user.stats.winRate}% WR</div>
+        `;
+	}
+
+	const friendsHtml = friends.map(friend => `
+        <div class="flex items-center justify-between p-3 bg-gray-700 rounded-lg hover:bg-gray-600 transition-colors cursor-pointer friend-item">
+            <div class="flex items-center space-x-3">
+                <img class="h-8 w-8" src=${friend.profilepicture ? friend.profilepicture : "https://www.gravatar.com/avatar/default?s=150&d=mp"}  />
+                <div>
+                    <div class="flex items-center space-x-4">
+                        <span class="font-semibold text-white text-base">${friend.username != null && friend.username.length > 10 ? friend.username.slice(0, 10) + '...' : friend.username}</span>
+                        <span class="text-green-400 text-base">🟢 Online</span>
+						<button id="deleteBtn"> X </button>
+						</div>
+                </div>
             </div>
         </div>
     `).join('');
 
-    return `
+	return `
         <div class="bg-gray-800 rounded-lg p-6 h-full flex flex-col">
             <div class="flex items-center justify-between mb-4">
                 <h2 class="text-xl font-bold text-white">👥 ${t('home.friends')} (${friends.length})</h2>
@@ -276,17 +326,27 @@ function renderFriendsList(): string {
     `;
 }
 
-function getFilteredGames(): GameScore[] {
+let data: Match[] = []
+async function getMyGameHistory(): Promise<Match[]> {
+	const response = await axios.post(`${TOURNAMENT_ADDRESS}/match/getAllMatches`, {}, {
+		headers: {
+			'Authorization': `Bearer ${sessionStorage.getItem('token')}`,
+			'Content-Type': 'application/json'
+		}
+	});
+	console.log('response data MATCH', response.data);
+	return data = response.data
+}
+
+
+
+async function getFilteredGames(): Promise<Match[]> {
 	if (currentHistoryView === 'all') {
-		return allGameHistory;
+		return [];
 	} else if (currentHistoryView === 'my-games') {
-		return allGameHistory.filter(game =>
-			game.player1name === currentUser.name || game.player2name === currentUser.name
-		);
+		return getMyGameHistory();
 	} else {
-		return allGameHistory.filter(game =>
-			game.player1name === selectedFriend || game.player2name === selectedFriend
-		);
+		return []
 	}
 }
 
@@ -303,49 +363,38 @@ function getHistoryTitle(): string {
 
 function renderMatchHistory(): string {
     const filteredGames = getFilteredGames();
-    const rowsHtml = filteredGames.map(game => {
-        const isCurrentUserInvolved = game.player1name === currentUser.name || game.player2name === currentUser.name;
-        const isFriendInvolved = game.player1name === selectedFriend || game.player2name === selectedFriend;
+    const rowsHtml = data.map(game => {
+        const isCurrentUserInvolved = game.player1 === currentUser.name || game.player2 === currentUser.name;
+        const isFriendInvolved = game.player1 === selectedFriend || game.player2 === selectedFriend;
 
         let rowClass = '';
-        if (currentHistoryView === 'my-games' && isCurrentUserInvolved) {
-            // Color based on win/loss for current user in "My Games" view
-            if (game.winner === currentUser.name) {
-                rowClass = 'bg-blue-900 bg-opacity-30'; // Victory in blue
-            } else if (game.winner === 'Draw') {
-                rowClass = 'bg-yellow-900 bg-opacity-30'; // Draw in yellow
-            } else {
-                rowClass = 'bg-red-900 bg-opacity-30'; // Defeat in red
-            }
-        } else if (currentHistoryView !== 'my-games' && isFriendInvolved) {
-            rowClass = 'bg-purple-900 bg-opacity-30';
-        }
+        // if (currentHistoryView === 'my-games' && isCurrentUserInvolved) {
+        //     // Color based on win/loss for current user in "My Games" view
+        //     if (game.winner === currentUser.name) {
+        //         rowClass = 'bg-blue-900 bg-opacity-30'; // Victory in blue
+        //     } else if (game.winner === 'Draw') {
+        //         rowClass = 'bg-yellow-900 bg-opacity-30'; // Draw in yellow
+        //     } else {
+        //         rowClass = 'bg-red-900 bg-opacity-30'; // Defeat in red
+        //     }
+        // } else if (currentHistoryView !== 'my-games' && isFriendInvolved) {
+        //     rowClass = 'bg-purple-900 bg-opacity-30';
+        // }
 
         return `
             <tr class="${rowClass} hover:bg-gray-700 transition-colors">
-                <td class="p-3 border-b border-gray-600 text-sm">${game.date}</td>
                 <td class="p-3 border-b border-gray-600 text-sm">
-                    <span class="${game.player1name === currentUser.name ? 'font-bold text-blue-400' :
-                game.player1name === selectedFriend ? 'font-bold text-purple-400' : ''
-            }">${game.player1name}</span>
+                    <span class="${game.player1 === currentUser.name ? 'font-bold text-blue-400' :
+                game.player1 === selectedFriend ? 'font-bold text-purple-400' : ''
+            }">${game.player1}</span>
                 </td>
                 <td class="p-3 border-b border-gray-600 text-center font-mono text-sm">${game.player1score}</td>
                 <td class="p-3 border-b border-gray-600 text-center text-gray-400 text-sm">vs</td>
                 <td class="p-3 border-b border-gray-600 text-center font-mono text-sm">${game.player2score}</td>
                 <td class="p-3 border-b border-gray-600 text-sm">
-                    <span class="${game.player2name === currentUser.name ? 'font-bold text-blue-400' :
-                game.player2name === selectedFriend ? 'font-bold text-purple-400' : ''
-            }">${game.player2name}</span>
-                </td>
-                <td class="p-3 border-b border-gray-600 text-center">
-                    <span class="px-2 py-1 bg-gray-600 rounded text-sm">${game.gameType}</span>
-                </td>
-                <td class="p-3 border-b border-gray-600 text-center text-gray-400 font-mono text-sm">${game.duration}</td>
-                <td class="p-3 border-b border-gray-600 text-center">
-                    <span class="font-semibold text-sm ${game.winner === currentUser.name ? 'text-green-400' :
-                game.winner === selectedFriend ? 'text-purple-400' :
-                    game.winner === 'Draw' ? 'text-yellow-400' : 'text-red-400'
-            }">${game.winner}</span>
+                    <span class="${game.player2 === currentUser.name ? 'font-bold text-blue-400' :
+                game.player2 === selectedFriend ? 'font-bold text-purple-400' : ''
+            }">${game.player2}</span>
                 </td>
             </tr>
         `;
@@ -391,7 +440,7 @@ function renderMatchHistory(): string {
                     </thead>
                     <tbody class="text-gray-300">
                         ${rowsHtml}
-                        ${filteredGames.length === 0 ? `
+                        ${data.length === 0 ? `
                             <tr>
                                 <td colspan="9" class="p-4 text-center text-gray-400">
                                     ${t('home.noGamesYet')}
@@ -402,16 +451,22 @@ function renderMatchHistory(): string {
                 </table>
             </div>
             <div class="mt-3 text-sm text-gray-400 text-center">
-                ${t('home.showingGames')} ${filteredGames.length} game${filteredGames.length !== 1 ? 's' : ''}
+                ${t('home.showingGames')} ${data.length} game${data.length !== 1 ? 's' : ''}
             </div>
         </div>
     `;
 }
 
-export function renderHome() {
-    renderNavbar();
+export async function renderHome() {
+	renderNavbar();
 
-    document.getElementById('app')!.innerHTML = `
+	// Charger l'utilisateur actuel et les amis en parallèle
+	await Promise.all([
+		getCurrentUser(),
+		loadFriends()
+	]);
+
+	document.getElementById('app')!.innerHTML = `
         <div class="flex flex-col justify-center items-center -mt-20 h-screen overflow-hidden pt-15">
             <div class="w-full max-w-7xl mx-auto p-6 h-full flex flex-col">				
                 <h1 class="text-4xl font-bold text-center mb-6 bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
@@ -443,8 +498,11 @@ export function renderHome() {
     });
 }
 
-function refreshHomeDashboard() {
-    const mainContent = `
+async function refreshHomeDashboard() {
+	// Recharger les données utilisateur
+	await getCurrentUser();
+
+	const mainContent = `
         <div class="flex flex-col justify-center items-center -mt-20 h-screen overflow-hidden pt-15">
             <div class="w-full max-w-7xl mx-auto p-6 h-full flex flex-col">
                 <h1 class="text-4xl font-bold text-center mb-6 bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
@@ -465,9 +523,9 @@ function refreshHomeDashboard() {
             </div>
         </div>
     `;
-    
-    document.getElementById('app')!.innerHTML = mainContent;
-    addEventListeners();
+
+	document.getElementById('app')!.innerHTML = mainContent;
+	addEventListeners();
 }
 
 (window as any).switchHistoryView = function (view: string) {
@@ -490,6 +548,25 @@ function addEventListeners() {
 		});
 	}
 
+	// Event listeners pour supprimer des amis
+	const deleteFriendBtns = document.querySelectorAll('.delete-friend-btn');
+	deleteFriendBtns.forEach(btn => {
+		btn.addEventListener('click', async (e) => {
+			e.stopPropagation();
+			const friendId = parseInt(btn.getAttribute('data-friend-id') || '0');
+			if (friendId && confirm('Are you sure you want to remove this friend?')) {
+				const success = await deleteFriendAPI(friendId);
+				if (success) {
+					showMessage('Friend removed successfully', 'success');
+					await loadFriends(); // Recharger la liste
+					refreshHomeDashboard();
+				} else {
+					showMessage('Failed to remove friend', 'error');
+				}
+			}
+		});
+	});
+
 	const friendElements = document.querySelectorAll('.friend-item');
 	friendElements.forEach(element => {
 		element.addEventListener('click', () => {
@@ -499,19 +576,11 @@ function addEventListeners() {
 				currentHistoryView = 'friend';
 
 				refreshHomeDashboard();
-
-				// setTimeout(() => {
-				// 	const historySection = document.querySelector('.bg-gray-800:last-child');
-				// 	if (historySection) {
-				// 		historySection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-				// 	}
-				// }, 100);
-
 				setTimeout(() => {
 					const historySection = document.querySelector('.bg-gray-800:last-child');
 					if (historySection) {
-						historySection.scrollIntoView({ 
-							behavior: 'smooth', 
+						historySection.scrollIntoView({
+							behavior: 'smooth',
 							block: 'center' // This centers the element in the viewport
 						});
 					}
@@ -523,7 +592,7 @@ function addEventListeners() {
 
 export function addFriends() {
 	renderNavbar();
-	
+
 	document.getElementById('app')!.innerHTML = `
 		<div class="flex flex-col justify-center items-center -mt-20 h-screen">
 			<div class="bg-gray-800 rounded-lg p-8 w-full max-w-md">
@@ -588,7 +657,7 @@ export function addFriends() {
 			e.preventDefault();
 			const friendName = friendNameInput.value.trim();
 			if (friendName) {
-				handleAddFriend(friendName);
+				addFriendAPI(friendName);
 			}
 		});
 	}
@@ -615,36 +684,10 @@ export function addFriends() {
 }
 
 function getAvailableUsers(): User[] {
-	const friendIds = friends.map(friend => friend.user.id);
+	// Fonction temporaire utilisant les mock users
+	// À remplacer par un appel API pour récupérer tous les utilisateurs
+	const friendIds = friends.map(friend => friend.id);
 	return users.filter(user => !friendIds.includes(user.id));
-}
-
-function handleAddFriend(friendName: string) {
-	const userToAdd = users.find(user => user.name.toLowerCase() === friendName.toLowerCase());
-	
-	if (!userToAdd) {
-		showMessage('User not found. Please check the name and try again.', 'error');
-		return;
-	}
-
-	const isAlreadyFriend = friends.some(friend => friend.user.id === userToAdd.id);
-	if (isAlreadyFriend) {
-		showMessage(`${userToAdd.name} is already your friend!`, 'warning');
-		return;
-	}
-
-	const newFriend: Friend = {
-		user: userToAdd,
-		status: userToAdd.isOnline ? 'online' : 'offline',
-		addedDate: new Date().toISOString().split('T')[0]
-	};
-
-	friends.push(newFriend);
-	showMessage(`${userToAdd.name} has been added to your friends list!`, 'success');
-	
-	setTimeout(() => {
-		renderHome();
-	}, 1500);
 }
 
 function showMessage(message: string, type: 'success' | 'error' | 'warning') {
@@ -656,11 +699,10 @@ function showMessage(message: string, type: 'success' | 'error' | 'warning') {
 
 	const messageDiv = document.createElement('div');
 	messageDiv.id = 'status-message';
-	messageDiv.className = `fixed top-4 right-4 p-4 rounded-lg text-white z-1002 transition-all duration-300 ${
-		type === 'success' ? 'bg-green-600' :
-		type === 'error' ? 'bg-red-600' :
-		'bg-yellow-600'
-	}`;
+	messageDiv.className = `fixed top-4 right-4 p-4 rounded-lg text-white z-1002 transition-all duration-300 ${type === 'success' ? 'bg-green-600' :
+			type === 'error' ? 'bg-red-600' :
+				'bg-yellow-600'
+		}`;
 	messageDiv.textContent = message;
 
 	document.body.appendChild(messageDiv);

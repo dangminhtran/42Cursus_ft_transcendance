@@ -32,7 +32,6 @@ export default async function userManagmentRoutes(fastify: FastifyInstance) {
 			username,
 			id: userid,
 			profilepicture,
-			// profilepicture: profilepicture || "https://res.cloudinary.com/demo/image/upload/default_avatar.png",  // Jack added this => set a defaulut URL if profilepicture empty ??
 			email,
 			password,
 			is2FAEnabled: is2FAEnabled == 1 ? true : false,
