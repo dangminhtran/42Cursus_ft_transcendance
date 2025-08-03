@@ -21,7 +21,7 @@ fastify.register(cors, {
 });
 
 fastify.register(dbServiceClient, {
-	baseURL: process.env.DATABASE_URL as string,
+	baseURL: process.env.DATABASE_URL as string || "http://localhost:3001/",
 	tokenHeader: 'authorization'
 })
 
@@ -53,6 +53,7 @@ fastify.listen({ port: 3002 , host: '0.0.0.0'}, (err: any, address: any) => {
 	
 	POST /update : update user informations OK
 
-	POST /linkfriends : link friends with friends
-	POST /unlinkfriends : unlink friends
+	POST /add : link friends with friends
+	POST /delete : unlink friends
+	/POST /fetch : retrive all friends
 */

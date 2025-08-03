@@ -6,6 +6,10 @@ import { v4 as uuidv4 } from 'uuid';
 export async function tournamentRoutes(fastify: FastifyInstance) {
 	// -- GET User
 	fastify.post('/create_tournament', { preValidation: [fastify.authenticate] },  async (request: any, reply) => {
-		return uuidv4();
+		const uuid = uuidv4();
+		const result: boolean = await fastify.dbClient.post<boolean>('/tournament/add', {uuid: uuid })
+		if (!result)
+			return reply.code(500).send({ error: 'Cannot create tournament.' });
+		return reply.code(200).send({ message: 'Tournament created' });
 	});
 }
