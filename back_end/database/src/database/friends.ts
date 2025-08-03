@@ -18,3 +18,6 @@ export const FetchFriends = async (userid: number): Promise<Friend[]> => {
 	const rows : Friend[]= stmt.all(userid) as Friend[];
 	return rows;
 }
+
+
+// SELECT * FROM 'matchs' WHERE user_id IN (SELECT users.id FROM friends INNER JOIN users on friend_id = users.id  WHERE user_id = 1)

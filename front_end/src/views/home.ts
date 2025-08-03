@@ -28,10 +28,16 @@ type User = {
 	joinDate: string,
 };
 
+// type Friend = {
+// 	user: User,
+// 	status: 'online' | 'offline' | 'in-game',
+// 	addedDate: string,
+// };
+
 type Friend = {
-	user: User,
-	status: 'online' | 'offline' | 'in-game',
-	addedDate: string,
+	username: string;
+	profilepicture: string;
+	email:   string;
 };
 
 // Mock current user data - À remplacer par un appel API si nécessaire
@@ -261,9 +267,9 @@ function renderUserProfile(): string {
         <div class="bg-gray-800 rounded-lg p-6">
             <h2 class="text-xl font-bold text-white mb-4">👤 Your Profile</h2>
             <div class="flex items-center space-x-4 mb-4">
-                <div class="text-4xl">${currentUser.avatar}</div>
+                <img class="h-8 w-8" src="${currentUser.profilepicture ? currentUser.profilepicture : "https://www.gravatar.com/avatar/default?s=150&d=mp"}" alt="User profile picture">
                 <div>
-                    <h3 class="text-xl font-semibold text-white">${currentUser.name}</h3>
+                    <h3 class="text-xl font-semibold text-white">${currentUser.username}</h3>
                     <p class="text-gray-400 text-base">Member since ${new Date(currentUser.joinDate).toLocaleDateString()}</p>
                     <div class="flex items-center space-x-2 mt-1">
                         <span class="text-green-400 text-base">🟢 Online</span>
@@ -339,29 +345,13 @@ function renderFriendsList(): string {
     const friendsHtml = friends.map(friend => `
         <div class="flex items-center justify-between p-3 bg-gray-700 rounded-lg hover:bg-gray-600 transition-colors cursor-pointer friend-item">
             <div class="flex items-center space-x-3">
-                <div class="text-2xl">${friend.user.avatar}</div>
+                <img class="h-8 w-8" src=${friend.profilepicture ? friend.profilepicture : "https://www.gravatar.com/avatar/default?s=150&d=mp"}  />
                 <div>
                     <div class="flex items-center space-x-2">
-                        <span class="font-semibold text-white text-base">${friend.user.name}</span>
-                        <span class="text-sm">${getStatusIcon(friend.status)}</span>
-                    </div>
-                    <div class="text-sm text-gray-400 mt-1">
-                        ${friend.status === 'online' ? 'Online' :
-            friend.status === 'in-game' ? 'In Game' :
-                `Last seen ${formatLastSeen(friend.user.lastSeen)}`}
+                        <span class="font-semibold text-white text-base">${friend.username}</span>
+                        <span class="text-green-400 text-base">🟢 Online</span>
                     </div>
                 </div>
-            </div>
-            <div class="text-right">
-                <div class="text-sm text-gray-300">${friend.user.stats.wins}W-${friend.user.stats.losses}L</div>
-                <div class="text-sm text-gray-500">${friend.user.stats.winRate}% WR</div>
-                <button 
-                    class="delete-friend-btn text-red-400 hover:text-red-300 text-xs mt-1 transition-colors"
-                    data-friend-id="${friend.user.id}"
-                    onclick="event.stopPropagation()"
-                >
-                    Remove
-                </button>
             </div>
         </div>
     `).join('');
@@ -724,38 +714,38 @@ export function addFriends() {
 	}, 100);
 }
 
-function getAvailableUsers(): User[] {
-	const friendIds = friends.map(friend => friend.user.id);
-	return users.filter(user => !friendIds.includes(user.id));
-}
+// function getAvailableUsers(): User[] {
+// 	const friendIds = friends.map(friend => friend.user.id);
+// 	return users.filter(user => !friendIds.includes(user.id));
+// }
 
-function handleAddFriend(friendName: string) {
-	const userToAdd = users.find(user => user.name.toLowerCase() === friendName.toLowerCase());
+// function handleAddFriend(friendName: string) {
+// 	const userToAdd = users.find(user => user.name.toLowerCase() === friendName.toLowerCase());
 	
-	if (!userToAdd) {
-		showMessage('User not found. Please check the name and try again.', 'error');
-		return;
-	}
+// 	if (!userToAdd) {
+// 		showMessage('User not found. Please check the name and try again.', 'error');
+// 		return;
+// 	}
 
-	const isAlreadyFriend = friends.some(friend => friend.user.id === userToAdd.id);
-	if (isAlreadyFriend) {
-		showMessage(`${userToAdd.name} is already your friend!`, 'warning');
-		return;
-	}
+// 	const isAlreadyFriend = friends.some(friend => friend.user.id === userToAdd.id);
+// 	if (isAlreadyFriend) {
+// 		showMessage(`${userToAdd.name} is already your friend!`, 'warning');
+// 		return;
+// 	}
 
-	const newFriend: Friend = {
-		user: userToAdd,
-		status: userToAdd.isOnline ? 'online' : 'offline',
-		addedDate: new Date().toISOString().split('T')[0]
-	};
+// 	const newFriend: Friend = {
+// 		user: userToAdd,
+// 		status: userToAdd.isOnline ? 'online' : 'offline',
+// 		addedDate: new Date().toISOString().split('T')[0]
+// 	};
 
-	friends.push(newFriend);
-	showMessage(`${userToAdd.name} has been added to your friends list!`, 'success');
+// 	friends.push(newFriend);
+// 	showMessage(`${userToAdd.name} has been added to your friends list!`, 'success');
 	
-	setTimeout(() => {
-		renderHome();
-	}, 1500);
-}
+// 	setTimeout(() => {
+// 		renderHome();
+// 	}, 1500);
+// }
 
 function showMessage(message: string, type: 'success' | 'error' | 'warning') {
 

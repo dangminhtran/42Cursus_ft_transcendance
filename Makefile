@@ -9,7 +9,7 @@ up:
 	@bash -c '\
 		spinner="/|\\-"; \
 		i=0; \
-		( docker compose -f docker-compose.yml up --build -d > /dev/null 2>&1 ) & \
+		( docker compose -f docker-compose.yml up --build -d ) & \
 		pid=$$!; \
 		while kill -0 $$pid 2>/dev/null; do \
 			i=$$(( (i + 1) % 4 )); \

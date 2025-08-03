@@ -30,8 +30,17 @@ export type Match = {
 	player1score: number;
 	player2score: number;
 	user_id: number;
-	tournament_id: number;
+	tournament_uuid?: string;
 	created_at: string;
+};
+
+export type MatchToAdd = {
+	player1: string;
+	player2: string;
+	player1score: number;
+	player2score: number;
+	user_id: number;
+	tournament_uuid?: string;
 };
 
 export type Tournament = {
