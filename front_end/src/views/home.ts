@@ -4,6 +4,7 @@ import { TEST_ADDRESS, TOURNAMENT_ADDRESS } from '../config';
 import type { User } from '../../../back_end/database/src/structs';
 import { navigateTo } from '../router';
 import type { Match } from '../../../back_end/database/src/structs'
+import { i18n, t } from '../i18n';
 
 
 let currentUser: any = {}
@@ -213,36 +214,38 @@ function renderUserProfile(): string {
 
 	return `
         <div class="bg-gray-800 rounded-lg p-6">
-            <h2 class="text-xl font-bold text-white mb-4">👤 Your Profile</h2>
+            <h2 class="text-xl font-bold text-white mb-4">👤 ${t('home.yourProfile')}</h2>
             <div class="flex items-center space-x-4 mb-4">
                 <img class="h-12 w-12 rounded-full" src="${currentUser.profilepicture ? currentUser.profilepicture : "https://www.gravatar.com/avatar/default?s=150&d=mp"}" alt="User profile picture">
                 <div>
                     <h3 class="text-xl font-semibold text-white">${currentUser.username}</h3>
+                    <p class="text-gray-400 text-base">${t('home.memberSince')} ${new Date(currentUser.joinDate).toLocaleDateString()}</p>
                     <div class="flex items-center space-x-2 mt-1">
-                        <span class="text-green-400 text-base">🟢 Online</span>
+                        <span class="text-green-400 text-base">🟢 ${t('home.online')}</span>
                     </div>
                 </div>
             </div>
             <div class="grid grid-cols-2 md:grid-cols-5 gap-3 text-center">
                 <div class="bg-gray-700 rounded p-3">
-                    <div class="text-xl font-bold text-green-400">${currentUser.stats?.wins || 0}</div>
-                    <div class="text-gray-300 text-sm">Wins</div>
+
+                    <div class="text-xl font-bold text-green-400">${currentUser.stats.wins}</div>
+                    <div class="text-gray-300 text-sm">${t('home.wins')}</div>
                 </div>
                 <div class="bg-gray-700 rounded p-3">
-                    <div class="text-xl font-bold text-red-400">${currentUser.stats?.losses || 0}</div>
-                    <div class="text-gray-300 text-sm">Losses</div>
+                    <div class="text-xl font-bold text-red-400">${currentUser.stats.losses}</div>
+                    <div class="text-gray-300 text-sm">${t('home.losses')}</div>
                 </div>
                 <div class="bg-gray-700 rounded p-3">
-                    <div class="text-xl font-bold text-yellow-400">${currentUser.stats?.draws || 0}</div>
-                    <div class="text-gray-300 text-sm">Draws</div>
+                    <div class="text-xl font-bold text-yellow-400">${currentUser.stats.draws}</div>
+                    <div class="text-gray-300 text-sm">${t('home.draws')}</div>
                 </div>
                 <div class="bg-gray-700 rounded p-3">
-                    <div class="text-xl font-bold text-blue-400">${currentUser.stats?.totalGames || 0}</div>
-                    <div class="text-gray-300 text-sm">Total Games</div>
+                    <div class="text-xl font-bold text-blue-400">${currentUser.stats.totalGames}</div>
+                    <div class="text-gray-300 text-sm">${t('home.totalGames')}</div>
                 </div>
                 <div class="bg-gray-700 rounded p-3">
-                    <div class="text-xl font-bold text-purple-400">${currentUser.stats?.winRate || 0}%</div>
-                    <div class="text-gray-300 text-sm">Win Rate</div>
+                    <div class="text-xl font-bold text-purple-400">${currentUser.stats.winRate}%</div>
+                    <div class="text-gray-300 text-sm">${t('home.winRate')}</div>
                 </div>
             </div>
         </div>
@@ -283,6 +286,10 @@ function renderFriendsList(): string {
                         <div class="text-4xl mb-2">👥</div>
                         <p>No friends yet</p>
                         <p class="text-sm">Add some friends to get started!</p>
+                    <div class="text-sm text-gray-400 mt-1">
+                        ${friend.status === 'online' ? t('home.online') :
+            friend.status === 'in-game' ? t('home.inGame') :
+                `Last seen ${formatLastSeen(friend.user.lastSeen)}`}
                     </div>
                 </div>
             </div>
@@ -307,9 +314,9 @@ function renderFriendsList(): string {
 	return `
         <div class="bg-gray-800 rounded-lg p-6 h-full flex flex-col">
             <div class="flex items-center justify-between mb-4">
-                <h2 class="text-xl font-bold text-white">👥 Friends (${friends.length})</h2>
+                <h2 class="text-xl font-bold text-white">👥 ${t('home.friends')} (${friends.length})</h2>
                 <button id="add-friend-btn" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm transition-colors">
-                    + Add Friend
+                    + ${t('home.addFriend')}
                 </button>
             </div>
             <div class="space-y-3 flex-1 overflow-y-auto">
@@ -463,7 +470,7 @@ export async function renderHome() {
         <div class="flex flex-col justify-center items-center -mt-20 h-screen overflow-hidden pt-15">
             <div class="w-full max-w-7xl mx-auto p-6 h-full flex flex-col">				
                 <h1 class="text-4xl font-bold text-center mb-6 bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
-                    🎮 Game Dashboard
+                    🎮 ${t('home.gameDashboard')}
                 </h1>
                 
                 <div class="flex-1 grid grid-cols-1 lg:grid-cols-3 gap-6 overflow-hidden">
@@ -481,7 +488,14 @@ export async function renderHome() {
         </div>
     `;
 
-	addEventListeners();
+    addEventListeners();
+    
+    // Listen for language changes and re-render
+    i18n.addLanguageChangeListener(() => {
+        if (location.pathname === '/') {
+            renderHome();
+        }
+    });
 }
 
 async function refreshHomeDashboard() {
@@ -585,7 +599,7 @@ export function addFriends() {
 				<h2 class="text-2xl font-bold text-white mb-6 text-center">👥 Add New Friend</h2>
 				<form id="add-friend-form">
 					<div class="mb-4">
-						<label class="block text-sm font-medium text-gray-300 mb-2">Friend's Name</label>
+						<label class="block text-sm font-medium text-gray-300 mb-2">${t('home.friendsName')}</label>
 						<input 
 							id="friend-name-input"
 							type="text" 
@@ -599,21 +613,21 @@ export function addFriends() {
 							type="submit"
 							class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-md transition-colors"
 						>
-							Add Friend
+							${t('home.addFriend')}
 						</button>
 						<button 
 							type="button"
 							id="cancel-add-friend"
 							class="flex-1 bg-gray-600 hover:bg-gray-700 text-white py-2 px-4 rounded-md transition-colors"
 						>
-							Cancel
+							${t('common.cancel')}
 						</button>
 					</div>
 				</form>
 				
 				<!-- Available users to add -->
 				<div class="mt-6">
-					<h3 class="text-lg font-semibold text-white mb-3">Available Users</h3>
+					<h3 class="text-lg font-semibold text-white mb-3">${t('home.availableUsers')}</h3>
 					<div class="space-y-2 max-h-48 overflow-y-auto">
 						${getAvailableUsers().map(user => `
 							<div class="flex items-center justify-between p-2 bg-gray-700 rounded cursor-pointer hover:bg-gray-600 transition-colors available-user" data-user-name="${user.name}">
@@ -624,7 +638,7 @@ export function addFriends() {
 										<div class="text-xs text-gray-400">${user.stats.wins}W-${user.stats.losses}L (${user.stats.winRate}% WR)</div>
 									</div>
 								</div>
-								<button class="text-blue-400 hover:text-blue-300 text-sm">Add</button>
+								<button class="text-blue-400 hover:text-blue-300 text-sm">${t('home.add')}</button>
 							</div>
 						`).join('')}
 					</div>

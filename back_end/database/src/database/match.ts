@@ -7,22 +7,6 @@ export const addMatch = async (match: MatchToAdd, userid: number): Promise<boole
 	let stmt;
 	let result;
 
-	const user: User | null = await getUserByID(userid);
-	if (!user)
-		return false;
-
-	const stmt_fetch_user = db.prepare(`SELECT * from users where username = ?`);
-	const user1: User = stmt_fetch_user.get(match.player1) as User;
-	const user2: User = stmt_fetch_user.get(match.player2) as User;
-
-	if (user1.id != userid && user2.id != userid)
-	{
-		return false;
-	}
-
-	
-	console.log(match.player1score)
-
 	if (!match.tournament_uuid)
 	{
 		stmt = db.prepare(`INSERT INTO matchs (player1, player2, player1_score, player2_score, user_id) VALUES (?, ?, ?, ?, ?)`);
@@ -37,7 +21,24 @@ export const addMatch = async (match: MatchToAdd, userid: number): Promise<boole
 }
 
 export const getAllMatches = async (userid: number): Promise<Match[]> => {
-	const stmt = db.prepare(`SELECT * FROM 'matchs' WHERE user_id IN (SELECT users.id FROM friends INNER JOIN users on friend_id = users.id  WHERE user_id = ?) OR user_id = ?`)
-	const rows: Match[] = stmt.all(userid, userid) as Match[];
+
+	const user: User | null = await getUserByID(userid);
+	if (!user || !user.username)
+		return [];
+	const stmt = db.prepare(`SELECT * FROM 'matchs' 
+		WHERE player1 IN (SELECT users.username FROM friends INNER JOIN users on friend_id = users.id WHERE username = ?) 
+		OR player2 IN (SELECT users.username FROM friends INNER JOIN users on friend_id = users.id WHERE username = ?)`)
+	const rows: Match[] = stmt.all(user.username, user.username) as Match[];
 	return rows;
+}
+
+export const getWinCount = async (username: string): Promise<number> => {
+	const stmt = db.prepare(`
+		SELECT 
+		(SELECT COUNT(matchs.player1_score) FROM matchs WHERE player1_score > player2_score AND matchs.player1 = ?)
+		+
+		(SELECT COUNT(matchs.player2_score) FROM matchs WHERE player1_score < player2_score AND matchs.player2 = ?) AS wins`);
+	const row = stmt.get(username, username) as { wins: number };
+	const winCount = row.wins ?? 0;
+	return winCount;
 }

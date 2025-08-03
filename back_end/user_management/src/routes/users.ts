@@ -35,7 +35,6 @@ export async function userRoutes(fastify: FastifyInstance) {
 		console.log('request.body', request.body)
 		console.log("profile picture en back end", profilepicture)
 		const emailidentifier = request.user.email;
-		console.log(email);
 		const user: User | null = await fastify.dbClient.post<User>('/user/getUserByEmail', { email: emailidentifier });
 
 		if (!user)
