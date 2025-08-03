@@ -3,6 +3,7 @@ import "@babylonjs/loaders/glTF"
 import { ArcRotateCamera, Color3, Engine, HemisphericLight, MeshBuilder, Scene, StandardMaterial, Vector3 } from "@babylonjs/core"
 import { renderNavbar } from '../componentes/navbar';
 import { setTronGame } from '../state';
+import { t, i18n } from '../i18n';
 
 export class TronGame {
 	canvas: HTMLCanvasElement | any;
@@ -380,10 +381,10 @@ export function renderTron() {
 	document.getElementById('app')!.innerHTML = `
 		<div class="flex flex-col justify-center items-center min-h-screen -mt-20">
 			<div class="card p-7">
-				<div class="text-purple-950 font-bold text-4xl mb-10">Ready to play Tron?</div>
-				<div class="text-purple-950 font-bold text-4xl mb-10">1 v 1 gare du nord</div>
+				<div class="text-purple-950 font-bold text-4xl mb-10">${t('tron.readyToPlay')}</div>
+				<div class="text-purple-950 font-bold text-4xl mb-10">${t('tron.oneVsOne')}</div>
 				<button id="startTronBtn">
-					Start Game
+					${t('tron.startGame')}
 				</button>
 			</div>
 		</div>
@@ -396,7 +397,7 @@ export function renderTron() {
 			<div id="gameContainer">
 				<canvas id="renderCanvas"></canvas>
 				<div id="gameUI">
-					<div>Player1(blue): <span id="playerOneScore">0</span> | Player2(orange): <span id="playerTwoScore">0</span></div>
+					<div>${t('pong.player')}1(blue): <span id="playerOneScore">0</span> | ${t('pong.player')}2(orange): <span id="playerTwoScore">0</span></div>
 				</div>
 				<div id="instructions">
 					Use W/S/A/D or Arrow Keys to move
@@ -404,5 +405,10 @@ export function renderTron() {
 			</div>
 		`;
 		startTronGame();
+	});
+	
+	// Listen for language changes and re-render
+	i18n.addLanguageChangeListener(() => {
+		renderTron();
 	});
 }

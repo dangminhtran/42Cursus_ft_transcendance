@@ -1,6 +1,7 @@
 import axios from "axios";
 import { navigateTo } from "../router";
 import { BASE_ADDRESS } from "../config";
+import { t, i18n } from "../i18n";
 
 let isLoginMode = true;
 
@@ -12,18 +13,18 @@ export function renderLogin() {
 
     document.getElementById('app')!.innerHTML = `
     	<div class="flex flex-col -mt-60 justify-center" id="authContainer">
-		<div class="flex justify-center text-white text-8xl mb-20 font-bold" id="authTitle">LOG IN</div>
+		<div class="flex justify-center text-white text-8xl mb-20 font-bold" id="authTitle">${t('login.title')}</div>
 		<div class="card">
 			<div class="flex rounded-sm p-4 mb-4 w-full m-w-300" id="auth-toggle">
-				<button class=" toggle-btn active" id="loginToggle">Log In</button>
-				<button class="toggle-btn" id="signupToggle">Sign Up</button>
+				<button class=" toggle-btn active" id="loginToggle">${t('login.loginButton')}</button>
+				<button class="toggle-btn" id="signupToggle">${t('login.signupButton')}</button>
 			</div>
 
 			<div class="w-full flex flex-col items-center" id="authForm">
-				<p class="font-bold text-lg mb-5" id="authDescription">Sign in with email address</p>
-				<input class="w-80 p-3 m-4 bg-indigo-950 text-md font-normal rounded-md border border-slate-700" type="email" id="email" placeholder="Yourname@gmail.com" />
-				<input class="w-80 p-3 m-4 bg-indigo-950 text-md font-normal rounded-md border border-slate-700" type="password" id="password" placeholder="YourPassword" />
-				<button id="authBtn">Log In</button>
+				<p class="font-bold text-lg mb-5" id="authDescription">${t('login.signInDescription')}</p>
+				<input class="w-80 p-3 m-4 bg-indigo-950 text-md font-normal rounded-md border border-slate-700" type="email" id="email" placeholder="${t('login.emailPlaceholder')}" />
+				<input class="w-80 p-3 m-4 bg-indigo-950 text-md font-normal rounded-md border border-slate-700" type="password" id="password" placeholder="${t('login.passwordPlaceholder')}" />
+				<button id="authBtn">${t('login.loginButton')}</button>
 				</div>
 			</div>
 		</div>
@@ -31,6 +32,11 @@ export function renderLogin() {
     `
 	initializeAuthToggle();
 	initializeAuthHandlers();
+	
+	// Listen for language changes and re-render
+	i18n.addLanguageChangeListener(() => {
+		renderLogin();
+	});
 }
 
 function initializeAuthToggle() {
@@ -47,9 +53,9 @@ function initializeAuthToggle() {
 		loginToggle?.classList.add('active');
 		signupToggle?.classList.remove('active');
 		
-		if (authTitle) authTitle.textContent = 'LOG IN';
-		if (authDescription) authDescription.textContent = 'Log in with email address';
-		if (authBtn) authBtn.textContent = 'Log In';
+		if (authTitle) authTitle.textContent = t('login.title');
+		if (authDescription) authDescription.textContent = t('login.signInDescription');
+		if (authBtn) authBtn.textContent = t('login.loginButton');
 		
 		signupFields.forEach((field: Element) => {
 			const htmlField = field as HTMLElement;
@@ -66,9 +72,9 @@ function initializeAuthToggle() {
 		loginToggle?.classList.remove('active');
 		signupToggle?.classList.add('active');
 		
-		if (authTitle) authTitle.textContent = 'SIGN UP';
-		if (authDescription) authDescription.textContent = 'Create your account';
-		if (authBtn) authBtn.textContent = 'Sign Up';
+		if (authTitle) authTitle.textContent = t('login.signUpTitle');
+		if (authDescription) authDescription.textContent = t('login.signUpDescription');
+		if (authBtn) authBtn.textContent = t('login.signupButton');
 		
 		signupFields.forEach((field: Element) => {
 			const htmlField = field as HTMLElement;
