@@ -1491,7 +1491,8 @@ function showNextMatch() {
     console.error('Modal element not found! Recreating tournament UI...');
     // If modal doesn't exist, recreate the tournament UI
     launchPongForMultiple();
-    setTimeout(() => showNextMatch(), 100);
+    // setTimeout(() => showNextMatch(), 1000); // "glitch" blinking here
+	showNextMatch();
   }
 }
 
