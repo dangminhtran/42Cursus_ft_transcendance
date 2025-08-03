@@ -13,6 +13,18 @@ export async function friendRoutes(fastify: FastifyInstance) {
         if (!user)
             return reply.code(404).send({ error: 'Utilisateur introuvable' });
 
+		let alreadyfriend: boolean = false;
+		const friends: Friend[] = await fastify.dbClient.post<Friend[]>('/friends/fetch', { user_id: userid });
+		friends.forEach((friend) => {
+			if (friend.email == user.email)
+			{
+				alreadyfriend = true;
+			}
+		});
+
+		if (alreadyfriend)
+			return reply.code(500).send({ error: "Can't add friend." });
+
         const result: boolean = await fastify.dbClient.post<boolean>('/friends/add', { user_id: userid, friend_id: friend_id });
         if (!result)
             return reply.code(500).send({ error: "Can't add friend." });
@@ -42,6 +54,7 @@ export async function friendRoutes(fastify: FastifyInstance) {
             return reply.code(404).send({ error: 'Utilisateur introuvable' });
 
         const result: Friend[] = await fastify.dbClient.post<Friend[]>('/friends/fetch', { user_id: userid });
+
         return reply.code(200).send(result);
     });
 
