@@ -101,11 +101,6 @@ export async function renderProfile() {
 				id="enable2FABtn">
 				Enable 2FA
 			</button>
-			
-			<button 
-				id="saveChangesBtn">
-				Save Changes
-			</button>
 		</div>
 	`;
 
@@ -268,7 +263,7 @@ export function loadUserProfile(userData: any) {
 
 async function get2Fa(jwt: string) {
 	try {
-		const response = await axios.post(`${TEST_ADDRESS}/2fa/setup`, {}, {
+		const response = await axios.post(`${BASE_ADDRESS}/2fa/setup`, {}, {
 			headers: { Authorization: `Bearer ${jwt}` }
 		});
 		console.log('2FA setup response:', response.data);

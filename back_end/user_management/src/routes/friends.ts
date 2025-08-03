@@ -9,7 +9,6 @@ export async function friendRoutes(fastify: FastifyInstance) {
         const userid = request.user.id;
         const user: User | null = await fastify.dbClient.post<User>('/user/getUserByEmail', { email });
 
-        console.log("ho ca chie ? ", user, email);
         if (!user)
             return reply.code(404).send({ error: 'Utilisateur introuvable' });
 
@@ -26,7 +25,7 @@ export async function friendRoutes(fastify: FastifyInstance) {
 		if (alreadyfriend)
 			return reply.code(500).send({ error: "Can't add friend." });
 
-        const result: boolean = await fastify.dbClient.post<boolean>('/friends/add', { user_id: userid, friend_id: friend_id });
+        const result: boolean = await fastify.dbClient.post<boolean>('/friends/add', { user_id: userid, friend_id: user.id });
 
         if (!result)
             return reply.code(500).send({ error: "Can't add friend." });
@@ -34,15 +33,15 @@ export async function friendRoutes(fastify: FastifyInstance) {
     });
 
     fastify.post('/delete', { preValidation: [fastify.authenticate] }, async (request: any, reply) => {
-        const { friend_id } = request.body as { friend_id: number };
+        const { email } = request.body as { email: string };
 
         const userid = request.user.id;
-        const user: User | null = await fastify.dbClient.post<User>('/user/getUserByID', { userid });
+        const user: User | null = await fastify.dbClient.post<User>('/user/getUserByEmail', { email });
 
         if (!user)
             return reply.code(404).send({ error: 'Utilisateur introuvable' });
 
-        const result: boolean = await fastify.dbClient.post<boolean>('/friends/delete', { user_id: userid, friend_id: friend_id });
+        const result: boolean = await fastify.dbClient.post<boolean>('/friends/delete', { user_id: userid, friend_id: user.id });
         if (!result)
             return reply.code(500).send({ error: "Can't delete friend." });
         return reply.code(200).send({ message: "Friend deleted." });
@@ -55,7 +54,7 @@ export async function friendRoutes(fastify: FastifyInstance) {
         if (!user)
             return reply.code(404).send({ error: 'Utilisateur introuvable' });
 
-        const result: Friend[] = await fastify.dbClient.post<Friend[]>('/friends/fetch', { user_id: userid });
+        const result: FriendWinRate[] = await fastify.dbClient.post<FriendWinRate[]>('/friends/fetch', { user_id: userid });
 
         return reply.code(200).send(result);
     });
