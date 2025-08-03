@@ -36,6 +36,15 @@ export interface Translations {
     online: string;
     offline: string;
     inGame: string;
+    myGames: string;
+    allGames: string;
+    back: string;
+    yourProfile: string;
+    memberSince: string;
+    gameDashboard: string;
+    friendsName: string;
+    availableUsers: string;
+    add: string;
   };
   
   // Login page
@@ -170,7 +179,16 @@ export const en: Translations = {
     winRate: "Win Rate",
     online: "Online",
     offline: "Offline",
-    inGame: "In Game"
+    inGame: "In Game",
+    myGames: "My Games",
+    allGames: "All Games",
+    back: "← Back",
+    yourProfile: "Your Profile",
+    memberSince: "Member since",
+    gameDashboard: "Game Dashboard",
+    friendsName: "Friend's Name",
+    availableUsers: "Available Users",
+    add: "Add"
   },
   login: {
     title: "LOG IN",
@@ -293,7 +311,16 @@ export const fr: Translations = {
     winRate: "Taux de Victoire",
     online: "En Ligne",
     offline: "Hors Ligne",
-    inGame: "En Jeu"
+    inGame: "En Jeu",
+    myGames: "Mes Jeux",
+    allGames: "Tous les Jeux",
+    back: "← Retour",
+    yourProfile: "Votre Profil",
+    memberSince: "Membre depuis",
+    gameDashboard: "Tableau de Bord de Jeu",
+    friendsName: "Nom de l'Ami",
+    availableUsers: "Utilisateurs Disponibles",
+    add: "Ajouter"
   },
   login: {
     title: "CONNEXION",
@@ -416,7 +443,16 @@ export const es: Translations = {
     winRate: "Tasa de Victoria",
     online: "En Línea",
     offline: "Desconectado",
-    inGame: "Jugando"
+    inGame: "Jugando",
+    myGames: "Mis Juegos",
+    allGames: "Todos los Juegos",
+    back: "← Atrás",
+    yourProfile: "Tu Perfil",
+    memberSince: "Miembro desde",
+    gameDashboard: "Panel de Juegos",
+    friendsName: "Nombre del Amigo",
+    availableUsers: "Usuarios Disponibles",
+    add: "Agregar"
   },
   login: {
     title: "INICIAR SESIÓN",

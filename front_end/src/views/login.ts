@@ -35,7 +35,10 @@ export function renderLogin() {
 	
 	// Listen for language changes and re-render
 	i18n.addLanguageChangeListener(() => {
-		renderLogin();
+		// Only re-render if we're currently on the login page
+		if (location.pathname === '/login') {
+			renderLogin();
+		}
 	});
 }
 

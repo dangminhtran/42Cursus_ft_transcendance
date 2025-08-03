@@ -1,4 +1,5 @@
 import { renderNavbar } from '../componentes/navbar';
+import { i18n, t } from '../i18n';
 
 type GameScore = {
 	player1name: string,
@@ -199,37 +200,37 @@ function formatLastSeen(lastSeen: string): string {
 function renderUserProfile(): string {
     return `
         <div class="bg-gray-800 rounded-lg p-6">
-            <h2 class="text-xl font-bold text-white mb-4">👤 Your Profile</h2>
+            <h2 class="text-xl font-bold text-white mb-4">👤 ${t('home.yourProfile')}</h2>
             <div class="flex items-center space-x-4 mb-4">
                 <div class="text-4xl">${currentUser.avatar}</div>
                 <div>
                     <h3 class="text-xl font-semibold text-white">${currentUser.name}</h3>
-                    <p class="text-gray-400 text-base">Member since ${new Date(currentUser.joinDate).toLocaleDateString()}</p>
+                    <p class="text-gray-400 text-base">${t('home.memberSince')} ${new Date(currentUser.joinDate).toLocaleDateString()}</p>
                     <div class="flex items-center space-x-2 mt-1">
-                        <span class="text-green-400 text-base">🟢 Online</span>
+                        <span class="text-green-400 text-base">🟢 ${t('home.online')}</span>
                     </div>
                 </div>
             </div>
             <div class="grid grid-cols-2 md:grid-cols-5 gap-3 text-center">
                 <div class="bg-gray-700 rounded p-3">
                     <div class="text-xl font-bold text-green-400">${currentUser.stats.wins}</div>
-                    <div class="text-gray-300 text-sm">Wins</div>
+                    <div class="text-gray-300 text-sm">${t('home.wins')}</div>
                 </div>
                 <div class="bg-gray-700 rounded p-3">
                     <div class="text-xl font-bold text-red-400">${currentUser.stats.losses}</div>
-                    <div class="text-gray-300 text-sm">Losses</div>
+                    <div class="text-gray-300 text-sm">${t('home.losses')}</div>
                 </div>
                 <div class="bg-gray-700 rounded p-3">
                     <div class="text-xl font-bold text-yellow-400">${currentUser.stats.draws}</div>
-                    <div class="text-gray-300 text-sm">Draws</div>
+                    <div class="text-gray-300 text-sm">${t('home.draws')}</div>
                 </div>
                 <div class="bg-gray-700 rounded p-3">
                     <div class="text-xl font-bold text-blue-400">${currentUser.stats.totalGames}</div>
-                    <div class="text-gray-300 text-sm">Total Games</div>
+                    <div class="text-gray-300 text-sm">${t('home.totalGames')}</div>
                 </div>
                 <div class="bg-gray-700 rounded p-3">
                     <div class="text-xl font-bold text-purple-400">${currentUser.stats.winRate}%</div>
-                    <div class="text-gray-300 text-sm">Win Rate</div>
+                    <div class="text-gray-300 text-sm">${t('home.winRate')}</div>
                 </div>
             </div>
         </div>
@@ -358,17 +359,17 @@ function renderMatchHistory(): string {
                     <button onclick="switchHistoryView('my-games')" 
                             class="px-3 py-2 rounded text-sm transition-colors ${currentHistoryView === 'my-games' ? 'bg-blue-600 text-white' : 'bg-gray-600 text-gray-300 hover:bg-gray-500'
         }">
-                        My Games
+                        ${t('home.myGames')}
                     </button>
                     <button onclick="switchHistoryView('all')" 
                             class="px-3 py-2 rounded text-sm transition-colors ${currentHistoryView === 'all' ? 'bg-blue-600 text-white' : 'bg-gray-600 text-gray-300 hover:bg-gray-500'
         }">
-                        All Games
+                        ${t('home.allGames')}
                     </button>
                     ${currentHistoryView !== 'my-games' && currentHistoryView !== 'all' ? `
                         <button onclick="switchHistoryView('my-games')" 
                                 class="px-3 py-2 rounded text-sm bg-gray-600 text-gray-300 hover:bg-gray-500 transition-colors">
-                            ← Back
+                            ${t('home.back')}
                         </button>
                     ` : ''}
                 </div>
@@ -377,15 +378,15 @@ function renderMatchHistory(): string {
                 <table class="w-full border-collapse text-base">
                     <thead class="sticky top-0 bg-gray-700">
                         <tr>
-                            <th class="p-3 text-left text-white font-semibold border-b border-gray-600">Date</th>
-                            <th class="p-3 text-left text-white font-semibold border-b border-gray-600">Player 1</th>
-                            <th class="p-3 text-center text-white font-semibold border-b border-gray-600">Score</th>
+                            <th class="p-3 text-left text-white font-semibold border-b border-gray-600">${t('home.date')}</th>
+                            <th class="p-3 text-left text-white font-semibold border-b border-gray-600">${t('home.player')} 1</th>
+                            <th class="p-3 text-center text-white font-semibold border-b border-gray-600">${t('home.score')}</th>
                             <th class="p-3 text-center text-white font-semibold border-b border-gray-600"></th>
-                            <th class="p-3 text-center text-white font-semibold border-b border-gray-600">Score</th>
-                            <th class="p-3 text-left text-white font-semibold border-b border-gray-600">Player 2</th>
-                            <th class="p-3 text-center text-white font-semibold border-b border-gray-600">Type</th>
-                            <th class="p-3 text-center text-white font-semibold border-b border-gray-600">Duration</th>
-                            <th class="p-3 text-center text-white font-semibold border-b border-gray-600">Winner</th>
+                            <th class="p-3 text-center text-white font-semibold border-b border-gray-600">${t('home.score')}</th>
+                            <th class="p-3 text-left text-white font-semibold border-b border-gray-600">${t('home.player')} 2</th>
+                            <th class="p-3 text-center text-white font-semibold border-b border-gray-600">${t('home.gameType')}</th>
+                            <th class="p-3 text-center text-white font-semibold border-b border-gray-600">${t('home.duration')}</th>
+                            <th class="p-3 text-center text-white font-semibold border-b border-gray-600">${t('home.winner')}</th>
                         </tr>
                     </thead>
                     <tbody class="text-gray-300">
@@ -414,7 +415,7 @@ export function renderHome() {
         <div class="flex flex-col justify-center items-center -mt-20 h-screen overflow-hidden pt-15">
             <div class="w-full max-w-7xl mx-auto p-6 h-full flex flex-col">				
                 <h1 class="text-4xl font-bold text-center mb-6 bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
-                    🎮 Game Dashboard
+                    🎮 ${t('home.gameDashboard')}
                 </h1>
                 
                 <div class="flex-1 grid grid-cols-1 lg:grid-cols-3 gap-6 overflow-hidden">
@@ -433,6 +434,13 @@ export function renderHome() {
     `;
 
     addEventListeners();
+    
+    // Listen for language changes and re-render
+    i18n.addLanguageChangeListener(() => {
+        if (location.pathname === '/') {
+            renderHome();
+        }
+    });
 }
 
 function refreshHomeDashboard() {
@@ -522,7 +530,7 @@ export function addFriends() {
 				<h2 class="text-2xl font-bold text-white mb-6 text-center">👥 Add New Friend</h2>
 				<form id="add-friend-form">
 					<div class="mb-4">
-						<label class="block text-sm font-medium text-gray-300 mb-2">Friend's Name</label>
+						<label class="block text-sm font-medium text-gray-300 mb-2">${t('home.friendsName')}</label>
 						<input 
 							id="friend-name-input"
 							type="text" 
@@ -550,7 +558,7 @@ export function addFriends() {
 				
 				<!-- Available users to add -->
 				<div class="mt-6">
-					<h3 class="text-lg font-semibold text-white mb-3">Available Users</h3>
+					<h3 class="text-lg font-semibold text-white mb-3">${t('home.availableUsers')}</h3>
 					<div class="space-y-2 max-h-48 overflow-y-auto">
 						${getAvailableUsers().map(user => `
 							<div class="flex items-center justify-between p-2 bg-gray-700 rounded cursor-pointer hover:bg-gray-600 transition-colors available-user" data-user-name="${user.name}">
@@ -561,7 +569,7 @@ export function addFriends() {
 										<div class="text-xs text-gray-400">${user.stats.wins}W-${user.stats.losses}L (${user.stats.winRate}% WR)</div>
 									</div>
 								</div>
-								<button class="text-blue-400 hover:text-blue-300 text-sm">Add</button>
+								<button class="text-blue-400 hover:text-blue-300 text-sm">${t('home.add')}</button>
 							</div>
 						`).join('')}
 					</div>

@@ -687,6 +687,7 @@ import "@babylonjs/core/Debug/debugLayer"
 import "@babylonjs/loaders/glTF"
 import { ArcRotateCamera, Color3, Engine, HemisphericLight, MeshBuilder, Scene, StandardMaterial, Vector3 } from "@babylonjs/core"
 import { setPongGame } from '../state';
+import { i18n, t } from '../i18n';
 
 // Add type declarations
 declare global {
@@ -1193,20 +1194,20 @@ export function renderPong() {
   renderNavbar();
   document.getElementById('app')!.innerHTML = `
     <div class="flex flex-col justify-content items-center">
-      <div class="text-white font-bold text-4xl mb-10">How do you want to play ?</div>
+      <div class="text-white font-bold text-4xl mb-10">${t('pong.readyToPlay')}</div>
       
 	<!-- Difficulty Selection -->
 	<div class="mb-8">
-		<div class="text-white text-xl mb-4 text-center">Choose Difficulty:</div>
+		<div class="text-white text-xl mb-4 text-center">${t('pong.selectDifficulty')}</div>
 		<div class="difficulty-container">
 			<button id="difficulty-easy" class="difficulty-btn bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg transition-colors font-semibold">
-				Easy
+				${t('pong.easy')}
 			</button>
 			<button id="difficulty-medium" class="difficulty-btn bg-yellow-600 hover:bg-yellow-700 text-white px-6 py-3 rounded-lg transition-colors font-semibold active">
-				Medium
+				${t('pong.medium')}
 			</button>
 			<button id="difficulty-hard" class="difficulty-btn bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg transition-colors font-semibold">
-				Hard
+				${t('pong.hard')}
 			</button>
 		</div>
 	</div>
@@ -1217,7 +1218,7 @@ export function renderPong() {
           <img src="paddle.gif"/>
         </div>
         <div class="bg-white text-green-900 p-5 text-xl text-center font-semibold h-100 w-100" id="multiple">
-          With your friends
+          ${t('pong.startTournament')}
           <img src="paddlesV2.gif"/>
         </div>
       </div>
@@ -1246,6 +1247,13 @@ export function renderPong() {
 
   const gameMultiple = document.getElementById("multiple");
   gameMultiple?.addEventListener('click', launchPongForMultiple);
+  
+  // Listen for language changes and re-render
+  i18n.addLanguageChangeListener(() => {
+    if (location.pathname === '/pong') {
+      renderPong();
+    }
+  });
 }
 
 export function launchPongGame(difficulty: 'easy' | 'medium' | 'hard' = 'medium') {
@@ -1254,11 +1262,11 @@ export function launchPongGame(difficulty: 'easy' | 'medium' | 'hard' = 'medium'
     <div id="gameContainer">
       <canvas id="renderCanvas"></canvas>
       <div id="gameUI">
-        <div><span id="player1Label">Player</span>: <span id="playerScore">0</span> | <span id="player2Label">AI</span>: <span id="aiScore">0</span></div>
+        <div><span id="player1Label">${t('pong.player')}</span>: <span id="playerScore">0</span> | <span id="player2Label">AI</span>: <span id="aiScore">0</span></div>
         <div style="font-size: 16px; margin-top: 10px;">Difficulty: ${difficulty.charAt(0).toUpperCase() + difficulty.slice(1)}</div>
       </div>
       <div id="instructions">
-        Use W/S or Arrow Keys to move
+        ${t('pong.player1Keys')} / ${t('pong.player2Keys')} - ${t('pong.firstTo5Wins')}
       </div>
     </div>
   `;
@@ -1276,33 +1284,33 @@ export function launchPongForMultiple() {
   renderNavbar();
   document.getElementById('app')!.innerHTML = `
   <div class="flex flex-col -mt-60 justify-center">
-    <div class="text-white font-bold text-4xl mb-10">How many players ?</div>
+    <div class="text-white font-bold text-4xl mb-10">${t('pong.selectPlayers')}</div>
       <div class="card p-7">
         <div class="w-full flex gap-10 justify-center align-items mb-10">
           <div class="bg-indigo-950 text-white p-5 text-xl text-center font-semibold w-100" id="2players">
-            2 players
+            ${t('pong.players2')}
           </div>
           <div class="bg-white text-green-900 p-5 text-xl text-center font-semibold w-100" id="4players">
-            4 players
+            ${t('pong.players4')}
           </div>
           <div class="bg-green-950 text-white p-5 text-xl text-center font-semibold w-100" id="8players">
-            8 players
+            ${t('pong.players8')}
           </div>
       </div>
     </div>
 
   <div id="playerModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
             <div class="bg-white rounded-lg p-8 max-w-md w-full mx-4">
-                <h2 class="text-2xl font-bold mb-6 text-center text-gray-800">Enter Player Names</h2>
+                <h2 class="text-2xl font-bold mb-6 text-center text-gray-800">${t('pong.enterPlayerName')}</h2>
                 <div id="playerInputs" class="space-y-4">
                     <!-- Les inputs seront générés dynamiquement -->
                 </div>
                 <div class="flex gap-4 mt-6">
                     <button id="cancelModal" class="flex-1 bg-gray-500 text-white py-2 px-4 rounded hover:bg-gray-600 transition-colors">
-                        Cancel
+                        ${t('common.cancel')}
                     </button>
                     <button id="startTournament" class="flex-1 bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700 transition-colors">
-                        Start Tournament
+                        ${t('pong.startTournament')}
                     </button>
                 </div>
             </div>
@@ -1311,13 +1319,13 @@ export function launchPongForMultiple() {
         <!-- Modal pour afficher le match actuel -->
         <div id="matchModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
             <div class="bg-white rounded-lg p-8 max-w-md w-full mx-4">
-                <h2 class="text-2xl font-bold mb-6 text-center text-gray-800">Tournament Match</h2>
+                <h2 class="text-2xl font-bold mb-6 text-center text-gray-800">${t('pong.tournamentMatch')}</h2>
                 <div id="matchInfo" class="text-center mb-6">
                     <!-- Info du match -->
                 </div>
                 <div class="flex gap-4">
                     <button id="startMatch" class="flex-1 bg-blue-600 text-white py-2 px-6 rounded hover:bg-blue-700 transition-colors">
-                        Start Match
+                        ${t('pong.startMatch')}
                     </button>
                 </div>
             </div>
@@ -1346,11 +1354,11 @@ function openPlayerModal(playerCount: number) {
     for (let i = 1; i <= playerCount; i++) {
       inputsContainer.innerHTML += `
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Player ${i}</label>
+                <label class="block text-sm font-medium text-gray-700 mb-2">${t('pong.player')} ${i}</label>
                 <input 
                     type="text" 
                     id="player${i}" 
-                    placeholder="Enter player ${i} name"
+                    placeholder="${t('pong.enterPlayerName')} ${i}"
                     class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     required
                 >
@@ -1463,12 +1471,12 @@ function showNextMatch() {
     
     matchInfo.innerHTML = `
         <div class="text-lg mb-4">
-            <strong>Round ${currentRound}</strong>
+            <strong>${t('pong.round')} ${currentRound}</strong>
         </div>
         <div class="text-xl font-semibold text-blue-600">
             ${currentMatch.player1}
         </div>
-        <div class="text-lg text-gray-600 my-2">VS</div>
+        <div class="text-lg text-gray-600 my-2">${t('pong.vs')}</div>
         <div class="text-xl font-semibold text-red-600">
             ${currentMatch.player2}
         </div>
@@ -1575,14 +1583,14 @@ function showTournamentWinner() {
   document.getElementById('app')!.innerHTML = `
         <div class="flex flex-col items-center justify-center h-screen overflow-hidden pt-20 text-center">
             <div class="card p-10">
-                <h1 class="text-4xl font-bold text-yellow-400 mb-6">🏆 TOURNAMENT WINNER! 🏆</h1>
+                <h1 class="text-4xl font-bold text-yellow-400 mb-6">🏆 ${t('pong.tournamentWinner')} 🏆</h1>
                 <div class="text-3xl font-bold text-purple-950 mb-8">${winner}</div>
                 <div class="flex gap-4">
                     <button id="newTournament" class="bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 transition-colors">
-                        New Tournament
+                        ${t('pong.newTournament')}
                     </button>
                     <button id="mainMenu" class="bg-gray-600 text-white py-3 px-6 rounded-lg hover:bg-gray-700 transition-colors">
-                        Main Menu
+                        ${t('pong.backToMenu')}
                     </button>
                 </div>
             </div>
@@ -1611,7 +1619,7 @@ function launchPongGameWithPlayers(player1Name: string, player2Name: string) {
         <div><span id="player1Label">${player1Name}</span>: <span id="playerScore">0</span> | <span id="player2Label">${player2Name}</span>: <span id="aiScore">0</span></div>
       </div>
       <div id="instructions">
-        ${player1Name}: W/S keys | ${player2Name}: Arrow keys | First to 5 wins!
+        ${player1Name}: ${t('pong.player1Keys')} | ${player2Name}: ${t('pong.player2Keys')} | ${t('pong.firstTo5Wins')}
       </div>
     </div>
   `;

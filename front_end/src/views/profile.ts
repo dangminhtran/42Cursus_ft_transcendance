@@ -1,10 +1,11 @@
 import { renderNavbar } from "../componentes/navbar";
+import { i18n, t } from "../i18n";
 
 export function renderProfile() {
 	renderNavbar();
 	document.getElementById('app')!.innerHTML = `
 		<div class="bg-emerald-900 border border-white flex flex-col justify-center items-center gap-5 -mt-20 text-md text-indigo-950 rounded-xl p-10">
-			<div class="text-lg text-white text-xl font-semibold">Change your information here</div>	
+			<div class="text-lg text-white text-xl font-semibold">${t('profile.personalInfo')}</div>	
 		
 			<!-- Avatar Preview Section -->
 			<div class="flex flex-col items-center gap-4 mb-6">
@@ -82,12 +83,19 @@ export function renderProfile() {
 				id="saveChangesBtn"
 				class="bg-green-600 text-white py-3 px-6 rounded-lg hover:bg-green-700 transition-colors font-semibold text-lg mt-4"
 			>
-				Save Changes
+				${t('profile.saveChanges')}
 			</button>
 		</div>
 	`;
 
 	setupEventListeners();
+	
+	// Listen for language changes and re-render
+	i18n.addLanguageChangeListener(() => {
+		if (location.pathname === '/profile') {
+			renderProfile();
+		}
+	});
 }
 
 function setupEventListeners() {

@@ -409,6 +409,8 @@ export function renderTron() {
 	
 	// Listen for language changes and re-render
 	i18n.addLanguageChangeListener(() => {
-		renderTron();
+		if (location.pathname === '/tron') {
+			renderTron();
+		}
 	});
 }
