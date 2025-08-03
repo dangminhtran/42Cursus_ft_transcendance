@@ -20,7 +20,7 @@ export interface UpdateUser {
 export interface Friend {
 	username: string;
 	profilepicture: string;
-	email:   string;
+	email: string;
 };
 
 export type Match = {
