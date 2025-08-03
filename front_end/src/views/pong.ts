@@ -687,13 +687,35 @@ import "@babylonjs/core/Debug/debugLayer"
 import "@babylonjs/loaders/glTF"
 import { ArcRotateCamera, Color3, Engine, HemisphericLight, MeshBuilder, Scene, StandardMaterial, Vector3 } from "@babylonjs/core"
 import { setPongGame } from '../state';
+import { i18n, t } from '../i18n';
+
+// Add type declarations
+declare global {
+  interface Window {
+    pongGameInstance: any;
+    onMatchFinished: (winner: string) => void;
+  }
+}
+
+interface TournamentMatch {
+  player1: string;
+  player2: string;
+  winner: string | null;
+}
+
+interface Tournament {
+  players: string[];
+  matches: TournamentMatch[];
+  currentMatchIndex: number;
+  winners: string[];
+}
 
 export class PongGame {
   canvas: HTMLCanvasElement | any;
   engine: any;
   playerScore: number;
   aiScore: number;
-  ballSpeed: { x: number; z: number; };
+  ballSpeed: { x: number; z: number; } = { x: 0.15, z: 0.1 };
   paddleSpeed: number;
   inputStates: { wPressed: boolean; sPressed: boolean; upPressed: boolean; downPressed: boolean; };
   scene: any;
@@ -742,6 +764,11 @@ export class PongGame {
     this.createScene();
     this.setupControls();
     this.startGameLoop();
+    
+    // Listen for language changes and update UI
+    i18n.addLanguageChangeListener(() => {
+      this.updateUILabels();
+    });
   }
 
   setDifficulty(level: 'easy' | 'medium' | 'hard') {
@@ -976,14 +1003,25 @@ export class PongGame {
     this.engine.stopRenderLoop();
     this.showWinnerOverlay(winner);
 
-    // If this is a tournament match, call the callback
+    // console.log('endMatch called with:', {
+    //   winner,
+    //   isMultiplayer: this.isMultiplayer,
+    //   onMatchFinishedExists: typeof window['onMatchFinished'] === 'function',
+    //   windowOnMatchFinished: window['onMatchFinished']
+    // });
+
+    // Only call onMatchFinished for tournament matches
     if (this.isMultiplayer && typeof window['onMatchFinished'] === 'function') {
+      // console.log('Calling onMatchFinished in 3 seconds...');
       setTimeout(() => {
+        // console.log('About to call onMatchFinished with winner:', winner);
         this.dispose();
         window['onMatchFinished'](winner);
       }, 3000);
     }
     else {
+      // console.log('Not a tournament match, returning to main menu');
+      // Solo game - just return to main menu, don't call onMatchFinished
       setTimeout(() => {
         this.dispose();
         renderPong();
@@ -1013,9 +1051,9 @@ export class PongGame {
     overlay.innerHTML = `
       <div>
         <div style="color: #ffd700; margin-bottom: 20px;">🏆</div>
-        <div>${winner} Wins!</div>
+        <div>${winner} ${t('pong.wins')}</div>
         <div style="font-size: 1.5rem; margin-top: 20px; opacity: 0.8;">
-          Final Score: ${this.playerScore} - ${this.aiScore}
+          ${t('pong.finalScore')}: ${this.playerScore} - ${this.aiScore}
         </div>
       </div>
     `;
@@ -1101,10 +1139,48 @@ export class PongGame {
     if (aiscore)
       aiscore.textContent = this.aiScore as unknown as string;
 
+    this.updateUILabels();
+  }
+
+  updateUILabels() {
     let player1Label = document.getElementById('player1Label');
     let player2Label = document.getElementById('player2Label');
-    if (player1Label) player1Label.textContent = this.player1Name;
-    if (player2Label) player2Label.textContent = this.player2Name;
+    
+    // For solo mode, always use translations. For multiplayer, use actual player names
+    if (!this.isMultiplayer) {
+      if (player1Label) player1Label.textContent = t('pong.player');
+      if (player2Label) player2Label.textContent = t('pong.ai');
+    } else {
+      if (player1Label) player1Label.textContent = this.player1Name;
+      if (player2Label) player2Label.textContent = this.player2Name;
+    }
+
+    // Update difficulty display
+    const getDifficultyText = (diff: string) => {
+      switch(diff) {
+        case 'easy': return t('pong.easy');
+        case 'medium': return t('pong.medium');
+        case 'hard': return t('pong.hard');
+        default: return diff;
+      }
+    };
+
+    // Find and update difficulty display in the game UI
+    const gameUI = document.getElementById('gameUI');
+    if (gameUI) {
+      const difficultyDiv = gameUI.querySelector('div[style*="font-size: 16px"]') as HTMLElement;
+      if (difficultyDiv) {
+        difficultyDiv.innerHTML = `${t('pong.difficulty')}: ${getDifficultyText(this.difficulty)}`;
+      }
+    }
+
+    // Update instructions for multiplayer games
+    const instructions = document.getElementById('instructions');
+    if (instructions && this.isMultiplayer) {
+      instructions.innerHTML = `${this.player1Name}: ${t('pong.player1Keys')} | ${this.player2Name}: ${t('pong.player2Keys')} | ${t('pong.firstTo5Wins')}`;
+    } else if (instructions && !this.isMultiplayer) {
+      instructions.innerHTML = `${t('pong.player1Keys')} / ${t('pong.player2Keys')} - ${t('pong.firstTo5Wins')}`;
+    }
   }
 
   startGameLoop() {
@@ -1157,24 +1233,32 @@ function startPongGame(isMultiplayer: boolean = false, player1Name: string = "Pl
   window.pongGameInstance = game;
 }
 
+// Global language change listener for active games
+i18n.addLanguageChangeListener(() => {
+  const activeGame = window.pongGameInstance;
+  if (activeGame && activeGame.updateUILabels && document.getElementById('gameUI')) {
+    activeGame.updateUILabels();
+  }
+});
+
 export function renderPong() {
   renderNavbar();
   document.getElementById('app')!.innerHTML = `
     <div class="flex flex-col justify-content items-center">
-      <div class="text-white font-bold text-4xl mb-10">How do you want to play ?</div>
+      <div class="text-white font-bold text-4xl mb-10">${t('pong.readyToPlay')}</div>
       
 	<!-- Difficulty Selection -->
 	<div class="mb-8">
-		<div class="text-white text-xl mb-4 text-center">Choose Difficulty:</div>
+		<div class="text-white text-xl mb-4 text-center">${t('pong.selectDifficulty')}</div>
 		<div class="difficulty-container">
 			<button id="difficulty-easy" class="difficulty-btn bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg transition-colors font-semibold">
-				Easy
+				${t('pong.easy')}
 			</button>
 			<button id="difficulty-medium" class="difficulty-btn bg-yellow-600 hover:bg-yellow-700 text-white px-6 py-3 rounded-lg transition-colors font-semibold active">
-				Medium
+				${t('pong.medium')}
 			</button>
 			<button id="difficulty-hard" class="difficulty-btn bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg transition-colors font-semibold">
-				Hard
+				${t('pong.hard')}
 			</button>
 		</div>
 	</div>
@@ -1185,7 +1269,7 @@ export function renderPong() {
           <img src="paddle.gif"/>
         </div>
         <div class="bg-white text-green-900 p-5 text-xl text-center font-semibold h-100 w-100" id="multiple">
-          With your friends
+          ${t('pong.startTournament')}
           <img src="paddlesV2.gif"/>
         </div>
       </div>
@@ -1214,26 +1298,43 @@ export function renderPong() {
 
   const gameMultiple = document.getElementById("multiple");
   gameMultiple?.addEventListener('click', launchPongForMultiple);
+  
+  // Listen for language changes and re-render
+  i18n.addLanguageChangeListener(() => {
+    if (location.pathname === '/pong') {
+      renderPong();
+    }
+  });
 }
 
 export function launchPongGame(difficulty: 'easy' | 'medium' | 'hard' = 'medium') {
+  // Helper function to get translated difficulty
+  const getDifficultyText = (diff: string) => {
+    switch(diff) {
+      case 'easy': return t('pong.easy');
+      case 'medium': return t('pong.medium');
+      case 'hard': return t('pong.hard');
+      default: return diff;
+    }
+  };
+
   renderNavbar();
   document.getElementById('app')!.innerHTML = `
     <div id="gameContainer">
       <canvas id="renderCanvas"></canvas>
       <div id="gameUI">
-        <div><span id="player1Label">Player</span>: <span id="playerScore">0</span> | <span id="player2Label">AI</span>: <span id="aiScore">0</span></div>
-        <div style="font-size: 16px; margin-top: 10px;">Difficulty: ${difficulty.charAt(0).toUpperCase() + difficulty.slice(1)}</div>
+        <div><span id="player1Label">${t('pong.player')}</span>: <span id="playerScore">0</span> | <span id="player2Label">${t('pong.ai')}</span>: <span id="aiScore">0</span></div>
+        <div style="font-size: 16px; margin-top: 10px;">${t('pong.difficulty')}: ${getDifficultyText(difficulty)}</div>
       </div>
       <div id="instructions">
-        Use W/S or Arrow Keys to move
+        ${t('pong.player1Keys')} / ${t('pong.player2Keys')} - ${t('pong.firstTo5Wins')}
       </div>
     </div>
   `;
   startPongGame(false, "Player", "AI", difficulty);
 }
 
-let currentTournament = {
+let currentTournament: Tournament = {
   players: [],
   matches: [],
   currentMatchIndex: 0,
@@ -1244,33 +1345,33 @@ export function launchPongForMultiple() {
   renderNavbar();
   document.getElementById('app')!.innerHTML = `
   <div class="flex flex-col -mt-60 justify-center">
-    <div class="text-white font-bold text-4xl mb-10">How many players ?</div>
+    <div class="text-white font-bold text-4xl mb-10">${t('pong.selectPlayers')}</div>
       <div class="card p-7">
-        <div class="w-full flex gap-10 justify-center align-items mb-10">
-          <div class="bg-indigo-950 text-white p-5 text-xl text-center font-semibold w-100" id="2players">
-            2 players
+        <div class="w-full flex flex-wrap gap-4 justify-center items-center mb-10">
+          <div class="bg-indigo-950 text-white p-4 text-lg text-center font-semibold min-w-32 flex-1 max-w-40 cursor-pointer hover:bg-indigo-800 transition-colors rounded" id="2players">
+            ${t('pong.players2')}
           </div>
-          <div class="bg-white text-green-900 p-5 text-xl text-center font-semibold w-100" id="4players">
-            4 players
+          <div class="bg-white text-green-900 p-4 text-lg text-center font-semibold min-w-32 flex-1 max-w-40 cursor-pointer hover:bg-gray-100 transition-colors rounded" id="4players">
+            ${t('pong.players4')}
           </div>
-          <div class="bg-green-950 text-white p-5 text-xl text-center font-semibold w-100" id="8players">
-            8 players
+          <div class="bg-green-950 text-white p-4 text-lg text-center font-semibold min-w-32 flex-1 max-w-40 cursor-pointer hover:bg-green-800 transition-colors rounded" id="8players">
+            ${t('pong.players8')}
           </div>
       </div>
     </div>
 
   <div id="playerModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
             <div class="bg-white rounded-lg p-8 max-w-md w-full mx-4">
-                <h2 class="text-2xl font-bold mb-6 text-center text-gray-800">Enter Player Names</h2>
+                <h2 class="text-2xl font-bold mb-6 text-center text-gray-800">${t('pong.enterPlayerName')}</h2>
                 <div id="playerInputs" class="space-y-4">
                     <!-- Les inputs seront générés dynamiquement -->
                 </div>
                 <div class="flex gap-4 mt-6">
                     <button id="cancelModal" class="flex-1 bg-gray-500 text-white py-2 px-4 rounded hover:bg-gray-600 transition-colors">
-                        Cancel
+                        ${t('common.cancel')}
                     </button>
                     <button id="startTournament" class="flex-1 bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700 transition-colors">
-                        Start Tournament
+                        ${t('pong.startTournament')}
                     </button>
                 </div>
             </div>
@@ -1279,13 +1380,13 @@ export function launchPongForMultiple() {
         <!-- Modal pour afficher le match actuel -->
         <div id="matchModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
             <div class="bg-white rounded-lg p-8 max-w-md w-full mx-4">
-                <h2 class="text-2xl font-bold mb-6 text-center text-gray-800">Tournament Match</h2>
+                <h2 class="text-2xl font-bold mb-6 text-center text-gray-800">${t('pong.tournamentMatch')}</h2>
                 <div id="matchInfo" class="text-center mb-6">
                     <!-- Info du match -->
                 </div>
                 <div class="flex gap-4">
                     <button id="startMatch" class="flex-1 bg-blue-600 text-white py-2 px-6 rounded hover:bg-blue-700 transition-colors">
-                        Start Match
+                        ${t('pong.startMatch')}
                     </button>
                 </div>
             </div>
@@ -1314,11 +1415,11 @@ function openPlayerModal(playerCount: number) {
     for (let i = 1; i <= playerCount; i++) {
       inputsContainer.innerHTML += `
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Player ${i}</label>
+                <label class="block text-sm font-medium text-gray-700 mb-2">${t('pong.player')} ${i}</label>
                 <input 
                     type="text" 
                     id="player${i}" 
-                    placeholder="Enter player ${i} name"
+                    placeholder="${t('pong.enterPlayerName')} ${i}"
                     class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     required
                 >
@@ -1386,38 +1487,82 @@ function generateMatches(players: string[]) {
 }
 
 function showNextMatch() {
+  // console.log('=== showNextMatch called ===');
+  // console.log('Tournament state in showNextMatch:', {
+  //   currentMatchIndex: currentTournament.currentMatchIndex,
+  //   totalMatches: currentTournament.matches.length,
+  //   matches: currentTournament.matches,
+  //   winners: currentTournament.winners
+  // });
+
+  // This function should only be called when there's a valid next match
   if (currentTournament.currentMatchIndex >= currentTournament.matches.length) {
+    console.error("showNextMatch called but no more matches in current round");
+    // console.log('Checking if we need to start next round...');
+    
+    // Check if we should progress to next round
     if (currentTournament.winners.length > 1) {
+      // console.log('Multiple winners, starting next round');
       currentTournament.matches = generateMatches(currentTournament.winners);
       currentTournament.currentMatchIndex = 0;
       currentTournament.winners = [];
-      showNextMatch();
+      
+      // console.log(`Generated new round with players:`, previousWinners);
+      showNextMatch(); // Recursive call for new round
+      return;
     } else if (currentTournament.winners.length === 1) {
+      // console.log('Single winner, tournament complete');
       showTournamentWinner();
+      return;
     }
+    
+    console.error('No valid tournament state found');
     return;
   }
 
   const currentMatch = currentTournament.matches[currentTournament.currentMatchIndex];
+  // console.log('Current match to display:', currentMatch);
+  
   const modal = document.getElementById("matchModal");
   const matchInfo = document.getElementById("matchInfo");
 
   if (matchInfo) {
+    const totalRounds = Math.ceil(Math.log2(currentTournament.players.length));
+    const currentRound = totalRounds - Math.ceil(Math.log2(currentTournament.matches.length)) + 1;
+    
     matchInfo.innerHTML = `
         <div class="text-lg mb-4">
-            <strong>Round ${Math.ceil(Math.log2(currentTournament.players.length)) - Math.ceil(Math.log2(currentTournament.winners.length + currentTournament.matches.length)) + 1}</strong>
+            <strong>${t('pong.round')} ${currentRound}</strong>
         </div>
         <div class="text-xl font-semibold text-blue-600">
             ${currentMatch.player1}
         </div>
-        <div class="text-lg text-gray-600 my-2">VS</div>
+        <div class="text-lg text-gray-600 my-2">${t('pong.vs')}</div>
         <div class="text-xl font-semibold text-red-600">
             ${currentMatch.player2}
         </div>
     `;
   }
 
+  // console.log('Showing match modal');
+  // console.log('Modal element:', modal);
+  // console.log('Modal classes before removing hidden:', modal?.className);
   modal?.classList.remove('hidden');
+  // console.log('Modal classes after removing hidden:', modal?.className);
+  
+  // Force the modal to be visible
+  if (modal) {
+    modal.style.display = 'flex';
+    modal.style.visibility = 'visible';
+    modal.style.opacity = '1';
+    // console.log('Forced modal visibility');
+  } else {
+    console.error('Modal element not found! Recreating tournament UI...');
+    // If modal doesn't exist, recreate the tournament UI
+    launchPongForMultiple();
+    // setTimeout(() => showNextMatch(), 1000); // "glitch" blinking here
+	showNextMatch();
+  }
 }
 
 function startCurrentMatch() {
@@ -1432,22 +1577,64 @@ function startCurrentMatch() {
 
 // Make this function available globally for the game to call
 window['onMatchFinished'] = function(winner: string) {
-  console.log(`Match finished, winner: ${winner}`);
+  // console.log(`=== onMatchFinished called with winner: ${winner} ===`);
+  // console.log('Current tournament state before processing:', {
+  //   currentMatchIndex: currentTournament.currentMatchIndex,
+  //   totalMatches: currentTournament.matches.length,
+  //   winners: currentTournament.winners,
+  //   matches: currentTournament.matches
+  // });
   
   if (currentTournament.matches[currentTournament.currentMatchIndex]) {
     currentTournament.matches[currentTournament.currentMatchIndex].winner = winner;
     currentTournament.winners.push(winner);
     currentTournament.currentMatchIndex++;
 
-    console.log(`Tournament state:`, {
-      currentMatchIndex: currentTournament.currentMatchIndex,
-      totalMatches: currentTournament.matches.length,
-      winners: currentTournament.winners
-    });
+    // console.log(`Tournament state after processing:`, {
+    //   currentMatchIndex: currentTournament.currentMatchIndex,
+    //   totalMatches: currentTournament.matches.length,
+    //   winners: currentTournament.winners
+    // });
 
-    setTimeout(() => {
-      showNextMatch();
-    }, 500);
+    // Check if current round is complete
+    if (currentTournament.currentMatchIndex >= currentTournament.matches.length) {
+      // console.log('Round complete!');
+      // Round complete - check if tournament is over
+      if (currentTournament.winners.length === 1) {
+        // console.log('Tournament over! Winner:', currentTournament.winners[0]);
+        showTournamentWinner();
+        return;
+      } else if (currentTournament.winners.length > 1) {
+        // console.log('Starting next round with', currentTournament.winners.length, 'players');
+        // Start next round
+        // setTimeout(() => {
+        //   currentTournament.matches = generateMatches(currentTournament.winners);
+        //   currentTournament.currentMatchIndex = 0;
+        //   currentTournament.winners = [];
+          
+        //   // console.log(`Starting new round with players:`, previousWinners);
+        //   showNextMatch();
+        // }, 1000);
+		currentTournament.matches = generateMatches(currentTournament.winners);
+        currentTournament.currentMatchIndex = 0;
+        currentTournament.winners = [];
+          
+        // console.log(`Starting new round with players:`, previousWinners);
+        showNextMatch();
+        return;
+      }
+    }
+
+    // Continue with next match in current round
+    // console.log('Continuing to next match in current round');
+    // console.log('About to call showNextMatch in 500ms...');
+    // setTimeout(() => {
+    //   // console.log('Timeout executed, calling showNextMatch now');
+    //   showNextMatch();
+    // }, 500);
+	showNextMatch(); // after announcing the winner goes directly to the next match
+  } else {
+    console.error('No valid match found at current index:', currentTournament.currentMatchIndex);
   }
 };
 
@@ -1457,14 +1644,14 @@ function showTournamentWinner() {
   document.getElementById('app')!.innerHTML = `
         <div class="flex flex-col items-center justify-center h-screen overflow-hidden pt-20 text-center">
             <div class="card p-10">
-                <h1 class="text-4xl font-bold text-yellow-400 mb-6">🏆 TOURNAMENT WINNER! 🏆</h1>
-                <div class="text-3xl font-bold text-white mb-8">${winner}</div>
+                <h1 class="text-4xl font-bold text-yellow-400 mb-6">🏆 ${t('pong.tournamentWinner')} 🏆</h1>
+                <div class="text-3xl font-bold text-purple-950 mb-8">${winner}</div>
                 <div class="flex gap-4">
                     <button id="newTournament" class="bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 transition-colors">
-                        New Tournament
+                        ${t('pong.newTournament')}
                     </button>
                     <button id="mainMenu" class="bg-gray-600 text-white py-3 px-6 rounded-lg hover:bg-gray-700 transition-colors">
-                        Main Menu
+                        ${t('pong.backToMenu')}
                     </button>
                 </div>
             </div>
@@ -1476,7 +1663,7 @@ function showTournamentWinner() {
 }
 
 function launchPongGameWithPlayers(player1Name: string, player2Name: string) {
-  console.log(`Starting match: ${player1Name} vs ${player2Name}`);
+  // console.log(`Starting match: ${player1Name} vs ${player2Name}`);
 
   renderNavbar();
   
@@ -1493,7 +1680,7 @@ function launchPongGameWithPlayers(player1Name: string, player2Name: string) {
         <div><span id="player1Label">${player1Name}</span>: <span id="playerScore">0</span> | <span id="player2Label">${player2Name}</span>: <span id="aiScore">0</span></div>
       </div>
       <div id="instructions">
-        ${player1Name}: W/S keys | ${player2Name}: Arrow keys | First to 5 wins!
+        ${player1Name}: ${t('pong.player1Keys')} | ${player2Name}: ${t('pong.player2Keys')} | ${t('pong.firstTo5Wins')}
       </div>
     </div>
   `;

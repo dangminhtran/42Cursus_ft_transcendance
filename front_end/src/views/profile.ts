@@ -1,4 +1,5 @@
 import { renderNavbar } from "../componentes/navbar";
+import { i18n, t } from "../i18n";
 import axios from "axios";
 import { navigateTo } from "../router";
 import { BASE_ADDRESS } from "../config";
@@ -7,11 +8,11 @@ export function renderProfile() {
 	renderNavbar();
 	document.getElementById('app')!.innerHTML = `
 		<div class="bg-emerald-900 border border-white flex flex-col justify-center items-center gap-5 -mt-20 text-md text-indigo-950 rounded-xl p-10">
-			<div class="text-lg text-white text-xl font-semibold">Change your information here</div>	
+			<div class="text-lg text-white text-xl font-semibold">${t('profile.personalInfo')}</div>	
 		
 			<!-- Avatar Preview Section -->
 			<div class="flex flex-col items-center gap-4 mb-6">
-				<div class="text-white font-medium">Profile Picture Preview</div>
+				<div class="text-white font-medium">${t('profile.profilePicturePreview')}</div>
 				<div class="relative">
 					<img 
 						id="avatarPreview" 
@@ -25,7 +26,7 @@ export function renderProfile() {
 			</div>
 
 			<div class="flex flex-col justify-center gap-2 w-full max-w-md">
-				<label for="pictureInput" class="text-white font-semibold">Profile picture URL:</label>
+				<label for="pictureInput" class="text-white font-semibold">${t('profile.profilePictureUrl')}</label>
 				<input 
 					class="rounded-sm bg-indigo-950 text-lg text-white border border-teal-50 ease-in-out p-2" 
 					type="url" 
@@ -37,12 +38,12 @@ export function renderProfile() {
 					id="previewBtn" 
 					class="mt-2 bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition-colors text-sm"
 				>
-					Preview Image
+					${t('profile.previewImage')}
 				</button>
 			</div>
 
 			<div class="flex flex-col justify-center gap-2 w-full max-w-md">
-				<label for="emailInput" class="text-white font-semibold">Email:</label>
+				<label for="emailInput" class="text-white font-semibold">${t('profile.email')}:</label>
 				<input 
 					class="rounded-sm bg-indigo-950 text-lg text-white border border-teal-50 ease-in-out p-2" 
 					type="email" 
@@ -52,7 +53,7 @@ export function renderProfile() {
 			</div>
 			
 			<div class="flex flex-col justify-center gap-2 w-full max-w-md">
-				<label for="oldPassword" class="text-white font-semibold">Old password:</label>
+				<label for="oldPassword" class="text-white font-semibold">${t('profile.oldPassword')}</label>
 				<input 
 					class="rounded-sm bg-indigo-950 text-lg text-white border border-teal-50 ease-in-out p-2" 
 					type="password" 
@@ -62,7 +63,7 @@ export function renderProfile() {
 			</div>
 			
 			<div class="flex flex-col justify-center gap-2 w-full max-w-md">
-				<label for="newPassword" class="text-white font-semibold">New password:</label>
+				<label for="newPassword" class="text-white font-semibold">${t('profile.newPassword')}:</label>
 				<input 
 					class="rounded-sm bg-indigo-950 text-lg text-white border border-teal-50 ease-in-out p-2" 
 					type="password" 
@@ -71,6 +72,21 @@ export function renderProfile() {
 				>
 			</div>
 			
+			<div class="flex justify-center items-center gap-2 w-full max-w-md">
+				<label for="2fa" class="text-white font-semibold">${t('profile.enable2FA')}:</label>
+				<input 
+					class="rounded-sm bg-indigo-950 text-lg text-white border border-teal-50 ease-in-out" 
+					type="checkbox" 
+					name="2fa" 
+					id="2fa"
+				>
+			</div>
+			
+			<button 
+				id="saveChangesBtn"
+				class="bg-green-600 text-white py-3 px-6 rounded-lg hover:bg-green-700 transition-colors font-semibold text-lg mt-4"
+			>
+				${t('profile.saveChanges')}
 			<button 
 				id="enable2FABtn">
 				Enable 2FA
@@ -84,6 +100,13 @@ export function renderProfile() {
 	`;
 
 	setupEventListeners();
+	
+	// Listen for language changes and re-render
+	i18n.addLanguageChangeListener(() => {
+		if (location.pathname === '/profile') {
+			renderProfile();
+		}
+	});
 	enable2Fa();
 }
 

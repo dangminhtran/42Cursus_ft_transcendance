@@ -27,7 +27,9 @@
 		0 8px 32px rgba(0, 0, 0, 0.3),
 		inset 0 1px 0 rgba(255, 255, 255, 0.2);
 
-	width: 30rem;
+	min-width: 20rem;
+	max-width: 28rem;
+	width: 100%;
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
@@ -35,6 +37,8 @@
 	font-size: 20px;
 	font-weight: 700;
 	color: white;
+	padding: 1.5rem;
+	margin: 0 auto;
 }
 
 .toggle-btn {
@@ -49,6 +53,10 @@
 	font-weight: 500;
 	cursor: pointer;
 	transition: all 0.3s ease;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	min-width: 0;
 }
 
 .toggle-btn.active {
@@ -75,6 +83,7 @@
 
 #authBtn {
 	width: 90%;
+	max-width: 300px;
 	padding: 15px;
 	margin: 20px 0 10px 0;
 	border: none;
@@ -87,6 +96,9 @@
 	font-family: 'Poppins', sans-serif;
 	transition: all 0.3s ease;
 	box-shadow: 0 4px 15px rgba(80, 23, 148, 0.3);
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 
 #authBtn:hover {
@@ -136,6 +148,82 @@
 
 #disconnect-navlink {
 	background: linear-gradient(90deg, #aa1a07, #ec413b);
+}
+
+/* LANGUAGE SWITCHER STYLES */
+.languageSelector {
+	position: relative;
+}
+
+.languageButton {
+	display: flex !important;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	min-width: 120px;
+	padding: 0 15px !important;
+	border: none;
+	background: linear-gradient(90deg, #501794, #3E70A1) !important;
+	color: white;
+	font-weight: 600;
+	transition: all 0.3s ease;
+	cursor: pointer;
+}
+
+.languageButton:hover {
+	background: linear-gradient(90deg, #3E70A1, #501794) !important;
+}
+
+.language-flag {
+	font-size: 16px;
+	display: inline-block;
+}
+
+.language-name {
+	font-size: 14px;
+	font-weight: 600;
+}
+
+#languageDropdown {
+	min-width: 140px;
+	border-radius: 8px;
+	overflow: hidden;
+	background: rgba(255, 255, 255, 0.95);
+	backdrop-filter: blur(10px);
+	-webkit-backdrop-filter: blur(10px);
+	border: 1px solid rgba(255, 255, 255, 0.3);
+	box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.language-option {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 12px 16px;
+	width: 100%;
+	border: none;
+	background: none;
+	text-align: left;
+	color: #374151;
+	font-size: 14px;
+	font-weight: 500;
+	transition: all 0.2s ease;
+	cursor: pointer;
+}
+
+.language-option:hover {
+	background: rgba(59, 130, 246, 0.1);
+	color: #2563eb;
+}
+
+.language-option.active {
+	background: rgba(59, 130, 246, 0.1);
+	color: #2563eb;
+	font-weight: 600;
+}
+
+#languageArrow {
+	transition: transform 0.3s ease;
 }
 
 /* STYLE FOR HOME*/
