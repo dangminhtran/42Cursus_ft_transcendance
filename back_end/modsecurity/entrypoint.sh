@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 set -e
 
 # Variables Vault
@@ -44,4 +44,5 @@ echo "✅ Certificat et clé écrits dans /etc/nginx/ssl/"
 
 # Lancer nginx
 echo "🚀 Démarrage de nginx..."
-exec /usr/local/nginx/sbin/nginx -g 'daemon off;'
+# sleep infinity
+exec /usr/local/nginx/nginx -g 'daemon off;'
