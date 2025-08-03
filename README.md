@@ -5,9 +5,12 @@
 Without framework : Typescript - OK
 
 - 0.5 - Minor module : Tailwind CSS - OK
+- 0.5 - Internationalisation - WIP
+- 0.5 - Accessibility - WIP
 
 **GAMEPLAY AND USER EXPERIENCE**
 
+NON
 - 1 - Major module : Another game - WIP
 
 **GRAPHICS**
@@ -22,7 +25,7 @@ Without framework : Typescript - OK
 
 **USER MANAGEMENT**
 
-- 1 - Major module : standard user management - WIP
+- 1 - Major module : standard user management - OK
 - 1 - Major module : OAuth Sign In
 
 **CYBER SCURITY**
@@ -31,10 +34,8 @@ Without framework : Typescript - OK
 
 **DEV ops**
 - 0.5 - Minor module: Grafana Prometheus - OK
-- 1 - Major module: Elastic Search - WIP
+- 1 - Major module: Elastic Search - OK
 
-**BLOCKCHAIN**
-- 1 - Major module: Stocker les resultats dans la blockchain
 
 **GITHUB**
 

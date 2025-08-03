@@ -7,7 +7,6 @@ type GameScore = {
 	player2score: number,
 	date: string,
 	gameType: '1v1' | 'tournament',
-	duration: string,
 	winner: string,
 };
 
@@ -135,36 +134,36 @@ const friends: Friend[] = [
 // Mock - All games in the system
 const allGameHistory: GameScore[] = [
 	// Alice's games
-	{ player1name: "Alice", player1score: 5, player2name: "Bot", player2score: 3, date: "2025-07-24", gameType: "1v1", duration: "12:34", winner: "Alice" },
-	{ player1name: "Eve", player1score: 1, player2name: "Alice", player2score: 5, date: "2025-07-21", gameType: "1v1", duration: "09:12", winner: "Alice" },
-	{ player1name: "Alice", player1score: 3, player2name: "Charlie", player2score: 5, date: "2025-07-19", gameType: "1v1", duration: "14:25", winner: "Charlie" },
-	{ player1name: "Bob", player1score: 1, player2name: "Alice", player2score: 5, date: "2025-07-17", gameType: "1v1", duration: "11:08", winner: "Alice" },
+	{ player1name: "Alice", player1score: 5, player2name: "Bot", player2score: 3, date: "2025-07-24", gameType: "1v1", winner: "Alice" },
+	{ player1name: "Eve", player1score: 1, player2name: "Alice", player2score: 5, date: "2025-07-21", gameType: "1v1", winner: "Alice" },
+	{ player1name: "Alice", player1score: 3, player2name: "Charlie", player2score: 5, date: "2025-07-19", gameType: "1v1", winner: "Charlie" },
+	{ player1name: "Bob", player1score: 1, player2name: "Alice", player2score: 5, date: "2025-07-17", gameType: "1v1", winner: "Alice" },
 
 	// Bob's games
-	{ player1name: "Bob", player1score: 2, player2name: "Eve", player2score: 5, date: "2025-07-23", gameType: "1v1", duration: "08:45", winner: "Eve" },
-	{ player1name: "Peggy", player1score: 5, player2name: "Bob", player2score: 2, date: "2025-07-16", gameType: "1v1", duration: "14:33", winner: "Peggy" },
-	{ player1name: "Bob", player1score: 4, player2name: "Charlie", player2score: 3, date: "2025-07-14", gameType: "1v1", duration: "16:45", winner: "Bob" },
-	{ player1name: "Bob", player1score: 5, player2name: "Mallory", player2score: 2, date: "2025-07-12", gameType: "1v1", duration: "09:33", winner: "Bob" },
+	{ player1name: "Bob", player1score: 2, player2name: "Eve", player2score: 5, date: "2025-07-23", gameType: "1v1", winner: "Eve" },
+	{ player1name: "Peggy", player1score: 5, player2name: "Bob", player2score: 2, date: "2025-07-16", gameType: "1v1", winner: "Peggy" },
+	{ player1name: "Bob", player1score: 4, player2name: "Charlie", player2score: 3, date: "2025-07-14", gameType: "1v1", winner: "Bob" },
+	{ player1name: "Bob", player1score: 5, player2name: "Mallory", player2score: 2, date: "2025-07-12", gameType: "1v1", winner: "Bob" },
 
 	// Charlie's games
-	{ player1name: "Charlie", player1score: 4, player2name: "Dave", player2score: 4, date: "2025-07-22", gameType: "1v1", duration: "15:20", winner: "Draw" },
-	{ player1name: "Trent", player1score: 2, player2name: "Charlie", player2score: 5, date: "2025-07-18", gameType: "1v1", duration: "13:42", winner: "Charlie" },
-	{ player1name: "Charlie", player1score: 5, player2name: "Eve", player2score: 3, date: "2025-07-13", gameType: "1v1", duration: "12:18", winner: "Charlie" },
-	{ player1name: "Charlie", player1score: 2, player2name: "Mallory", player2score: 5, date: "2025-07-11", gameType: "1v1", duration: "10:27", winner: "Mallory" },
+	{ player1name: "Charlie", player1score: 4, player2name: "Dave", player2score: 4, date: "2025-07-22", gameType: "1v1", winner: "Draw" },
+	{ player1name: "Trent", player1score: 2, player2name: "Charlie", player2score: 5, date: "2025-07-18", gameType: "1v1", winner: "Charlie" },
+	{ player1name: "Charlie", player1score: 5, player2name: "Eve", player2score: 3, date: "2025-07-13", gameType: "1v1", winner: "Charlie" },
+	{ player1name: "Charlie", player1score: 2, player2name: "Mallory", player2score: 5, date: "2025-07-11", gameType: "1v1", winner: "Mallory" },
 
 	// Eve's games
-	{ player1name: "Eve", player1score: 5, player2name: "Dave", player2score: 2, date: "2025-07-20", gameType: "1v1", duration: "11:55", winner: "Eve" },
-	{ player1name: "Eve", player1score: 4, player2name: "Mallory", player2score: 3, date: "2025-07-15", gameType: "1v1", duration: "13:12", winner: "Eve" },
-	{ player1name: "Oscar", player1score: 2, player2name: "Eve", player2score: 5, date: "2025-07-10", gameType: "1v1", duration: "08:44", winner: "Eve" },
+	{ player1name: "Eve", player1score: 5, player2name: "Dave", player2score: 2, date: "2025-07-20", gameType: "1v1", winner: "Eve" },
+	{ player1name: "Eve", player1score: 4, player2name: "Mallory", player2score: 3, date: "2025-07-15", gameType: "1v1", winner: "Eve" },
+	{ player1name: "Oscar", player1score: 2, player2name: "Eve", player2score: 5, date: "2025-07-10", gameType: "1v1", winner: "Eve" },
 
 	// Mallory's games
-	{ player1name: "Mallory", player1score: 3, player2name: "Trent", player2score: 5, date: "2025-07-20", gameType: "1v1", duration: "11:28", winner: "Trent" },
-	{ player1name: "Victor", player1score: 4, player2name: "Mallory", player2score: 5, date: "2025-07-17", gameType: "1v1", duration: "10:55", winner: "Mallory" },
-	{ player1name: "Mallory", player1score: 5, player2name: "Dave", player2score: 1, date: "2025-07-09", gameType: "1v1", duration: "07:22", winner: "Mallory" },
+	{ player1name: "Mallory", player1score: 3, player2name: "Trent", player2score: 5, date: "2025-07-20", gameType: "1v1", winner: "Trent" },
+	{ player1name: "Victor", player1score: 4, player2name: "Mallory", player2score: 5, date: "2025-07-17", gameType: "1v1", winner: "Mallory" },
+	{ player1name: "Mallory", player1score: 5, player2name: "Dave", player2score: 1, date: "2025-07-09", gameType: "1v1", winner: "Mallory" },
 
 	// Other games
-	{ player1name: "Oscar", player1score: 5, player2name: "Peggy", player2score: 0, date: "2025-07-19", gameType: "1v1", duration: "06:15", winner: "Oscar" },
-	{ player1name: "Dave", player1score: 3, player2name: "Oscar", player2score: 5, date: "2025-07-15", gameType: "1v1", duration: "07:48", winner: "Oscar" },
+	{ player1name: "Oscar", player1score: 5, player2name: "Peggy", player2score: 0, date: "2025-07-19", gameType: "1v1", winner: "Oscar" },
+	{ player1name: "Dave", player1score: 3, player2name: "Oscar", player2score: 5, date: "2025-07-15", gameType: "1v1", winner: "Oscar" },
 ];
 
 // Current view - can be 'all', 'my-games', or a specific friend's name
