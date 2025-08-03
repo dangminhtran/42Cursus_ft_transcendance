@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 set -e
 
 # Variables Vault
@@ -25,7 +25,7 @@ done
 echo "✅ Vault est prêt"
 
 # Récupérer secrets
-sleep 3
+sleep 8
 echo "⏳ Récupération des certificats depuis Vault..."
 cert=$(vault kv get -field=cert secret/ssl/certs)
 key=$(vault kv get -field=key secret/ssl/certs)
@@ -44,4 +44,5 @@ echo "✅ Certificat et clé écrits dans /etc/nginx/ssl/"
 
 # Lancer nginx
 echo "🚀 Démarrage de nginx..."
-exec /usr/local/nginx/sbin/nginx -g 'daemon off;'
+# sleep infinity
+exec nginx -g 'daemon off;'

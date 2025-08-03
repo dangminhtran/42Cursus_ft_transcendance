@@ -1,5 +1,8 @@
 import { renderNavbar } from "../componentes/navbar";
 import { i18n, t } from "../i18n";
+import axios from "axios";
+import { navigateTo } from "../router";
+import { BASE_ADDRESS } from "../config";
 
 export function renderProfile() {
 	renderNavbar();
@@ -84,6 +87,14 @@ export function renderProfile() {
 				class="bg-green-600 text-white py-3 px-6 rounded-lg hover:bg-green-700 transition-colors font-semibold text-lg mt-4"
 			>
 				${t('profile.saveChanges')}
+			<button 
+				id="enable2FABtn">
+				Enable 2FA
+			</button>
+			
+			<button 
+				id="saveChangesBtn">
+				Save Changes
 			</button>
 		</div>
 	`;
@@ -96,6 +107,7 @@ export function renderProfile() {
 			renderProfile();
 		}
 	});
+	enable2Fa();
 }
 
 function setupEventListeners() {
@@ -221,4 +233,141 @@ export function loadUserProfile(userData: any) {
 			twofaInput.checked = userData.twofa;
 		}
 	}, 100);
+}
+
+async function get2Fa(jwt: string) {
+	try {
+		const response = await axios.post(`${BASE_ADDRESS}/2fa/setup`, {}, {
+			headers: { Authorization: `Bearer ${jwt}` }
+		});
+		console.log('2FA setup response:', response.data);
+		
+		if (response.data.qrCodeDataURL) {
+			const qrCodeDataURL = response.data.qrCodeDataURL;
+			create2FAModal(qrCodeDataURL, jwt);
+		} else {
+			alert('Failed to generate QR code. Please try again.');
+		}
+	} catch (error) {
+		console.error('Error enabling 2FA:', error);
+		alert('An error occurred while enabling 2FA. Please try again.');
+	}
+}
+
+function create2FAModal(qrCodeDataURL: string, jwt: string) {
+	const existingModal = document.getElementById('twofa-modal');
+	if (existingModal) {
+		existingModal.remove();
+	}
+	
+	const modal = document.createElement('div');
+	modal.id = 'twofa-modal';
+	modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+	
+	modal.innerHTML = `
+		<div class="bg-white rounded-lg p-8 max-w-md w-full mx-4">
+			<div class="text-center">
+				<h2 class="text-2xl font-bold mb-4 text-gray-800">Setup 2FA</h2>
+				<p class="text-gray-600 mb-4">Scan this QR code with your authenticator app:</p>
+				
+				<div class="mb-6">
+					<img src="${qrCodeDataURL}" alt="2FA QR Code" class="mx-auto border rounded" />
+				</div>
+				
+				<div class="mb-4">
+					<label for="twofa-code" class="block text-gray-700 font-medium mb-2">
+						Enter the 6-digit code from your app:
+					</label>
+					<input 
+						type="text" 
+						id="twofa-code" 
+						placeholder="123456"
+						maxlength="6"
+						class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+					/>
+				</div>
+				
+				<div class="flex gap-3">
+					<button 
+						id="verify-2fa-btn" 
+						class="flex-1 bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition-colors"
+					>
+						Verify & Enable
+					</button>
+					<button 
+						id="cancel-2fa-btn" 
+						class="flex-1 bg-gray-500 text-white py-2 px-4 rounded hover:bg-gray-600 transition-colors"
+					>
+						Cancel
+					</button>
+				</div>
+			</div>
+		</div>
+	`;
+	
+	document.body.appendChild(modal);
+	
+	const verifyBtn = document.getElementById('verify-2fa-btn');
+	const cancelBtn = document.getElementById('cancel-2fa-btn');
+	const codeInput = document.getElementById('twofa-code') as HTMLInputElement;
+	
+	verifyBtn?.addEventListener('click', async () => {
+		const token = codeInput.value.trim();
+		if (!token || token.length !== 6) {
+			alert('Please enter a valid 6-digit code');
+			return;
+		}
+		
+		try {
+			verifyBtn.textContent = 'Verifying...';
+			verifyBtn.setAttribute('disabled', 'true');
+			
+			const verifyResponse = await axios.post(`${BASE_ADDRESS}/2fa/verify-setup`, {
+				token,
+			}, {
+				headers: { Authorization: `Bearer ${jwt}` }
+			});
+			
+			if (verifyResponse.data.success) {
+				alert('2FA setup successful!');
+				modal.remove();
+				navigateTo('/');
+			} else {
+				alert('Invalid code. Please try again.');
+				verifyBtn.textContent = 'Verify & Enable';
+				verifyBtn.removeAttribute('disabled');
+			}
+		} catch (error) {
+			console.error('Error verifying 2FA code:', error);
+			alert('An error occurred while verifying the 2FA code. Please try again.');
+			verifyBtn.textContent = 'Verify & Enable';
+			verifyBtn.removeAttribute('disabled');
+		}
+	});
+	
+	cancelBtn?.addEventListener('click', () => {
+		modal.remove();
+		navigateTo('/profile');
+	});
+	
+	modal.addEventListener('click', (e) => {
+		if (e.target === modal) {
+			modal.remove();
+		}
+	});
+	
+	codeInput.focus();
+}
+
+
+function enable2Fa() {
+	const twofaInput = document.getElementById("enable2FABtn") as HTMLInputElement;
+	twofaInput.addEventListener('click', () => {
+	const jwt = window.sessionStorage.getItem("token")
+	if (!jwt) {
+		alert('You must be logged in to enable 2FA.');
+		return;
+	}
+	get2Fa(jwt);
+})
 }

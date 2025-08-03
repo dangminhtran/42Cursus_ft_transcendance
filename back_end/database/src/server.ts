@@ -5,7 +5,10 @@ import fastifyMetrics from 'fastify-metrics';
 import authRoutes from './routes/user';
 import userManagmentRoutes from './routes/user_managment'
 import dbConnector from "./database/db";
-import gameResultRoutes from './routes/gameresult';
+import friendsRoutes from './routes/friends';
+import tournamentRoutes from './routes/tournament';
+import matchRoutes from './routes/match';
+
 
 
 const fastify = Fastify({ logger: true });
@@ -23,7 +26,9 @@ fastify.register(fastifyMetrics, {
 fastify.register(dbConnector);
 fastify.register(authRoutes, { prefix: '/auth' });
 fastify.register(userManagmentRoutes, { prefix: '/user' });
-fastify.register(gameResultRoutes, { prefix: '/tournament'});
+fastify.register(tournamentRoutes, { prefix: '/tournament'});
+fastify.register(friendsRoutes, { prefix: '/friends' });
+fastify.register(matchRoutes, {prefix: '/match'});
 
 // Démarrer serveur
 fastify.listen({ port: 3001 , host: '0.0.0.0'}, (err: any, address: any) => {

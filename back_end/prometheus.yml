@@ -5,3 +5,11 @@ scrape_configs:
   - job_name: 'auth'
     static_configs:
       - targets: ['auth:3000']
+
+  - job_name: 'user-management'
+    static_configs:
+      - targets: ['user-management:3002']
+  
+  - job_name: 'tournament'
+    static_configs:
+      - targets: ['tournament:3003']

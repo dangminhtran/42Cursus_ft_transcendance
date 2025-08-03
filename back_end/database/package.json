@@ -14,7 +14,8 @@
     "fastify-metrics": "^12.1.0",
     "fastify-plugin": "^5.0.1",
     "qrcode": "^1.5.4",
-    "speakeasy": "^2.0.0"
+    "speakeasy": "^2.0.0",
+    "uuid": "^11.1.0"
   },
   "devDependencies": {
     "@jest/globals": "^30.0.5",

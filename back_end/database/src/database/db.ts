@@ -1,13 +1,16 @@
 import fp from 'fastify-plugin';
 import Database from 'better-sqlite3';
 import { getUserByEmail, getUserByID, addUser, updateUser, update2FASecret, update2FAEnabled } from './users';
-import { addGameResult, getResultsByUserID } from './gameresult';
+import { AddFriend, DeleteFriend, FetchFriends } from './friends';
+import { createTournament } from './tournament';
+import { addMatch, getAllMatches, getWinCount } from './match';
 
 export const db = new Database('./transcendence.db', { verbose: console.log });
 
 db.exec(`
   CREATE TABLE IF NOT EXISTS users (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
+	username TEXT,
 	profilepicture TEXT,
 	email TEXT NOT NULL UNIQUE,
 	password TEXT NOT NULL,
@@ -15,17 +18,27 @@ db.exec(`
 	twoFASecret TEXT,
 	created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 	updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
-  )
+  );
+`);
+
+db.exec(`CREATE TABLE IF NOT EXISTS tournaments (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    uuid TEXT NOT NULL UNIQUE,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  );
 `);
 
 db.exec(`
-  CREATE TABLE IF NOT EXISTS chats (
+  CREATE TABLE IF NOT EXISTS matchs (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
-	message TEXT NOT NULL,
-	user_id INTEGER,
-	created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-	FOREIGN KEY(user_id) REFERENCES users(id)
-  )
+	player1 TEXT NOT NULL REFERENCES users(username),
+	player2 TEXT NOT NULL REFERENCES users(username),
+	player1_score INTEGER,
+	player2_score INTEGER,
+	user_id INTEGER references users(id),
+	tournament_id TEXT REFERENCES tournaments(uuid),
+	created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  );
 `);
 
 db.exec(`
@@ -37,7 +50,7 @@ db.exec(`
 	FOREIGN KEY(user_id) REFERENCES users(id),
 	FOREIGN KEY(friend_id) REFERENCES users(id)
   );
-`)
+`);
 
 export default fp(async (fastify, opts) => {
 
@@ -49,8 +62,19 @@ export default fp(async (fastify, opts) => {
 	fastify.decorate('updateUser', updateUser);
 	fastify.decorate('update2FASecret', update2FASecret);
 	fastify.decorate('update2FAEnabled', update2FAEnabled);
-	fastify.decorate('getResultsByUserID', getResultsByUserID);
-	fastify.decorate('addGameResult', addGameResult);
+
+	// friends
+	fastify.decorate('AddFriend', AddFriend);
+	fastify.decorate('DeleteFriend', DeleteFriend);
+	fastify.decorate('FetchFriends', FetchFriends);
+	fastify.decorate('getWinCount', getWinCount);
+
+	// tournament
+	fastify.decorate('createTournament', createTournament);
+
+	// match
+	fastify.decorate('addMatch', addMatch);
+	fastify.decorate('getAllMatches', getAllMatches);
 
 
 	fastify.addHook('onClose', (instance, done) => {

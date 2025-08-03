@@ -1,8 +1,7 @@
 export interface User {
 	id: number
+	username: string,
 	profilepicture: string,
-	displayname: string, // Jack added this (should be unique)
-	// UNIQUE contraint for db ?  =>  ALTER TABLE users ADD CONSTRAINT unique_displayname UNIQUE (displayname);
 	email: string
 	password: string
 	is2FAEnabled: boolean
@@ -16,20 +15,53 @@ export interface UpdateUser {
 	password?: string
 	is2FAEnabled?: boolean
 	twoFASecret?: string
-}
+};
 
-export type GameResult = {
+export interface Friend {
+	username: string;
+	profilepicture: string;
+	email: string;
+};
+
+export interface FriendWinRate {
+	username: string;
+	profilepicture: string;
+	email: string;
+	win: number;
+	loss: number;
+};
+
+export interface FriendStat {
+	username: string;
+	profilepicture: string;
+	email:   string;
+	win: number;
+	loss: number;
+};
+
+export type Match = {
 	id: number;
 	player1: string;
 	player2: string;
 	player1score: number;
 	player2score: number;
 	user_id: number;
+	tournament_uuid?: string;
 	created_at: string;
 };
 
-export interface ChatMessage {
-  id:      number;
-  message: string;
-  email:   string;
+export type MatchToAdd = {
+	player1: string;
+	player2: string;
+	player1score: number;
+	player2score: number;
+	user_id: number;
+	tournament_uuid?: string;
+};
+
+export type Tournament = {
+	id: number;
+	uuid: string;
+	start_date: string;
+	end_date: string;
 };

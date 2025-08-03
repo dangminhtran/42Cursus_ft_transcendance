@@ -1,4 +1,3 @@
-
 import { User } from '../structs'
 import { db } from './db'
 import bcrypt from 'bcrypt'
@@ -6,7 +5,7 @@ import bcrypt from 'bcrypt'
 export const getUserByEmail = async (email: string): Promise<User | null> => {
 	const stmt = db.prepare(`
 		SELECT 
-		id, profilepicture, email, password, is2FAEnabled, twoFASecret, created_at, updated_at
+		id, profilepicture, email, username, password, is2FAEnabled, twoFASecret, created_at, updated_at
 		FROM users
 		WHERE email = ?
 	`)
@@ -17,18 +16,17 @@ export const getUserByEmail = async (email: string): Promise<User | null> => {
 export const getUserByID = async (id: number): Promise<User | null> => {
 	const stmt = db.prepare(`
 		SELECT 
-		id, profilepicture, email, password, is2FAEnabled, twoFASecret, created_at, updated_at
+		id, profilepicture, email, username, password, is2FAEnabled, twoFASecret, created_at, updated_at
 		FROM users
 		WHERE id = ?
 	`)
 	const row = stmt.get(id)
-	console.log(row)
 	return (row as User) || null
 }
 
-export const addUser = async (email: string, password: string): Promise<boolean> => {
-	const stmt = db.prepare(`INSERT INTO users (email, password) VALUES (?, ?)`)
-	const result = stmt.run(email, password)
+export const addUser = async (email: string, username: string, password: string): Promise<boolean> => {
+	const stmt = db.prepare(`INSERT INTO users (email, username, password) VALUES (?, ?, ?)`)
+	const result = stmt.run(email, username, password)
 	return result.changes === 1
 }
 
