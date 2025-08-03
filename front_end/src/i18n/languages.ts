@@ -398,7 +398,7 @@ export const fr: Translations = {
     enterPlayerName: "Entrez le nom du joueur",
     player: "Joueur",
     congratulations: "Félicitations !",
-    wins: "Gagne !",
+    wins: "a Gagné !",
     finalScore: "Score Final",
     ai: "IA",
     difficulty: "Difficulté"
@@ -411,7 +411,7 @@ export const fr: Translations = {
     instructions: "Utilisez W/S/A/D ou les touches fléchées pour vous déplacer",
     playerBlue: "Joueur(bleu)",
     playerOrange: "Joueur(orange)",
-    wins: "Gagne !",
+    wins: "a Gagné !",
     finalScore: "Score Final"
   },
   profile: {
