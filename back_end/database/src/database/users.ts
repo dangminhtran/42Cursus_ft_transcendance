@@ -21,7 +21,6 @@ export const getUserByID = async (id: number): Promise<User | null> => {
 		WHERE id = ?
 	`)
 	const row = stmt.get(id)
-	console.log(row)
 	return (row as User) || null
 }
 

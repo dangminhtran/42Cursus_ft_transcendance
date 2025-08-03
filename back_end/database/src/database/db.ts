@@ -3,7 +3,7 @@ import Database from 'better-sqlite3';
 import { getUserByEmail, getUserByID, addUser, updateUser, update2FASecret, update2FAEnabled } from './users';
 import { AddFriend, DeleteFriend, FetchFriends } from './friends';
 import { createTournament } from './tournament';
-import { addMatch, getAllMatches } from './match';
+import { addMatch, getAllMatches, getWinCount } from './match';
 
 export const db = new Database('./transcendence.db', { verbose: console.log });
 
@@ -67,6 +67,7 @@ export default fp(async (fastify, opts) => {
 	fastify.decorate('AddFriend', AddFriend);
 	fastify.decorate('DeleteFriend', DeleteFriend);
 	fastify.decorate('FetchFriends', FetchFriends);
+	fastify.decorate('getWinCount', getWinCount);
 
 	// tournament
 	fastify.decorate('createTournament', createTournament);

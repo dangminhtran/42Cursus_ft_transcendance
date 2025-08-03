@@ -1,6 +1,6 @@
 import fastifyFormbody from '@fastify/formbody';
 import { FastifyInstance } from 'fastify';
-import { Friend, User } from '../structs';
+import { Friend, FriendWinRate, User } from '../structs';
 
 export async function friendRoutes(fastify: FastifyInstance) {
 
@@ -14,7 +14,7 @@ export async function friendRoutes(fastify: FastifyInstance) {
             return reply.code(404).send({ error: 'Utilisateur introuvable' });
 
 		let alreadyfriend: boolean = false;
-		const friends: Friend[] = await fastify.dbClient.post<Friend[]>('/friends/fetch', { user_id: userid });
+		const friends: FriendWinRate[] = await fastify.dbClient.post<FriendWinRate[]>('/friends/fetch', { user_id: userid });
 		friends.forEach((friend) => {
 			if (friend.email == user.email)
 			{

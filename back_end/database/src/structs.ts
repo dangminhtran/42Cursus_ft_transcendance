@@ -23,6 +23,14 @@ export interface Friend {
 	email: string;
 };
 
+export interface FriendWinRate {
+	username: string;
+	profilepicture: string;
+	email: string;
+	win: number;
+	loss: number;
+};
+
 export interface FriendStat {
 	username: string;
 	profilepicture: string;
