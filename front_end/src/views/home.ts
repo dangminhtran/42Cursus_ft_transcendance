@@ -248,8 +248,8 @@ function renderFriendsList(): string {
                         <span class="text-sm">${getStatusIcon(friend.status)}</span>
                     </div>
                     <div class="text-sm text-gray-400 mt-1">
-                        ${friend.status === 'online' ? 'Online' :
-            friend.status === 'in-game' ? 'In Game' :
+                        ${friend.status === 'online' ? t('home.online') :
+            friend.status === 'in-game' ? t('home.inGame') :
                 `Last seen ${formatLastSeen(friend.user.lastSeen)}`}
                     </div>
                 </div>
@@ -264,9 +264,9 @@ function renderFriendsList(): string {
     return `
         <div class="bg-gray-800 rounded-lg p-6 h-full flex flex-col">
             <div class="flex items-center justify-between mb-4">
-                <h2 class="text-xl font-bold text-white">👥 Friends (${friends.length})</h2>
+                <h2 class="text-xl font-bold text-white">👥 ${t('home.friends')} (${friends.length})</h2>
                 <button id="add-friend-btn" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm transition-colors">
-                    + Add Friend
+                    + ${t('home.addFriend')}
                 </button>
             </div>
             <div class="space-y-3 flex-1 overflow-y-auto">
@@ -394,7 +394,7 @@ function renderMatchHistory(): string {
                         ${filteredGames.length === 0 ? `
                             <tr>
                                 <td colspan="9" class="p-4 text-center text-gray-400">
-                                    No games found for this filter
+                                    ${t('home.noGamesYet')}
                                 </td>
                             </tr>
                         ` : ''}
@@ -402,7 +402,7 @@ function renderMatchHistory(): string {
                 </table>
             </div>
             <div class="mt-3 text-sm text-gray-400 text-center">
-                Showing ${filteredGames.length} game${filteredGames.length !== 1 ? 's' : ''}
+                ${t('home.showingGames')} ${filteredGames.length} game${filteredGames.length !== 1 ? 's' : ''}
             </div>
         </div>
     `;
@@ -544,14 +544,14 @@ export function addFriends() {
 							type="submit"
 							class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-md transition-colors"
 						>
-							Add Friend
+							${t('home.addFriend')}
 						</button>
 						<button 
 							type="button"
 							id="cancel-add-friend"
 							class="flex-1 bg-gray-600 hover:bg-gray-700 text-white py-2 px-4 rounded-md transition-colors"
 						>
-							Cancel
+							${t('common.cancel')}
 						</button>
 					</div>
 				</form>

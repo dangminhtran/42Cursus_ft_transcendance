@@ -222,7 +222,6 @@ export class TronGame {
 		if ( this.checkCollision(this.aiCar.position.x, this.aiCar.position.z, 1) == true )
 			return ;
 
-		Color3 
 		this.addTrailBlock(oldPos.x, oldPos.z, new Color3(1, 0.5, 0.05));
 	}
 
@@ -248,11 +247,11 @@ export class TronGame {
 			this.updateScore();
 
 			if (this.playerOneScore >= this.winningScore) {
-				this.endMatch("Player(blue)");
+				this.endMatch(t('tron.playerBlue'));
 				return true;
 			}
 			if (this.playerTwoScore >= this.winningScore) {
-				this.endMatch("Player(orange)");
+				this.endMatch(t('tron.playerOrange'));
 				return true;
 			}
 
@@ -294,9 +293,9 @@ export class TronGame {
 		overlay.innerHTML = `
 			<div>
 				<div style="color: #ffd700; margin-bottom: 20px;">🏆</div>
-				<div>${winner} Wins!</div>
+				<div>${winner} ${t('tron.wins')}</div>
 				<div style="font-size: 1.5rem; margin-top: 20px; opacity: 0.8;">
-					Final Score: ${this.playerOneScore} - ${this.playerTwoScore}
+					${t('tron.finalScore')}: ${this.playerOneScore} - ${this.playerTwoScore}
 				</div>
 			</div>
 		`;
@@ -400,7 +399,7 @@ export function renderTron() {
 					<div>${t('pong.player')}1(blue): <span id="playerOneScore">0</span> | ${t('pong.player')}2(orange): <span id="playerTwoScore">0</span></div>
 				</div>
 				<div id="instructions">
-					Use W/S/A/D or Arrow Keys to move
+					${t('tron.instructions')}
 				</div>
 			</div>
 		`;

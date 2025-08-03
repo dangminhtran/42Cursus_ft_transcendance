@@ -45,6 +45,7 @@ export interface Translations {
     friendsName: string;
     availableUsers: string;
     add: string;
+    showingGames: string;
   };
   
   // Login page
@@ -93,6 +94,10 @@ export interface Translations {
     enterPlayerName: string;
     player: string;
     congratulations: string;
+    wins: string;
+    finalScore: string;
+    ai: string;
+    difficulty: string;
   };
   
   // Tron game
@@ -101,6 +106,11 @@ export interface Translations {
     readyToPlay: string;
     oneVsOne: string;
     startGame: string;
+    instructions: string;
+    playerBlue: string;
+    playerOrange: string;
+    wins: string;
+    finalScore: string;
   };
   
   // Profile page
@@ -123,6 +133,12 @@ export interface Translations {
     loading: string;
     success: string;
     error: string;
+    profilePicturePreview: string;
+    profilePictureUrl: string;
+    previewImage: string;
+    oldPassword: string;
+    profileUpdated: string;
+    validImageUrl: string;
   };
   
   // Common
@@ -188,7 +204,8 @@ export const en: Translations = {
     gameDashboard: "Game Dashboard",
     friendsName: "Friend's Name",
     availableUsers: "Available Users",
-    add: "Add"
+    add: "Add",
+    showingGames: "Showing"
   },
   login: {
     title: "LOG IN",
@@ -232,13 +249,22 @@ export const en: Translations = {
     player2Keys: "Arrow keys",
     enterPlayerName: "Enter player name",
     player: "Player",
-    congratulations: "Congratulations!"
+    congratulations: "Congratulations!",
+    wins: "Wins!",
+    finalScore: "Final Score",
+    ai: "AI",
+    difficulty: "Difficulty"
   },
   tron: {
     title: "Tron",
     readyToPlay: "Ready to play Tron?",
     oneVsOne: "1 v 1 gare du nord",
-    startGame: "Start Game"
+    startGame: "Start Game",
+    instructions: "Use W/S/A/D or Arrow Keys to move",
+    playerBlue: "Player(blue)",
+    playerOrange: "Player(orange)",
+    wins: "Wins!",
+    finalScore: "Final Score"
   },
   profile: {
     title: "Profile",
@@ -258,7 +284,13 @@ export const en: Translations = {
     notifications: "Notifications",
     loading: "Loading...",
     success: "Success!",
-    error: "Error!"
+    error: "Error!",
+    profilePicturePreview: "Profile Picture Preview",
+    profilePictureUrl: "Profile picture URL:",
+    previewImage: "Preview Image",
+    oldPassword: "Old password:",
+    profileUpdated: "Profile updated successfully!",
+    validImageUrl: "Please enter a valid image URL"
   },
   common: {
     back: "Back",
@@ -320,7 +352,8 @@ export const fr: Translations = {
     gameDashboard: "Tableau de Bord de Jeu",
     friendsName: "Nom de l'Ami",
     availableUsers: "Utilisateurs Disponibles",
-    add: "Ajouter"
+    add: "Ajouter",
+    showingGames: "Affichage"
   },
   login: {
     title: "CONNEXION",
@@ -364,13 +397,22 @@ export const fr: Translations = {
     player2Keys: "Touches fléchées",
     enterPlayerName: "Entrez le nom du joueur",
     player: "Joueur",
-    congratulations: "Félicitations !"
+    congratulations: "Félicitations !",
+    wins: "Gagne !",
+    finalScore: "Score Final",
+    ai: "IA",
+    difficulty: "Difficulté"
   },
   tron: {
     title: "Tron",
     readyToPlay: "Prêt à jouer au Tron ?",
     oneVsOne: "1 contre 1 gare du nord",
-    startGame: "Commencer le Jeu"
+    startGame: "Commencer le Jeu",
+    instructions: "Utilisez W/S/A/D ou les touches fléchées pour vous déplacer",
+    playerBlue: "Joueur(bleu)",
+    playerOrange: "Joueur(orange)",
+    wins: "Gagne !",
+    finalScore: "Score Final"
   },
   profile: {
     title: "Profil",
@@ -380,7 +422,8 @@ export const fr: Translations = {
     email: "Email",
     avatar: "Avatar",
     avatarUrl: "URL de l'Avatar",
-    saveChanges: "Sauvegarder les Modifications",
+    // saveChanges: "Sauvegarder les Modifications",
+    saveChanges: "Sauvegarder",
     changePassword: "Changer le Mot de Passe",
     newPassword: "Nouveau Mot de Passe",
     confirmPassword: "Confirmer le Mot de Passe",
@@ -390,7 +433,13 @@ export const fr: Translations = {
     notifications: "Notifications",
     loading: "Chargement...",
     success: "Succès !",
-    error: "Erreur !"
+    error: "Erreur !",
+    profilePicturePreview: "Aperçu de la Photo de Profil",
+    profilePictureUrl: "URL de la photo de profil :",
+    previewImage: "Aperçu de l'Image",
+    oldPassword: "Ancien mot de passe :",
+    profileUpdated: "Profil mis à jour avec succès !",
+    validImageUrl: "Veuillez entrer une URL d'image valide"
   },
   common: {
     back: "Retour",
@@ -452,7 +501,8 @@ export const es: Translations = {
     gameDashboard: "Panel de Juegos",
     friendsName: "Nombre del Amigo",
     availableUsers: "Usuarios Disponibles",
-    add: "Agregar"
+    add: "Agregar",
+    showingGames: "Mostrando"
   },
   login: {
     title: "INICIAR SESIÓN",
@@ -496,13 +546,22 @@ export const es: Translations = {
     player2Keys: "Teclas de flecha",
     enterPlayerName: "Ingresa el nombre del jugador",
     player: "Jugador",
-    congratulations: "¡Felicitaciones!"
+    congratulations: "¡Felicitaciones!",
+    wins: "¡Gana!",
+    finalScore: "Puntuación Final",
+    ai: "IA",
+    difficulty: "Dificultad"
   },
   tron: {
     title: "Tron",
     readyToPlay: "¿Listo para jugar Tron?",
     oneVsOne: "1 vs 1 gare du nord",
-    startGame: "Comenzar Juego"
+    startGame: "Comenzar Juego",
+    instructions: "Usa W/S/A/D o las teclas de flecha para moverte",
+    playerBlue: "Jugador(azul)",
+    playerOrange: "Jugador(naranja)",
+    wins: "¡Gana!",
+    finalScore: "Puntuación Final"
   },
   profile: {
     title: "Perfil",
@@ -522,7 +581,13 @@ export const es: Translations = {
     notifications: "Notificaciones",
     loading: "Cargando...",
     success: "¡Éxito!",
-    error: "¡Error!"
+    error: "¡Error!",
+    profilePicturePreview: "Vista previa de la foto de perfil",
+    profilePictureUrl: "URL de la foto de perfil:",
+    previewImage: "Vista previa de imagen",
+    oldPassword: "Contraseña anterior:",
+    profileUpdated: "¡Perfil actualizado exitosamente!",
+    validImageUrl: "Por favor ingresa una URL de imagen válida"
   },
   common: {
     back: "Atrás",

@@ -9,7 +9,7 @@ export function renderProfile() {
 		
 			<!-- Avatar Preview Section -->
 			<div class="flex flex-col items-center gap-4 mb-6">
-				<div class="text-white font-medium">Profile Picture Preview</div>
+				<div class="text-white font-medium">${t('profile.profilePicturePreview')}</div>
 				<div class="relative">
 					<img 
 						id="avatarPreview" 
@@ -23,7 +23,7 @@ export function renderProfile() {
 			</div>
 
 			<div class="flex flex-col justify-center gap-2 w-full max-w-md">
-				<label for="pictureInput" class="text-white font-semibold">Profile picture URL:</label>
+				<label for="pictureInput" class="text-white font-semibold">${t('profile.profilePictureUrl')}</label>
 				<input 
 					class="rounded-sm bg-indigo-950 text-lg text-white border border-teal-50 ease-in-out p-2" 
 					type="url" 
@@ -35,12 +35,12 @@ export function renderProfile() {
 					id="previewBtn" 
 					class="mt-2 bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition-colors text-sm"
 				>
-					Preview Image
+					${t('profile.previewImage')}
 				</button>
 			</div>
 
 			<div class="flex flex-col justify-center gap-2 w-full max-w-md">
-				<label for="emailInput" class="text-white font-semibold">Email:</label>
+				<label for="emailInput" class="text-white font-semibold">${t('profile.email')}:</label>
 				<input 
 					class="rounded-sm bg-indigo-950 text-lg text-white border border-teal-50 ease-in-out p-2" 
 					type="email" 
@@ -50,7 +50,7 @@ export function renderProfile() {
 			</div>
 			
 			<div class="flex flex-col justify-center gap-2 w-full max-w-md">
-				<label for="oldPassword" class="text-white font-semibold">Old password:</label>
+				<label for="oldPassword" class="text-white font-semibold">${t('profile.oldPassword')}</label>
 				<input 
 					class="rounded-sm bg-indigo-950 text-lg text-white border border-teal-50 ease-in-out p-2" 
 					type="password" 
@@ -60,7 +60,7 @@ export function renderProfile() {
 			</div>
 			
 			<div class="flex flex-col justify-center gap-2 w-full max-w-md">
-				<label for="newPassword" class="text-white font-semibold">New password:</label>
+				<label for="newPassword" class="text-white font-semibold">${t('profile.newPassword')}:</label>
 				<input 
 					class="rounded-sm bg-indigo-950 text-lg text-white border border-teal-50 ease-in-out p-2" 
 					type="password" 
@@ -70,7 +70,7 @@ export function renderProfile() {
 			</div>
 			
 			<div class="flex justify-center items-center gap-2 w-full max-w-md">
-				<label for="2fa" class="text-white font-semibold">Enable 2FA:</label>
+				<label for="2fa" class="text-white font-semibold">${t('profile.enable2FA')}:</label>
 				<input 
 					class="rounded-sm bg-indigo-950 text-lg text-white border border-teal-50 ease-in-out" 
 					type="checkbox" 

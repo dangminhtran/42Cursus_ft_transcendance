@@ -764,6 +764,11 @@ export class PongGame {
     this.createScene();
     this.setupControls();
     this.startGameLoop();
+    
+    // Listen for language changes and update UI
+    i18n.addLanguageChangeListener(() => {
+      this.updateUILabels();
+    });
   }
 
   setDifficulty(level: 'easy' | 'medium' | 'hard') {
@@ -1046,9 +1051,9 @@ export class PongGame {
     overlay.innerHTML = `
       <div>
         <div style="color: #ffd700; margin-bottom: 20px;">🏆</div>
-        <div>${winner} Wins!</div>
+        <div>${winner} ${t('pong.wins')}</div>
         <div style="font-size: 1.5rem; margin-top: 20px; opacity: 0.8;">
-          Final Score: ${this.playerScore} - ${this.aiScore}
+          ${t('pong.finalScore')}: ${this.playerScore} - ${this.aiScore}
         </div>
       </div>
     `;
@@ -1134,10 +1139,48 @@ export class PongGame {
     if (aiscore)
       aiscore.textContent = this.aiScore as unknown as string;
 
+    this.updateUILabels();
+  }
+
+  updateUILabels() {
     let player1Label = document.getElementById('player1Label');
     let player2Label = document.getElementById('player2Label');
-    if (player1Label) player1Label.textContent = this.player1Name;
-    if (player2Label) player2Label.textContent = this.player2Name;
+    
+    // For solo mode, always use translations. For multiplayer, use actual player names
+    if (!this.isMultiplayer) {
+      if (player1Label) player1Label.textContent = t('pong.player');
+      if (player2Label) player2Label.textContent = t('pong.ai');
+    } else {
+      if (player1Label) player1Label.textContent = this.player1Name;
+      if (player2Label) player2Label.textContent = this.player2Name;
+    }
+
+    // Update difficulty display
+    const getDifficultyText = (diff: string) => {
+      switch(diff) {
+        case 'easy': return t('pong.easy');
+        case 'medium': return t('pong.medium');
+        case 'hard': return t('pong.hard');
+        default: return diff;
+      }
+    };
+
+    // Find and update difficulty display in the game UI
+    const gameUI = document.getElementById('gameUI');
+    if (gameUI) {
+      const difficultyDiv = gameUI.querySelector('div[style*="font-size: 16px"]') as HTMLElement;
+      if (difficultyDiv) {
+        difficultyDiv.innerHTML = `${t('pong.difficulty')}: ${getDifficultyText(this.difficulty)}`;
+      }
+    }
+
+    // Update instructions for multiplayer games
+    const instructions = document.getElementById('instructions');
+    if (instructions && this.isMultiplayer) {
+      instructions.innerHTML = `${this.player1Name}: ${t('pong.player1Keys')} | ${this.player2Name}: ${t('pong.player2Keys')} | ${t('pong.firstTo5Wins')}`;
+    } else if (instructions && !this.isMultiplayer) {
+      instructions.innerHTML = `${t('pong.player1Keys')} / ${t('pong.player2Keys')} - ${t('pong.firstTo5Wins')}`;
+    }
   }
 
   startGameLoop() {
@@ -1189,6 +1232,14 @@ function startPongGame(isMultiplayer: boolean = false, player1Name: string = "Pl
   // Store reference for cleanup
   window.pongGameInstance = game;
 }
+
+// Global language change listener for active games
+i18n.addLanguageChangeListener(() => {
+  const activeGame = window.pongGameInstance;
+  if (activeGame && activeGame.updateUILabels && document.getElementById('gameUI')) {
+    activeGame.updateUILabels();
+  }
+});
 
 export function renderPong() {
   renderNavbar();
@@ -1257,13 +1308,23 @@ export function renderPong() {
 }
 
 export function launchPongGame(difficulty: 'easy' | 'medium' | 'hard' = 'medium') {
+  // Helper function to get translated difficulty
+  const getDifficultyText = (diff: string) => {
+    switch(diff) {
+      case 'easy': return t('pong.easy');
+      case 'medium': return t('pong.medium');
+      case 'hard': return t('pong.hard');
+      default: return diff;
+    }
+  };
+
   renderNavbar();
   document.getElementById('app')!.innerHTML = `
     <div id="gameContainer">
       <canvas id="renderCanvas"></canvas>
       <div id="gameUI">
-        <div><span id="player1Label">${t('pong.player')}</span>: <span id="playerScore">0</span> | <span id="player2Label">AI</span>: <span id="aiScore">0</span></div>
-        <div style="font-size: 16px; margin-top: 10px;">Difficulty: ${difficulty.charAt(0).toUpperCase() + difficulty.slice(1)}</div>
+        <div><span id="player1Label">${t('pong.player')}</span>: <span id="playerScore">0</span> | <span id="player2Label">${t('pong.ai')}</span>: <span id="aiScore">0</span></div>
+        <div style="font-size: 16px; margin-top: 10px;">${t('pong.difficulty')}: ${getDifficultyText(difficulty)}</div>
       </div>
       <div id="instructions">
         ${t('pong.player1Keys')} / ${t('pong.player2Keys')} - ${t('pong.firstTo5Wins')}
@@ -1286,14 +1347,14 @@ export function launchPongForMultiple() {
   <div class="flex flex-col -mt-60 justify-center">
     <div class="text-white font-bold text-4xl mb-10">${t('pong.selectPlayers')}</div>
       <div class="card p-7">
-        <div class="w-full flex gap-10 justify-center align-items mb-10">
-          <div class="bg-indigo-950 text-white p-5 text-xl text-center font-semibold w-100" id="2players">
+        <div class="w-full flex flex-wrap gap-4 justify-center items-center mb-10">
+          <div class="bg-indigo-950 text-white p-4 text-lg text-center font-semibold min-w-32 flex-1 max-w-40 cursor-pointer hover:bg-indigo-800 transition-colors rounded" id="2players">
             ${t('pong.players2')}
           </div>
-          <div class="bg-white text-green-900 p-5 text-xl text-center font-semibold w-100" id="4players">
+          <div class="bg-white text-green-900 p-4 text-lg text-center font-semibold min-w-32 flex-1 max-w-40 cursor-pointer hover:bg-gray-100 transition-colors rounded" id="4players">
             ${t('pong.players4')}
           </div>
-          <div class="bg-green-950 text-white p-5 text-xl text-center font-semibold w-100" id="8players">
+          <div class="bg-green-950 text-white p-4 text-lg text-center font-semibold min-w-32 flex-1 max-w-40 cursor-pointer hover:bg-green-800 transition-colors rounded" id="8players">
             ${t('pong.players8')}
           </div>
       </div>
