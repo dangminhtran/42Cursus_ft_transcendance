@@ -1538,14 +1538,20 @@ window['onMatchFinished'] = function(winner: string) {
       } else if (currentTournament.winners.length > 1) {
         // console.log('Starting next round with', currentTournament.winners.length, 'players');
         // Start next round
-        setTimeout(() => {
-          currentTournament.matches = generateMatches(currentTournament.winners);
-          currentTournament.currentMatchIndex = 0;
-          currentTournament.winners = [];
+        // setTimeout(() => {
+        //   currentTournament.matches = generateMatches(currentTournament.winners);
+        //   currentTournament.currentMatchIndex = 0;
+        //   currentTournament.winners = [];
           
-          // console.log(`Starting new round with players:`, previousWinners);
-          showNextMatch();
-        }, 1000);
+        //   // console.log(`Starting new round with players:`, previousWinners);
+        //   showNextMatch();
+        // }, 1000);
+		currentTournament.matches = generateMatches(currentTournament.winners);
+        currentTournament.currentMatchIndex = 0;
+        currentTournament.winners = [];
+          
+        // console.log(`Starting new round with players:`, previousWinners);
+        showNextMatch();
         return;
       }
     }
@@ -1553,10 +1559,11 @@ window['onMatchFinished'] = function(winner: string) {
     // Continue with next match in current round
     // console.log('Continuing to next match in current round');
     // console.log('About to call showNextMatch in 500ms...');
-    setTimeout(() => {
-      // console.log('Timeout executed, calling showNextMatch now');
-      showNextMatch();
-    }, 500);
+    // setTimeout(() => {
+    //   // console.log('Timeout executed, calling showNextMatch now');
+    //   showNextMatch();
+    // }, 500);
+	showNextMatch(); // after announcing the winner goes directly to the next match
   } else {
     console.error('No valid match found at current index:', currentTournament.currentMatchIndex);
   }
