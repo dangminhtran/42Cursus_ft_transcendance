@@ -4,13 +4,13 @@ import { TEST_ADDRESS, TOURNAMENT_ADDRESS } from '../config';
 import type { User } from '../../../back_end/database/src/structs';
 import { navigateTo } from '../router';
 import { i18n, t } from '../i18n';
+import { WebXRMotionControllerManager } from '@babylonjs/core';
 
 
 let currentUser: any = {}
 const getCurrentUser = async () => {
 	try {
 		const token = sessionStorage.getItem("token");
-		console.log('Token used for profile:', token);
 
 		if (!token) {
 			console.error('No token found in sessionStorage');
@@ -29,7 +29,6 @@ const getCurrentUser = async () => {
 			}
 		);
 		currentUser = response.data;
-		console.log('Current user loaded:', currentUser);
 		return currentUser;
 	} catch (error: any) {
 		console.error('Error loading current user:', error);
@@ -41,68 +40,8 @@ const getCurrentUser = async () => {
 	}
 }
 
-console.log('currentUser ?', currentUser)
-
-// Mock users data - À remplacer par un appel API
-const users: User[] = [
-	{
-		id: 'bob',
-		name: 'Bob',
-		isOnline: true,
-		lastSeen: '2025-07-27T10:25:00Z',
-		stats: { wins: 8, losses: 12, draws: 1, totalGames: 21, winRate: (21 / 8) * 100 },
-		avatar: '🎯',
-		joinDate: '2025-02-01',
-	},
-	{
-		id: 'charlie',
-		name: 'Charlie',
-		isOnline: false,
-		lastSeen: '2025-07-26T22:15:00Z',
-		stats: { wins: 15, losses: 6, draws: 3, totalGames: 24, winRate: 62.5 },
-		avatar: '⚡',
-		joinDate: '2025-01-20',
-	},
-	{
-		id: 'eve',
-		name: 'Eve',
-		isOnline: true,
-		lastSeen: '2025-07-27T10:28:00Z',
-		stats: { wins: 18, losses: 9, draws: 1, totalGames: 28, winRate: 64.3 },
-		avatar: '🔥',
-		joinDate: '2025-01-10',
-	},
-	{
-		id: 'dave',
-		name: 'Dave',
-		isOnline: false,
-		lastSeen: '2025-07-27T08:45:00Z',
-		stats: { wins: 7, losses: 11, draws: 4, totalGames: 22, winRate: 31.8 },
-		avatar: '🎲',
-		joinDate: '2025-02-10',
-	},
-	{
-		id: 'mallory',
-		name: 'Mallory',
-		isOnline: true,
-		lastSeen: '2025-07-27T10:20:00Z',
-		stats: { wins: 13, losses: 10, draws: 2, totalGames: 25, winRate: 52.0 },
-		avatar: '🌟',
-		joinDate: '2025-01-25',
-	},
-	{
-		id: 'oscar',
-		name: 'Oscar',
-		isOnline: true,
-		lastSeen: '2025-07-27T10:50:00Z',
-		stats: { wins: 19, losses: 1, draws: 2, totalGames: 22, winRate: 80.0 },
-		avatar: '🌟',
-		joinDate: '2025-01-19',
-	},
-];
-
 // Variables globales pour les données chargées
-let friends = [];
+let friends: any[] = [];
 let isLoading = true;
 
 // Current view - can be 'all', 'my-games', or a specific friend's name
@@ -133,7 +72,6 @@ async function loadFriends(): Promise<void> {
 				}
 			}
 		)
-		console.log('response.data', response.data)
 		if (response.data == null) {
 			friends = []
 			isLoading = false
@@ -153,7 +91,6 @@ async function loadFriends(): Promise<void> {
 
 async function addFriendAPI(email: string): Promise<boolean> {
 	try {
-		console.log(email)
 		await axios.post(
 			`${TEST_ADDRESS}/friends/add`,
 			{ email: email },
@@ -189,15 +126,6 @@ async function deleteFriendAPI(friendId: number): Promise<boolean> {
 	}
 }
 
-function getStatusIcon(status: string): string {
-	switch (status) {
-		case 'online': return '🟢';
-		case 'offline': return '⚫';
-		case 'in-game': return '🎮';
-		default: return '⚫';
-	}
-}
-
 function renderUserProfile(): string {
 	if (!currentUser || !currentUser.username) {
 		return `
@@ -211,6 +139,21 @@ function renderUserProfile(): string {
         `;
 	}
 
+	let win: number = 0;
+	let losses: number = 0;
+	const totalGames = data.length;
+
+	data.forEach((game) => {
+		const winnerusername = game.player1_score > game.player2_score ? game.player1 : game.player2;
+		if (winnerusername == currentUser.username)
+			win++;
+		else
+			losses++;
+	})
+
+	const winrate: number = Math.round((win / totalGames) * 10000) / 100;
+
+
 	return `
         <div class="bg-gray-800 rounded-lg p-6">
             <h2 class="text-xl font-bold text-white mb-4">👤 ${t('home.yourProfile')}</h2>
@@ -218,7 +161,7 @@ function renderUserProfile(): string {
                 <img class="h-12 w-12 rounded-full" src="${currentUser.profilepicture ? currentUser.profilepicture : "https://www.gravatar.com/avatar/default?s=150&d=mp"}" alt="User profile picture">
                 <div>
                     <h3 class="text-xl font-semibold text-white">${currentUser.username}</h3>
-                    <p class="text-gray-400 text-base">${t('home.memberSince')} ${new Date(currentUser.joinDate).toLocaleDateString()}</p>
+                    <p class="text-gray-400 text-base">${t('home.memberSince')} ${new Date(currentUser.created_at).toLocaleDateString()}</p>
                     <div class="flex items-center space-x-2 mt-1">
                         <span class="text-green-400 text-base">🟢 ${t('home.online')}</span>
                     </div>
@@ -227,24 +170,20 @@ function renderUserProfile(): string {
             <div class="grid grid-cols-2 md:grid-cols-5 gap-3 text-center">
                 <div class="bg-gray-700 rounded p-3">
 
-                    <div class="text-xl font-bold text-green-400">{currentUser.stats.wins}</div>
-                    <div class="text-gray-300 text-sm">{t('home.wins')}</div>
+                    <div class="text-xl font-bold text-green-400">${win}</div>
+                    <div class="text-gray-300 text-sm">${t('home.wins')}</div>
                 </div>
                 <div class="bg-gray-700 rounded p-3">
-                    <div class="text-xl font-bold text-red-400">{currentUser.stats.losses}</div>
-                    <div class="text-gray-300 text-sm">{t('home.losses')}</div>
+                    <div class="text-xl font-bold text-red-400">${losses}</div>
+                    <div class="text-gray-300 text-sm">${t('home.losses')}</div>
                 </div>
                 <div class="bg-gray-700 rounded p-3">
-                    <div class="text-xl font-bold text-yellow-400">{currentUser.stats.draws}</div>
-                    <div class="text-gray-300 text-sm">{t('home.draws')}</div>
+                    <div class="text-xl font-bold text-blue-400">${totalGames}</div>
+                    <div class="text-gray-300 text-sm">${t('home.totalGames')}</div>
                 </div>
                 <div class="bg-gray-700 rounded p-3">
-                    <div class="text-xl font-bold text-blue-400">{currentUser.stats.totalGames}</div>
-                    <div class="text-gray-300 text-sm">{t('home.totalGames')}</div>
-                </div>
-                <div class="bg-gray-700 rounded p-3">
-                    <div class="text-xl font-bold text-purple-400">{currentUser.stats.winRate}%</div>
-                    <div class="text-gray-300 text-sm">{t('home.winRate')}</div>
+                    <div class="text-xl font-bold text-purple-400">${winrate}%</div>
+                    <div class="text-gray-300 text-sm">${t('home.winRate')}</div>
                 </div>
             </div>
         </div>
@@ -295,15 +234,16 @@ function renderFriendsList(): string {
         `;
 	}
 
+	console.log(friends);
 	const friendsHtml = friends.map(friend => `
         <div class="flex items-center justify-between p-3 bg-gray-700 rounded-lg hover:bg-gray-600 transition-colors cursor-pointer friend-item">
             <div class="flex items-center space-x-3">
                 <img class="h-8 w-8" src=${friend.profilepicture ? friend.profilepicture : "https://www.gravatar.com/avatar/default?s=150&d=mp"}  />
                 <div>
                     <div class="flex items-center space-x-4">
-                        <span class="font-semibold text-white text-base">${friend.username != null && friend.username.length > 10 ? friend.username.slice(0, 10) + '...' : friend.username}</span>
-                        <span class="text-green-400 text-base">🟢 Online</span>
-						<button id="deleteBtn"> X </button>
+						<span class="font-semibold text-white text-base">${friend.username != null && friend.username.length > 10 ? friend.username.slice(0, 10) + '...' : friend.username}</span>
+						<span class="text-green-400 text-base">🟢 Online</span>
+						<button class="delete-friend-btn" data-email="${friend.email}"> X </button>
 						</div>
                 </div>
             </div>
@@ -341,7 +281,6 @@ async function getMyGameHistory(): Promise<Match[]> {
 			'Content-Type': 'application/json'
 		}
 	});
-	console.log('response data MATCH', response.data);
 	return data = response.data
 }
 
@@ -358,36 +297,21 @@ async function getFilteredGames(): Promise<Match[]> {
 }
 
 function getHistoryTitle(): string {
-	if (currentHistoryView === 'all') {
-		return '📊 All Match History';
-	} else if (currentHistoryView === 'my-games') {
-		return '📊 My Match History';
-	} else {
-		const friend = friends.find(f => f.user.name === selectedFriend);
-		return `📊 ${selectedFriend}'s Match History ${friend?.user.avatar || ''}`;
-	}
+	// if (currentHistoryView === 'all') {
+	// 	return '📊 All Match History';
+	// } else if (currentHistoryView === 'my-games') {
+	// 	return '📊 My Match History';
+	// } else {
+	// 	const friend = friends.find(f => f.user.name === selectedFriend);
+	// 	return `📊 ${selectedFriend}'s Match History ${friend?.user.avatar || ''}`;
+	// }
+	return ""
 }
 
 function renderMatchHistory(): string {
     const filteredGames = getFilteredGames();
     const rowsHtml = data.map(game => {
-        const isCurrentUserInvolved = game.player1 === currentUser.name || game.player2 === currentUser.name;
-        const isFriendInvolved = game.player1 === selectedFriend || game.player2 === selectedFriend;
 
-        let rowClass = '';
-        // if (currentHistoryView === 'my-games' && isCurrentUserInvolved) {
-        //     // Color based on win/loss for current user in "My Games" view
-        //     if (game.winner === currentUser.name) {
-        //         rowClass = 'bg-blue-900 bg-opacity-30'; // Victory in blue
-        //     } else if (game.winner === 'Draw') {
-        //         rowClass = 'bg-yellow-900 bg-opacity-30'; // Draw in yellow
-        //     } else {
-        //         rowClass = 'bg-red-900 bg-opacity-30'; // Defeat in red
-        //     }
-        // } else if (currentHistoryView !== 'my-games' && isFriendInvolved) {
-        //     rowClass = 'bg-purple-900 bg-opacity-30';
-        // }
-		console.log("game in data", game)
         return `
             <tr class="hover:bg-gray-700 transition-colors">
                 <td class="p-3 border-b border-gray-600 text-sm">
@@ -556,19 +480,23 @@ function addEventListeners() {
 
 	// Event listeners pour supprimer des amis
 	const deleteFriendBtns = document.querySelectorAll('.delete-friend-btn');
+	console.log(deleteFriendBtns)
 	deleteFriendBtns.forEach(btn => {
-		btn.addEventListener('click', async (e) => {
+		btn.addEventListener('click', (e) => {
 			e.stopPropagation();
-			const friendId = parseInt(btn.getAttribute('data-friend-id') || '0');
-			if (friendId && confirm('Are you sure you want to remove this friend?')) {
-				const success = await deleteFriendAPI(friendId);
-				if (success) {
-					showMessage('Friend removed successfully', 'success');
-					await loadFriends(); // Recharger la liste
-					refreshHomeDashboard();
-				} else {
-					showMessage('Failed to remove friend', 'error');
+			const email = e.currentTarget.dataset.email;
+			if (email && confirm('Are you sure you want to remove this friend?')) {
+				axios.post(
+			`${TEST_ADDRESS}/friends/delete`,
+				{email:email},
+				{
+					headers: {
+						'Authorization': `Bearer ${sessionStorage.getItem('token')}`,
+						'Content-Type': 'application/json'
+					}
 				}
+			)
+			navigateTo("/")
 			}
 		});
 	});
@@ -587,7 +515,7 @@ function addEventListeners() {
 					if (historySection) {
 						historySection.scrollIntoView({
 							behavior: 'smooth',
-							block: 'center' // This centers the element in the viewport
+							block: 'center'
 						});
 					}
 				}, 100);
@@ -630,25 +558,6 @@ export function addFriends() {
 						</button>
 					</div>
 				</form>
-				
-				<!-- Available users to add -->
-				<div class="mt-6">
-					<h3 class="text-lg font-semibold text-white mb-3">${t('home.availableUsers')}</h3>
-					<div class="space-y-2 max-h-48 overflow-y-auto">
-						${getAvailableUsers().map(user => `
-							<div class="flex items-center justify-between p-2 bg-gray-700 rounded cursor-pointer hover:bg-gray-600 transition-colors available-user" data-user-name="${user.name}">
-								<div class="flex items-center space-x-3">
-									<span class="text-xl">${user.avatar}</span>
-									<div>
-										<span class="text-white font-medium">${user.name}</span>
-										<div class="text-xs text-gray-400">${user.stats.wins}W-${user.stats.losses}L (${user.stats.winRate}% WR)</div>
-									</div>
-								</div>
-								<button class="text-blue-400 hover:text-blue-300 text-sm">${t('home.add')}</button>
-							</div>
-						`).join('')}
-					</div>
-				</div>
 			</div>
 		</div>
 	`;
@@ -687,13 +596,6 @@ export function addFriends() {
 	setTimeout(() => {
 		friendNameInput.focus();
 	}, 100);
-}
-
-function getAvailableUsers(): User[] {
-	// Fonction temporaire utilisant les mock users
-	// À remplacer par un appel API pour récupérer tous les utilisateurs
-	const friendIds = friends.map(friend => friend.id);
-	return users.filter(user => !friendIds.includes(user.id));
 }
 
 function showMessage(message: string, type: 'success' | 'error' | 'warning') {

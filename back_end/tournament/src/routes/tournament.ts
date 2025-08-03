@@ -10,6 +10,6 @@ export async function tournamentRoutes(fastify: FastifyInstance) {
 		const result: boolean = await fastify.dbClient.post<boolean>('/tournament/add', {uuid: uuid })
 		if (!result)
 			return reply.code(500).send({ error: 'Cannot create tournament.' });
-		return reply.code(200).send({ message: 'Tournament created' });
+		return reply.code(200).send({uuid: uuid});
 	});
 }

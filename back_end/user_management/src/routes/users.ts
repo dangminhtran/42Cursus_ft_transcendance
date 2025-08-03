@@ -17,12 +17,12 @@ export async function userRoutes(fastify: FastifyInstance) {
 			username:     user.username,
 			email:        user.email,
 			is2FAEnabled: user.is2FAEnabled,
-			profilepicture: user.profilepicture
+			profilepicture: user.profilepicture,
+			created_at: user.created_at
 		};
 	});
 
 	fastify.post('/update', { preValidation: [fastify.authenticate] },  async (request: any, reply) => {
-		console.log("COUCOU ?")
 		const {
 			username,
 			profilepicture,
