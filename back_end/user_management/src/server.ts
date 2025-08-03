@@ -21,7 +21,7 @@ fastify.register(cors, {
 });
 
 fastify.register(dbServiceClient, {
-	baseURL: process.env.DATABASE_URL as string,
+	baseURL: process.env.DATABASE_URL as string || 'http://localhost:3001',
 	tokenHeader: 'authorization'
 })
 

@@ -1,4 +1,3 @@
-import fastifyFormbody from '@fastify/formbody';
 import { FastifyInstance } from 'fastify';
 import { Friend, User } from '../structs';
 
