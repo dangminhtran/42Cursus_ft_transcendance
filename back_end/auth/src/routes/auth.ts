@@ -7,14 +7,14 @@ export default async function authRoutes(fastify: FastifyInstance) {
 
     // -- REGISTER simple (sans hash, juste pour exemple)
     fastify.post('/register', async (request, reply) => {
-        const { email, password } = request.body as { email: string, password: string };
+        const { email, username, password } = request.body as { email: string, username: string, password: string };
         let user: User | null = await fastify.dbClient.post<User>('/user/getUserByEmail', { email });
 		if (user != null)
 			return reply.code(409).send({message: "Email already used. Please login."});
 
 		let hash = await bcrypt.hash(password, 10);
 
-        let status: boolean = await fastify.dbClient.post<boolean>('/auth/register', { email: email, password: hash });
+        let status: boolean = await fastify.dbClient.post<boolean>('/auth/register', { email: email, username: username, password: hash });
 		if (!status)
 			return reply.code(401).send({ error: 'Unable to create user.' });
 		

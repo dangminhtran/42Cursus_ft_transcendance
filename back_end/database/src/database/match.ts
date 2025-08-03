@@ -1,10 +1,27 @@
-import { FastifyInstance } from 'fastify';
-import { Match, MatchToAdd } from '../structs';
+import fastify, { FastifyInstance } from 'fastify';
+import { Match, MatchToAdd, User } from '../structs';
 import { db } from './db'
+import { getUserByID } from './users';
 
 export const addMatch = async (match: MatchToAdd, userid: number): Promise<boolean> => {
 	let stmt;
 	let result;
+
+	const user: User | null = await getUserByID(userid);
+	if (!user)
+		return false;
+
+	const stmt_fetch_user = db.prepare(`SELECT * from users where username = ?`);
+	const user1: User = stmt_fetch_user.get(match.player1) as User;
+	const user2: User = stmt_fetch_user.get(match.player2) as User;
+
+	if (user1.id != userid && user2.id != userid)
+	{
+		return false;
+	}
+
+	
+	console.log(match.player1score)
 
 	if (!match.tournament_uuid)
 	{
