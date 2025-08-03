@@ -6,7 +6,7 @@ declare module 'fastify' {
 		// usermanagment && user
 		getUserByEmail(email: string): Promise<User | null>;
 		getUserByID(id: number): Promise<User | null>;
-		addUser(email: string, password: string): Promise<boolean>;
+		addUser(email: string, username: string, password: string): Promise<boolean>;
 		updateUser(user: User): Promise<boolean>;
 		update2FASecret(userid: number, twoFASecret: string): Promise<boolean>;
 		update2FAEnabled(userid: number): Promise<boolean>;
