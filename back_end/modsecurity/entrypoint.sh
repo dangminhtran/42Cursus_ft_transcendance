@@ -45,4 +45,4 @@ echo "✅ Certificat et clé écrits dans /etc/nginx/ssl/"
 # Lancer nginx
 echo "🚀 Démarrage de nginx..."
 # sleep infinity
-exec /usr/local/nginx/nginx -g 'daemon off;'
+exec nginx -g 'daemon off;'
