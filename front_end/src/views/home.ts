@@ -3,7 +3,6 @@ import { renderNavbar } from '../componentes/navbar';
 import { TEST_ADDRESS, TOURNAMENT_ADDRESS } from '../config';
 import type { User } from '../../../back_end/database/src/structs';
 import { navigateTo } from '../router';
-import type { Match } from '../../../back_end/database/src/structs'
 import { i18n, t } from '../i18n';
 
 
@@ -146,7 +145,7 @@ async function loadFriends(): Promise<void> {
 	} catch (error) {
 		console.error('Erreur lors du chargement des amis:', error);
 		isLoading = false;
-		friends = [];
+		friends = []
 		showMessage('Erreur lors du chargement des amis', 'error');
 	}
 }
@@ -228,24 +227,24 @@ function renderUserProfile(): string {
             <div class="grid grid-cols-2 md:grid-cols-5 gap-3 text-center">
                 <div class="bg-gray-700 rounded p-3">
 
-                    <div class="text-xl font-bold text-green-400">${currentUser.stats.wins}</div>
-                    <div class="text-gray-300 text-sm">${t('home.wins')}</div>
+                    <div class="text-xl font-bold text-green-400">{currentUser.stats.wins}</div>
+                    <div class="text-gray-300 text-sm">{t('home.wins')}</div>
                 </div>
                 <div class="bg-gray-700 rounded p-3">
-                    <div class="text-xl font-bold text-red-400">${currentUser.stats.losses}</div>
-                    <div class="text-gray-300 text-sm">${t('home.losses')}</div>
+                    <div class="text-xl font-bold text-red-400">{currentUser.stats.losses}</div>
+                    <div class="text-gray-300 text-sm">{t('home.losses')}</div>
                 </div>
                 <div class="bg-gray-700 rounded p-3">
-                    <div class="text-xl font-bold text-yellow-400">${currentUser.stats.draws}</div>
-                    <div class="text-gray-300 text-sm">${t('home.draws')}</div>
+                    <div class="text-xl font-bold text-yellow-400">{currentUser.stats.draws}</div>
+                    <div class="text-gray-300 text-sm">{t('home.draws')}</div>
                 </div>
                 <div class="bg-gray-700 rounded p-3">
-                    <div class="text-xl font-bold text-blue-400">${currentUser.stats.totalGames}</div>
-                    <div class="text-gray-300 text-sm">${t('home.totalGames')}</div>
+                    <div class="text-xl font-bold text-blue-400">{currentUser.stats.totalGames}</div>
+                    <div class="text-gray-300 text-sm">{t('home.totalGames')}</div>
                 </div>
                 <div class="bg-gray-700 rounded p-3">
-                    <div class="text-xl font-bold text-purple-400">${currentUser.stats.winRate}%</div>
-                    <div class="text-gray-300 text-sm">${t('home.winRate')}</div>
+                    <div class="text-xl font-bold text-purple-400">{currentUser.stats.winRate}%</div>
+                    <div class="text-gray-300 text-sm">{t('home.winRate')}</div>
                 </div>
             </div>
         </div>
@@ -326,6 +325,14 @@ function renderFriendsList(): string {
     `;
 }
 
+
+type Match = {
+	player1: string,
+	player2: string,
+	player1_score: number,
+	player2_score: number,
+}
+
 let data: Match[] = []
 async function getMyGameHistory(): Promise<Match[]> {
 	const response = await axios.post(`${TOURNAMENT_ADDRESS}/match/getAllMatches`, {}, {
@@ -380,22 +387,23 @@ function renderMatchHistory(): string {
         // } else if (currentHistoryView !== 'my-games' && isFriendInvolved) {
         //     rowClass = 'bg-purple-900 bg-opacity-30';
         // }
-
+		console.log("game in data", game)
         return `
-            <tr class="${rowClass} hover:bg-gray-700 transition-colors">
+            <tr class="hover:bg-gray-700 transition-colors">
                 <td class="p-3 border-b border-gray-600 text-sm">
-                    <span class="${game.player1 === currentUser.name ? 'font-bold text-blue-400' :
+                    <span class="${game.player1 === currentUser.username ? 'font-bold text-blue-400' :
                 game.player1 === selectedFriend ? 'font-bold text-purple-400' : ''
             }">${game.player1}</span>
                 </td>
-                <td class="p-3 border-b border-gray-600 text-center font-mono text-sm">${game.player1score}</td>
+                <td class="p-3 border-b border-gray-600 text-center font-mono text-sm">${game.player1_score}</td>
                 <td class="p-3 border-b border-gray-600 text-center text-gray-400 text-sm">vs</td>
-                <td class="p-3 border-b border-gray-600 text-center font-mono text-sm">${game.player2score}</td>
+                <td class="p-3 border-b border-gray-600 text-center font-mono text-sm">${game.player2_score}</td>
                 <td class="p-3 border-b border-gray-600 text-sm">
                     <span class="${game.player2 === currentUser.name ? 'font-bold text-blue-400' :
                 game.player2 === selectedFriend ? 'font-bold text-purple-400' : ''
             }">${game.player2}</span>
                 </td>
+				<td class="p-3 border-b border-gray-600 text-center font-mono text-sm">${game.player1_score > game.player2_score ? game.player1 : game.player2}</td>
             </tr>
         `;
     }).join('');
@@ -427,14 +435,11 @@ function renderMatchHistory(): string {
                 <table class="w-full border-collapse text-base">
                     <thead class="sticky top-0 bg-gray-700">
                         <tr>
-                            <th class="p-3 text-left text-white font-semibold border-b border-gray-600">${t('home.date')}</th>
                             <th class="p-3 text-left text-white font-semibold border-b border-gray-600">${t('home.player')} 1</th>
                             <th class="p-3 text-center text-white font-semibold border-b border-gray-600">${t('home.score')}</th>
                             <th class="p-3 text-center text-white font-semibold border-b border-gray-600"></th>
                             <th class="p-3 text-center text-white font-semibold border-b border-gray-600">${t('home.score')}</th>
                             <th class="p-3 text-left text-white font-semibold border-b border-gray-600">${t('home.player')} 2</th>
-                            <th class="p-3 text-center text-white font-semibold border-b border-gray-600">${t('home.gameType')}</th>
-                            <th class="p-3 text-center text-white font-semibold border-b border-gray-600">${t('home.duration')}</th>
                             <th class="p-3 text-center text-white font-semibold border-b border-gray-600">${t('home.winner')}</th>
                         </tr>
                     </thead>
@@ -463,7 +468,8 @@ export async function renderHome() {
 	// Charger l'utilisateur actuel et les amis en parallèle
 	await Promise.all([
 		getCurrentUser(),
-		loadFriends()
+		loadFriends(),
+		getMyGameHistory()
 	]);
 
 	document.getElementById('app')!.innerHTML = `

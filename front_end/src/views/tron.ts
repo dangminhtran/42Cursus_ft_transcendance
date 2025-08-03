@@ -260,54 +260,54 @@ export class TronGame {
 		return ( false );
 	}
 
-	endMatch(winner: string) {
-		this.engine.stopRenderLoop();
+	// endMatch(winner: string) {
+	// 	this.engine.stopRenderLoop();
 
-		this.showWinnerOverlay(winner);
+	// 	this.showWinnerOverlay(winner);
 
-		// Optionally, you can reset the game or go back to menu after a delay
-		setTimeout(() => {
-			renderTron(); // Go back to Tron menu
-		}, 3000);
-	}
+	// 	// Optionally, you can reset the game or go back to menu after a delay
+	// 	setTimeout(() => {
+	// 		renderTron(); // Go back to Tron menu
+	// 	}, 3000);
+	// }
 
-	showWinnerOverlay(winner: string) {
-		const overlay = document.createElement('div');
-		overlay.style.cssText = `
-			position: fixed;
-			top: 0;
-			left: 0;
-			width: 100%;
-			height: 100%;
-			background: rgba(0, 0, 0, 0.8);
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			z-index: 1000;
-			color: white;
-			font-size: 3rem;
-			font-weight: bold;
-			text-align: center;
-		`;
+	// showWinnerOverlay(winner: string) {
+	// 	const overlay = document.createElement('div');
+	// 	overlay.style.cssText = `
+	// 		position: fixed;
+	// 		top: 0;
+	// 		left: 0;
+	// 		width: 100%;
+	// 		height: 100%;
+	// 		background: rgba(0, 0, 0, 0.8);
+	// 		display: flex;
+	// 		align-items: center;
+	// 		justify-content: center;
+	// 		z-index: 1000;
+	// 		color: white;
+	// 		font-size: 3rem;
+	// 		font-weight: bold;
+	// 		text-align: center;
+	// 	`;
 
-		overlay.innerHTML = `
-			<div>
-				<div style="color: #ffd700; margin-bottom: 20px;">🏆</div>
-				<div>${winner} ${t('tron.wins')}</div>
-				<div style="font-size: 1.5rem; margin-top: 20px; opacity: 0.8;">
-					${t('tron.finalScore')}: ${this.playerOneScore} - ${this.playerTwoScore}
-				</div>
-			</div>
-		`;
+	// 	overlay.innerHTML = `
+	// 		<div>
+	// 			<div style="color: #ffd700; margin-bottom: 20px;">🏆</div>
+	// 			<div>${winner} ${t('tron.wins')}</div>
+	// 			<div style="font-size: 1.5rem; margin-top: 20px; opacity: 0.8;">
+	// 				${t('tron.finalScore')}: ${this.playerOneScore} - ${this.playerTwoScore}
+	// 			</div>
+	// 		</div>
+	// 	`;
 
-		document.body.appendChild(overlay);
+	// 	document.body.appendChild(overlay);
 
-		setTimeout(() => {
-			if (overlay.parentNode) {
-				overlay.parentNode.removeChild(overlay);
-			}
-		}, 3000);
-	}
+	// 	setTimeout(() => {
+	// 		if (overlay.parentNode) {
+	// 			overlay.parentNode.removeChild(overlay);
+	// 		}
+	// 	}, 3000);
+	// }
 
 	resetGame() {
 		this.playerCar.position = new Vector3(-90, 0.5, 0);
