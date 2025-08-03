@@ -381,6 +381,7 @@ export function renderTron() {
 		<div class="flex flex-col justify-center items-center min-h-screen -mt-20">
 			<div class="card p-7">
 				<div class="text-purple-950 font-bold text-4xl mb-10">Ready to play Tron?</div>
+				<div class="text-purple-950 font-bold text-4xl mb-10">1 v 1 gare du nord</div>
 				<button id="startTronBtn">
 					Start Game
 				</button>
