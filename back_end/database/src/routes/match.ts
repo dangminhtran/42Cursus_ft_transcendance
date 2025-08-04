@@ -18,11 +18,12 @@ export default async function matchRoutes(fastify: FastifyInstance) {
 		const { match } = request.body as { match: MatchToAdd };
 		const { userid } = request.params as {userid: number};
 
-		if ( !match.player1 || !match.player2 || match.player1score < 0 || match.player2score < 0)
-		{
-			console.log("LA BARRRE")
-			return reply.code(500).send({ message: 'Invalid body.' });
-		}
+		console.log(match, userid)
+		// if ( match.player1 == undefined || match.player2 == undefined || match.player1score < 0 || match.player2score < 0)
+		// {
+		// 	console.log("LA BARRRE")
+		// 	return reply.code(500).send({ message: 'Invalid body.' });
+		// }
 
 		const result: boolean = await fastify.addMatch(match, userid);
 		if (!result)

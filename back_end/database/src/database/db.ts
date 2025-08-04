@@ -31,8 +31,8 @@ db.exec(`CREATE TABLE IF NOT EXISTS tournaments (
 db.exec(`
   CREATE TABLE IF NOT EXISTS matchs (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
-	player1 TEXT NOT NULL REFERENCES users(username),
-	player2 TEXT NOT NULL REFERENCES users(username),
+	player1 TEXT NOT NULL,
+	player2 TEXT NOT NULL,
 	player1_score INTEGER,
 	player2_score INTEGER,
 	user_id INTEGER references users(id),

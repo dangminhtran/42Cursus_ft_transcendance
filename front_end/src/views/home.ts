@@ -120,7 +120,6 @@ function renderUserProfile(): string {
 	let win: number = 0;
 	let losses: number = 0;
 	const totalGames = data.length;
-	const winrate: number = totalGames === 0 ? 0 : Math.round((win / totalGames) * 10000) / 100;
 
 	data.forEach((game) => {
 		const winnerusername = game.player1_score > game.player2_score ? game.player1 : game.player2;
@@ -129,6 +128,9 @@ function renderUserProfile(): string {
 		else
 			losses++;
 	})
+
+
+	const winrate: number = totalGames === 0 ? 0 : Math.round((win / totalGames) * 10000) / 100;
 
 	return `
         <div class="bg-gray-800 rounded-lg p-6">
@@ -243,6 +245,8 @@ async function getMyGameHistory(): Promise<Match[]> {
 			'Content-Type': 'application/json'
 		}
 	});
+
+	console.log('response data in front', response.data)
 	return data = response.data
 }
 

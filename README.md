@@ -8,11 +8,6 @@ Without framework : Typescript - OK
 - 0.5 - Internationalisation - OK
 - 0.5 - Accessibility - OK
 
-**GAMEPLAY AND USER EXPERIENCE**
-
-NON
-- 1 - Major module : Another game - WIP
-
 **GRAPHICS**
 
 - 1- Major module : 3D Babylon.js - OK
@@ -26,7 +21,6 @@ NON
 **USER MANAGEMENT**
 
 - 1 - Major module : standard user management - OK
-- 1 - Major module : OAuth Sign In
 
 **CYBER SCURITY**
 - 1 - Major module: 2FA and JWT - OK

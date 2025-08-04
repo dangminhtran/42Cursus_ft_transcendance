@@ -7,6 +7,8 @@ export const addMatch = async (match: MatchToAdd, userid: number): Promise<boole
 	let stmt;
 	let result;
 
+	console.log("MATCHEUH: ", match)
+
 	if (!match.tournament_uuid)
 	{
 		stmt = db.prepare(`INSERT INTO matchs (player1, player2, player1_score, player2_score, user_id) VALUES (?, ?, ?, ?, ?)`);
@@ -25,10 +27,12 @@ export const getAllMatches = async (userid: number): Promise<Match[]> => {
 	const user: User | null = await getUserByID(userid);
 	if (!user || !user.username)
 		return [];
-	const stmt = db.prepare(`SELECT * FROM 'matchs' 
-		WHERE player1 IN (SELECT users.username FROM friends INNER JOIN users on friend_id = users.id WHERE username = ?) 
-		OR player2 IN (SELECT users.username FROM friends INNER JOIN users on friend_id = users.id WHERE username = ?)`)
-	const rows: Match[] = stmt.all(user.username, user.username) as Match[];
+
+	const stmt = db.prepare(`SELECT * FROM 'matchs' WHERE user_id = ?`)
+	// const stmt = db.prepare(`SELECT * FROM 'matchs' 
+	// 	WHERE player1 IN (SELECT users.username FROM friends INNER JOIN users on friend_id = users.id WHERE username = ?) 
+	// 	OR player2 IN (SELECT users.username FROM friends INNER JOIN users on friend_id = users.id WHERE username = ?)`)
+	const rows: Match[] = stmt.all(userid) as Match[];
 	return rows;
 }
 

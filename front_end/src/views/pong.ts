@@ -6,10 +6,10 @@ import { setPongGame } from '../state';
 import { i18n, t } from '../i18n';
 import axios from 'axios';
 import { TOURNAMENT_ADDRESS } from '../config';
-import * as sanitizeHtml from 'sanitize-html';
+import sanitizeHtml from 'sanitize-html';
 
 
-let tournament_uuid: string = "-1";
+// let tournament_uuid: string = "-1";
 declare global {
   interface Window {
     pongGameInstance: any;
@@ -45,6 +45,7 @@ export class PongGame {
   ball: any;
   playerPaddle: any;
   aiPaddle: any;
+  lastAiMove: number;
   
   // Multiplayer properties
   isMultiplayer: boolean;
@@ -66,6 +67,8 @@ export class PongGame {
     this.fieldWidth = 0;
     this.fieldHeight = 0;
     this.winningScore = 5;
+    this.lastAiMove = Date.now();
+
 
     this.inputStates = {
       wPressed: false,
@@ -249,6 +252,10 @@ export class PongGame {
     if (this.isMultiplayer) {
       this.updatePlayer2Paddle();
     } else {
+
+      const now: number = Date.now();
+      if (now - this.lastAiMove >= 100) {
+
       const ballZ = this.ball.position.z;
       const paddleZ = this.aiPaddle.position.z;
       
@@ -273,6 +280,8 @@ export class PongGame {
       } else if (ballZ < paddleZ - 0.5 && this.aiPaddle.position.z > -this.fieldHeight / 2 + 1) {
         this.aiPaddle.position.z -= aiSpeed;
       }
+      this.lastAiMove = Date.now();
+    }
     }
   }
 
@@ -373,18 +382,18 @@ export class PongGame {
     `;
 
 
-	let match = { 
-		match:  {
+	let match = {
 				player1: this.player1Name,
 				player2: this.player2Name,
 				player1score: this.playerScore,
 				player2score: this.aiScore
-				}
 			}
+
+    console.log(match);
 
 	axios.post(
 			`${TOURNAMENT_ADDRESS}/match/addMatch`,
-			{ match },
+			{ "match": match },
 			{
 				headers: {
 					'Authorization': `Bearer ${sessionStorage.getItem('token')}`,
@@ -780,21 +789,21 @@ async function startTournament() {
   const inputs = document.querySelectorAll('#playerInputs input');
   const players: string[] = [];
 
-  const uuid: string = await axios.post(`${TOURNAMENT_ADDRESS}/tournament/create_tournament`,
-	{},
-	{
-		headers: {
-			'Authorization': `Bearer ${sessionStorage.getItem('token')}`,
-			'Content-Type': 'application/json'
-		}
-	}
-  ).then(data => data.data.uuid)
-  if (uuid.length == 0) {
-	alert('Unable to create tournament!');
-    return;
-  }
+  // const uuid: string = await axios.post(`${TOURNAMENT_ADDRESS}/tournament/create_tournament`,
+	// {},
+	// {
+	// 	headers: {
+	// 		'Authorization': `Bearer ${sessionStorage.getItem('token')}`,
+	// 		'Content-Type': 'application/json'
+	// 	}
+	// }
+  // ).then(data => data.data.uuid)
+  // if (uuid.length == 0) {
+	// alert('Unable to create tournament!');
+  //   return;
+  // }
 
-  tournament_uuid = uuid;
+ // tournament_uuid = uuid;
   inputs.forEach(input => {
     const name = sanitizeHtml((input as HTMLInputElement).value.trim());
     if (name) {
@@ -970,7 +979,6 @@ function showTournamentWinner() {
   document.getElementById('newTournament')?.addEventListener('click', launchPongForMultiple);
   document.getElementById('mainMenu')?.addEventListener('click', renderPong);
 
-  tournament_uuid = "-1";
 }
 
 function launchPongGameWithPlayers(player1Name: string, player2Name: string) {
