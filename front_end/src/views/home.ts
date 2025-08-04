@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { renderNavbar } from '../componentes/navbar';
-import { TEST_ADDRESS, TOURNAMENT_ADDRESS } from '../config';
+import { TEST_ADDRESS, TOURNAMENT_ADDRESS, BASE_ADDRESS } from '../config';
 import type { User } from '../../../back_end/database/src/structs';
 import { navigateTo } from '../router';
 import { i18n, t } from '../i18n';
@@ -18,7 +18,7 @@ const getCurrentUser = async () => {
 		}
 
 		const response = await axios.post(
-			`${TEST_ADDRESS}/user-management/profile`,
+			`${BASE_ADDRESS}/user-management/profile`,
 			{},
 			{
 				headers:
@@ -151,7 +151,7 @@ function renderUserProfile(): string {
 			losses++;
 	})
 
-	const winrate: number = Math.round((win / totalGames) * 10000) / 100;
+	const winrate: number = totalGames === 0 ? 0 : Math.round((win / totalGames) * 10000) / 100;
 
 
 	return `
@@ -224,11 +224,6 @@ function renderFriendsList(): string {
                         <div class="text-4xl mb-2">👥</div>
                         <p>No friends yet</p>
                         <p class="text-sm">Add some friends to get started!</p>
-                    <div class="text-sm text-gray-400 mt-1">
-                        ${friend.status === 'online' ? t('home.online') :
-            friend.status === 'in-game' ? t('home.inGame') :
-                `Last seen ${formatLastSeen(friend.user.lastSeen)}`}
-                    </div>
                 </div>
             </div>
         `;
