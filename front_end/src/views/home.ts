@@ -269,13 +269,25 @@ type Match = {
 
 let data: Match[] = []
 async function getMyGameHistory(): Promise<Match[]> {
-	const response = await axios.post(`${TOURNAMENT_ADDRESS}/match/getAllMatches`, {}, {
-		headers: {
-			'Authorization': `Bearer ${sessionStorage.getItem('token')}`,
-			'Content-Type': 'application/json'
+	try {
+		
+		const response = await axios.post(`${TOURNAMENT_ADDRESS}/match/getAllMatches`, {}, {
+			headers: {
+				'Authorization': `Bearer ${sessionStorage.getItem('token')}`,
+				'Content-Type': 'application/json'
+			}
+		});
+		return data = response.data
+	} catch (error) {
+		console.error("Erreur dans getMyGameHistory:", error);
+
+		// Si c’est une erreur d’authentification, on peut rediriger
+		if (axios.isAxiosError(error) && error.response?.status === 401) {
+			// sessionStorage.removeItem("token");
+			navigateTo("/login");
 		}
-	});
-	return data = response.data
+	return [];
+	}
 }
 
 
