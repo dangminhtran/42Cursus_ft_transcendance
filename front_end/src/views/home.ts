@@ -80,10 +80,10 @@ async function loadFriends(): Promise<void> {
 
 		}
 	} catch (error) {
-		console.error('Erreur lors du chargement des amis:', error);
+		console.error('Error loading friends:', error);
 		isLoading = false;
 		friends = []
-		showMessage('Erreur lors du chargement des amis', 'error');
+		showMessage(t('home.errorLoadingFriends'), 'error');
 	}
 }
 
@@ -103,7 +103,7 @@ async function addFriendAPI(email: string): Promise<boolean> {
 		navigateTo('/');
 		return true;
 	} catch (error) {
-		console.error('Erreur lors de l\'ajout de l\'ami:', error);
+		console.error('Error adding friend:', error);
 		return false;
 	}
 }
@@ -120,7 +120,7 @@ async function deleteFriendAPI(friendId: number): Promise<boolean> {
 		);
 		return true;
 	} catch (error) {
-		console.error('Erreur lors de la suppression de l\'ami:', error);
+		console.error('Error deleting friend:', error);
 		return false;
 	}
 }
@@ -129,10 +129,10 @@ function renderUserProfile(): string {
 	if (!currentUser || !currentUser.username) {
 		return `
             <div class="bg-gray-800 rounded-lg p-6">
-                <h2 class="text-xl font-bold text-white mb-4">👤 Your Profile</h2>
+                <h2 class="text-xl font-bold text-white mb-4">👤 ${t('home.yourProfile')}</h2>
                 <div class="flex items-center justify-center h-32">
                     <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-400"></div>
-                    <span class="ml-2 text-gray-400">Loading profile...</span>
+                    <span class="ml-2 text-gray-400">${t('home.loadingProfile')}</span>
                 </div>
             </div>
         `;
@@ -194,15 +194,15 @@ function renderFriendsList(): string {
 		return `
             <div class="bg-gray-800 rounded-lg p-6 h-full flex flex-col">
                 <div class="flex items-center justify-between mb-4">
-                    <h2 class="text-xl font-bold text-white">👥 Friends</h2>
+                    <h2 class="text-xl font-bold text-white">👥 ${t('home.friends')}</h2>
                     <button id="add-friend-btn" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm transition-colors">
-                        + Add Friend
+                        + ${t('home.addFriend')}
                     </button>
                 </div>
                 <div class="flex-1 flex items-center justify-center">
                     <div class="text-gray-400 text-center">
                         <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-400 mx-auto mb-2"></div>
-                        Loading friends...
+                        ${t('home.loadingFriends')}
                     </div>
                 </div>
             </div>
@@ -213,16 +213,16 @@ function renderFriendsList(): string {
 		return `
             <div class="bg-gray-800 rounded-lg p-6 h-full flex flex-col">
                 <div class="flex items-center justify-between mb-4">
-                    <h2 class="text-xl font-bold text-white">👥 Friends (0)</h2>
+                    <h2 class="text-xl font-bold text-white">👥 ${t('home.friends')} (0)</h2>
                     <button id="add-friend-btn" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm transition-colors">
-                        + Add Friend
+                        + ${t('home.addFriend')}
                     </button>
                 </div>
                 <div class="flex-1 flex items-center justify-center">
                     <div class="text-gray-400 text-center">
                         <div class="text-4xl mb-2">👥</div>
-                        <p>No friends yet</p>
-                        <p class="text-sm">Add some friends to get started!</p>
+                        <p>${t('home.noFriendsYet')}</p>
+                        <p class="text-sm">${t('home.addSomeFriends')}</p>
                 </div>
             </div>
         `;
@@ -236,8 +236,8 @@ function renderFriendsList(): string {
                 <div>
                     <div class="flex items-center space-x-4">
 						<span class="font-semibold text-white text-base">${friend.username != null && friend.username.length > 10 ? friend.username.slice(0, 10) + '...' : friend.username}</span>
-						<span class="text-green-400 text-base">🟢 Online</span>
-						<button class="delete-friend-btn" data-email="${friend.email}"> X </button>
+						<span class="text-green-400 text-base">🟢 ${t('home.online')}</span>
+						<button class="delete-friend-btn bg-red-600 hover:bg-red-700 text-white px-2 py-1 rounded text-xs transition-colors" data-email="${friend.email}"> ${t('home.removeFriend')} </button>
 						</div>
                 </div>
             </div>
@@ -484,14 +484,14 @@ function addEventListeners() {
 		});
 	}
 
-	// Event listeners pour supprimer des amis
+	// Event listeners for deleting friends
 	const deleteFriendBtns = document.querySelectorAll('.delete-friend-btn');
 	console.log(deleteFriendBtns)
 	deleteFriendBtns.forEach(btn => {
 		btn.addEventListener('click', (e) => {
 			e.stopPropagation();
 			const email = e.currentTarget.dataset.email;
-			if (email && confirm('Are you sure you want to remove this friend?')) {
+			if (email && confirm(t('home.confirmRemoveFriend'))) {
 				axios.post(
 			`${TEST_ADDRESS}/friends/delete`,
 				{email:email},
@@ -536,7 +536,7 @@ export function addFriends() {
 	document.getElementById('app')!.innerHTML = `
 		<div class="flex flex-col justify-center items-center -mt-20 h-screen">
 			<div class="bg-gray-800 rounded-lg p-8 w-full max-w-md">
-				<h2 class="text-2xl font-bold text-white mb-6 text-center">👥 Add New Friend</h2>
+				<h2 class="text-2xl font-bold text-white mb-6 text-center">👥 ${t('home.addNewFriend')}</h2>
 				<form id="add-friend-form">
 					<div class="mb-4">
 						<label class="block text-sm font-medium text-gray-300 mb-2">${t('home.friendsName')}</label>
