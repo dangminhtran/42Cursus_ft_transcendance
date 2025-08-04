@@ -51,4 +51,9 @@ export default async function authRoutes(fastify: FastifyInstance) {
         const token = fastify.jwt.sign({ id: user.id, email: user.email });
         return { token };
     });
+
+    fastify.post('/verify-jwt', { preValidation: [fastify.authenticate] }, async (request, reply) => {
+        return reply.code(200).send({ message: 'valid token' });
+    });
+
 }
