@@ -1,11 +1,8 @@
 import axios from 'axios';
 import { renderNavbar } from '../componentes/navbar';
 import { TEST_ADDRESS, TOURNAMENT_ADDRESS, BASE_ADDRESS } from '../config';
-import type { User } from '../../../back_end/database/src/structs';
 import { navigateTo } from '../router';
 import { i18n, t } from '../i18n';
-import { WebXRMotionControllerManager } from '@babylonjs/core';
-
 
 let currentUser: any = {}
 const getCurrentUser = async () => {
