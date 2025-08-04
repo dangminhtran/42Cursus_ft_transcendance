@@ -1,6 +1,7 @@
 import axios from "axios";
 import { navigateTo } from "../router";
 import { BASE_ADDRESS } from "../config";
+import sanitizeHtml from 'sanitize-html';
 
 let isLoginMode = true;
 
@@ -87,9 +88,9 @@ function initializeAuthToggle() {
 function initializeAuthHandlers() {
 
 	document.getElementById('authBtn')?.addEventListener('click', async () => {
-		const email = (document.getElementById('email') as HTMLInputElement)?.value;
-		const username = (document.getElementById('username') as HTMLInputElement)?.value;
-		const password = (document.getElementById('password') as HTMLInputElement)?.value;
+		const email = sanitizeHtml((document.getElementById('email') as HTMLInputElement)?.value);
+		const username = sanitizeHtml((document.getElementById('username') as HTMLInputElement)?.value);
+		const password = sanitizeHtml((document.getElementById('password') as HTMLInputElement)?.value);
 
 		if (isLoginMode) {
 			if (!email || !password) {
@@ -283,7 +284,7 @@ function show2FAModal(): Promise<string | null> {
 		};
 		
 		verifyBtn?.addEventListener('click', () => {
-			const code = codeInput.value.trim();
+			const code = sanitizeHtml(codeInput.value.trim());
 			if (!code || code.length !== 6) {
 				alert('Please enter a valid 6-digit code');
 				return;
