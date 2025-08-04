@@ -6,6 +6,7 @@ import { setPongGame } from '../state';
 import { i18n, t } from '../i18n';
 import axios from 'axios';
 import { TOURNAMENT_ADDRESS } from '../config';
+import * as sanitizeHtml from 'sanitize-html';
 
 
 
@@ -801,7 +802,7 @@ async function startTournament() {
 
   tournament_uuid = uuid;
   inputs.forEach(input => {
-    const name = (input as HTMLInputElement).value.trim();
+    const name = sanitizeHtml((input as HTMLInputElement).value.trim());
     if (name) {
       players.push(name);
     }
