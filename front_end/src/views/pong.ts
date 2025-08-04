@@ -9,11 +9,7 @@ import { TOURNAMENT_ADDRESS } from '../config';
 import * as sanitizeHtml from 'sanitize-html';
 
 
-
-// tournament_uuid
 let tournament_uuid: string = "-1";
-
-// Add type declarations
 declare global {
   interface Window {
     pongGameInstance: any;
@@ -385,8 +381,6 @@ export class PongGame {
 				player2score: this.aiScore
 				}
 			}
-	if (tournament_uuid.length > 0 && tournament_uuid != "-1")
-		match.tournament_uuid = tournament_uuid;
 
 	axios.post(
 			`${TOURNAMENT_ADDRESS}/match/addMatch`,
@@ -861,7 +855,6 @@ function showNextMatch() {
       showNextMatch(); // Recursive call for new round
       return;
     } else if (currentTournament.winners.length === 1) {
-      // console.log('Single winner, tournament complete');
       showTournamentWinner();
       return;
     }
@@ -871,7 +864,7 @@ function showNextMatch() {
   }
 
   const currentMatch = currentTournament.matches[currentTournament.currentMatchIndex];
-  // console.log('Current match to display:', currentMatch);
+
   
   const modal = document.getElementById("matchModal");
   const matchInfo = document.getElementById("matchInfo");

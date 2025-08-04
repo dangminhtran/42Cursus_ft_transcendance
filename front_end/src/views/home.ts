@@ -1,14 +1,25 @@
-import axios from 'axios';
-import { renderNavbar } from '../componentes/navbar';
-import { TEST_ADDRESS, TOURNAMENT_ADDRESS, BASE_ADDRESS } from '../config';
-import type { User } from '../../../back_end/database/src/structs';
-import { navigateTo } from '../router';
-import { i18n, t } from '../i18n';
-import { WebXRMotionControllerManager } from '@babylonjs/core';
-import * as sanitizeHtml from 'sanitize-html';
+import axios from 'axios'
+import { renderNavbar } from '../componentes/navbar'
+import { TEST_ADDRESS, TOURNAMENT_ADDRESS, BASE_ADDRESS } from '../config'
+import { navigateTo } from '../router'
+import { i18n, t } from '../i18n'
+import sanitizeHtml from 'sanitize-html';
 
 
 let currentUser: any = {}
+let friends: any[] = []
+let isLoading = true;
+let currentHistoryView = 'my-games'
+let selectedFriend: string | null = null
+let data: Match[] = []
+
+type Match = {
+	player1: string,
+	player2: string,
+	player1_score: number,
+	player2_score: number,
+}
+
 const getCurrentUser = async () => {
 	try {
 		const token = sessionStorage.getItem("token");
@@ -28,34 +39,17 @@ const getCurrentUser = async () => {
 					'Content-Type': 'application/json'
 				}
 			}
-		);
-		currentUser = response.data;
-		return currentUser;
+		)
+		currentUser = response.data
+		return currentUser
 	} catch (error: any) {
-		console.error('Error loading current user:', error);
+		console.error('Error loading current user:', error)
 		if (error.response) {
-			console.error('Response status:', error.response.status);
-			console.error('Response data:', error.response.data);
+			console.error('Response status:', error.response.status)
+			console.error('Response data:', error.response.data)
 		}
-		return null;
+		return null
 	}
-}
-
-// Variables globales pour les données chargées
-let friends: any[] = [];
-let isLoading = true;
-
-// Current view - can be 'all', 'my-games', or a specific friend's name
-let currentHistoryView = 'my-games';
-let selectedFriend: string | null = null;
-
-function getAuthToken(): string | null {
-	return sessionStorage.getItem('token');
-}
-
-function getAuthHeaders() {
-	const token = getAuthToken();
-	return token ? { Authorization: `Bearer ${token}` } : {};
 }
 
 
@@ -89,7 +83,6 @@ async function loadFriends(): Promise<void> {
 	}
 }
 
-
 async function addFriendAPI(email: string): Promise<boolean> {
 	try {
 		await axios.post(
@@ -110,22 +103,6 @@ async function addFriendAPI(email: string): Promise<boolean> {
 	}
 }
 
-// Fonction pour supprimer un ami via l'API
-async function deleteFriendAPI(friendId: number): Promise<boolean> {
-	try {
-		await axios.post(
-			`${TEST_ADDRESS}/friends/delete`,
-			{ friend_id: friendId },
-			{
-				headers: getAuthHeaders()
-			}
-		);
-		return true;
-	} catch (error) {
-		console.error('Erreur lors de la suppression de l\'ami:', error);
-		return false;
-	}
-}
 
 function renderUserProfile(): string {
 	if (!currentUser || !currentUser.username) {
@@ -143,6 +120,7 @@ function renderUserProfile(): string {
 	let win: number = 0;
 	let losses: number = 0;
 	const totalGames = data.length;
+	const winrate: number = totalGames === 0 ? 0 : Math.round((win / totalGames) * 10000) / 100;
 
 	data.forEach((game) => {
 		const winnerusername = game.player1_score > game.player2_score ? game.player1 : game.player2;
@@ -151,9 +129,6 @@ function renderUserProfile(): string {
 		else
 			losses++;
 	})
-
-	const winrate: number = totalGames === 0 ? 0 : Math.round((win / totalGames) * 10000) / 100;
-
 
 	return `
         <div class="bg-gray-800 rounded-lg p-6">
@@ -261,15 +236,6 @@ function renderFriendsList(): string {
     `;
 }
 
-
-type Match = {
-	player1: string,
-	player2: string,
-	player1_score: number,
-	player2_score: number,
-}
-
-let data: Match[] = []
 async function getMyGameHistory(): Promise<Match[]> {
 	const response = await axios.post(`${TOURNAMENT_ADDRESS}/match/getAllMatches`, {}, {
 		headers: {
@@ -278,18 +244,6 @@ async function getMyGameHistory(): Promise<Match[]> {
 		}
 	});
 	return data = response.data
-}
-
-
-
-async function getFilteredGames(): Promise<Match[]> {
-	if (currentHistoryView === 'all') {
-		return [];
-	} else if (currentHistoryView === 'my-games') {
-		return getMyGameHistory();
-	} else {
-		return []
-	}
 }
 
 function getHistoryTitle(): string {
@@ -305,7 +259,6 @@ function getHistoryTitle(): string {
 }
 
 function renderMatchHistory(): string {
-    const filteredGames = getFilteredGames();
     const rowsHtml = data.map(game => {
 
         return `
@@ -385,7 +338,6 @@ function renderMatchHistory(): string {
 export async function renderHome() {
 	renderNavbar();
 
-	// Charger l'utilisateur actuel et les amis en parallèle
 	await Promise.all([
 		getCurrentUser(),
 		loadFriends(),
@@ -415,8 +367,6 @@ export async function renderHome() {
     `;
 
     addEventListeners();
-    
-    // Listen for language changes and re-render
     i18n.addLanguageChangeListener(() => {
         if (location.pathname === '/') {
             renderHome();
@@ -425,7 +375,6 @@ export async function renderHome() {
 }
 
 async function refreshHomeDashboard() {
-	// Recharger les données utilisateur
 	await getCurrentUser();
 
 	const mainContent = `
@@ -474,13 +423,12 @@ function addEventListeners() {
 		});
 	}
 
-	// Event listeners pour supprimer des amis
 	const deleteFriendBtns = document.querySelectorAll('.delete-friend-btn');
 	console.log(deleteFriendBtns)
 	deleteFriendBtns.forEach(btn => {
 		btn.addEventListener('click', (e) => {
 			e.stopPropagation();
-			const email = e.currentTarget.dataset.email;
+			const email = e.currentTarget?.dataset.email;
 			if (email && confirm('Are you sure you want to remove this friend?')) {
 				axios.post(
 			`${TEST_ADDRESS}/friends/delete`,
