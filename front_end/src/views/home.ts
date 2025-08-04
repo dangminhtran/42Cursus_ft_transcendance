@@ -543,7 +543,7 @@ export function addFriends() {
 						<input 
 							id="friend-name-input"
 							type="text" 
-							placeholder="${t('home.enterFriendName')}"
+							placeholder="${t('home.enterFriendEmail')}"
 							class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
 							required
 						>

@@ -46,7 +46,7 @@ export interface Translations {
     availableUsers: string;
     add: string;
     showingGames: string;
-	enterFriendName: string;
+	enterFriendEmail: string;
   };
   
   // Login page
@@ -203,11 +203,11 @@ export const en: Translations = {
     yourProfile: "Your Profile",
     memberSince: "Member since",
     gameDashboard: "Game Dashboard",
-    friendsName: "Friend's Name",
+    friendsName: "Friend's Email",
     availableUsers: "Available Users",
     add: "Add",
     showingGames: "Showing",
-	enterFriendName: "Enter friend's name"
+	enterFriendEmail: "Enter friend's email"
   },
   login: {
     title: "LOG IN",
@@ -352,11 +352,11 @@ export const fr: Translations = {
     yourProfile: "Votre Profil",
     memberSince: "Membre depuis",
     gameDashboard: "Tableau de Bord de Jeu",
-    friendsName: "Nom de l'Ami",
+    friendsName: "Email de l'Ami",
     availableUsers: "Utilisateurs Disponibles",
     add: "Ajouter",
     showingGames: "Affichage",
-	enterFriendName: "Entrez le nom de l'ami"
+	enterFriendEmail: "Entrez l'email de l'ami"
   },
   login: {
     title: "CONNEXION",
@@ -502,11 +502,11 @@ export const es: Translations = {
     yourProfile: "Tu Perfil",
     memberSince: "Miembro desde",
     gameDashboard: "Panel de Juegos",
-    friendsName: "Nombre del Amigo",
+    friendsName: "Email del Amigo",
     availableUsers: "Usuarios Disponibles",
     add: "Agregar",
     showingGames: "Mostrando",
-	enterFriendName: "Ingresa el nombre del amigo"
+	enterFriendEmail: "Ingresa el email del amigo"
   },
   login: {
     title: "INICIAR SESIÓN",
