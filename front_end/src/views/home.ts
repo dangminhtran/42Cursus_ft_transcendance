@@ -3,6 +3,8 @@ import { renderNavbar } from '../componentes/navbar';
 import { TEST_ADDRESS, TOURNAMENT_ADDRESS, BASE_ADDRESS } from '../config';
 import { navigateTo } from '../router';
 import { i18n, t } from '../i18n';
+import { WebXRMotionControllerManager } from '@babylonjs/core';
+import * as sanitizeHtml from 'sanitize-html';
 
 let currentUser: any = {}
 const getCurrentUser = async () => {
@@ -562,7 +564,7 @@ export function addFriends() {
 	if (form) {
 		form.addEventListener('submit', (e) => {
 			e.preventDefault();
-			const friendName = friendNameInput.value.trim();
+			const friendName = sanitizeHtml(friendNameInput.value.trim());
 			if (friendName) {
 				addFriendAPI(friendName);
 			}
