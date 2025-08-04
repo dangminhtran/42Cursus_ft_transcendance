@@ -46,6 +46,7 @@ export interface Translations {
     availableUsers: string;
     add: string;
     showingGames: string;
+	enterFriendName: string;
   };
   
   // Login page
@@ -205,7 +206,8 @@ export const en: Translations = {
     friendsName: "Friend's Name",
     availableUsers: "Available Users",
     add: "Add",
-    showingGames: "Showing"
+    showingGames: "Showing",
+	enterFriendName: "Enter friend's name"
   },
   login: {
     title: "LOG IN",
@@ -353,7 +355,8 @@ export const fr: Translations = {
     friendsName: "Nom de l'Ami",
     availableUsers: "Utilisateurs Disponibles",
     add: "Ajouter",
-    showingGames: "Affichage"
+    showingGames: "Affichage",
+	enterFriendName: "Entrez le nom de l'ami"
   },
   login: {
     title: "CONNEXION",
@@ -502,7 +505,8 @@ export const es: Translations = {
     friendsName: "Nombre del Amigo",
     availableUsers: "Usuarios Disponibles",
     add: "Agregar",
-    showingGames: "Mostrando"
+    showingGames: "Mostrando",
+	enterFriendName: "Ingresa el nombre del amigo"
   },
   login: {
     title: "INICIAR SESIÓN",
