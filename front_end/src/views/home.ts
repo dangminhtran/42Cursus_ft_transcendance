@@ -283,10 +283,10 @@ async function getMyGameHistory(): Promise<Match[]> {
 
 		// Si c’est une erreur d’authentification, on peut rediriger
 		if (axios.isAxiosError(error) && error.response?.status === 401) {
-			sessionStorage.removeItem("token");
+			// sessionStorage.removeItem("token");
 			navigateTo("/login");
 		}
-		return [];
+	return [];
 	}
 }
 
