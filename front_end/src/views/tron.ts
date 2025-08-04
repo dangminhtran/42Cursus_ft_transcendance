@@ -336,21 +336,21 @@ export class TronGame {
 	}
 
 	updateScore() {
-		let playerscore = document.getElementById('playerOneScore');
-		if (playerscore)
-			playerscore.textContent = this.playerOneScore as unknown as string;
-		let aiscore = document.getElementById('playerTwoScore');
-		if (aiscore)
-			aiscore.textContent = this.playerTwoScore as unknown as string;
+		let playeronescore = document.getElementById('playerOneScore');
+		if (playeronescore)
+			playeronescore.textContent = this.playerOneScore as unknown as string;
+		let playertwoscore = document.getElementById('playerTwoScore');
+		if (playertwoscore)
+			playertwoscore.textContent = this.playerTwoScore as unknown as string;
 	}
 
 	startGameLoop() {
 		this.engine.runRenderLoop(() => {
 			this.updatePlayerCar();
-		if ( this.playerScore == 5 )
-			this.endMatch("Player 1");
-		else if ( this.aiScore == 5 )
-			this.endMatch("Player 2");
+		// if ( this.playerScore == 5 )
+		// 	this.endMatch("Player 1");
+		// else if ( this.aiScore == 5 )
+		// 	this.endMatch("Player 2");
 		this.scene.render();
 		});
 
@@ -389,7 +389,7 @@ export class TronGame {
 			<div style="color: #ffd700; margin-bottom: 20px;">🏆</div>
 			<div>${winner} Wins!</div>
 			<div style="font-size: 1.5rem; margin-top: 20px; opacity: 0.8;">
-				Final Score: ${this.playerScore} - ${this.aiScore}
+				Final Score: ${this.playerOneScore} - ${this.playerTwoScore}
 			</div>
 			</div>
 		`;
