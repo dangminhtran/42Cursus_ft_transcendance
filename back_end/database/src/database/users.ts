@@ -47,15 +47,12 @@ export const updateUser = async (user: User) : Promise<boolean> => {
 	console.log('user in database', user)
 	const stmt = db.prepare(
 		`UPDATE users SET 
-		username = ?,
 		profilepicture = ?,
 		email = ?,
-		password = ?,
-		is2FAEnabled = ?,
-		twoFASecret = ?
+		password = ?
 		WHERE id = ?`);
 	
-	const info = stmt.run(user.username, user.profilepicture, user.email, user.password, user.is2FAEnabled ? 1 : 0, user.twoFASecret, user.id)
+	const info = stmt.run(user.profilepicture, user.email, user.password, user.id)
 	
 	console.log(info)
 	

@@ -43,16 +43,6 @@ export async function renderProfile() {
 			</div>
 
 			<div class="flex flex-col justify-center gap-2 w-full max-w-md">
-				<label for="usernameInput" class="text-white font-semibold">Username:</label>
-				<input 
-					class="rounded-sm bg-indigo-950 text-lg text-white border border-teal-50 ease-in-out p-2" 
-					type="text" 
-					name="usernameInput" 
-					id="usernameInput"
-				>
-			</div>
-
-			<div class="flex flex-col justify-center gap-2 w-full max-w-md">
 				<label for="emailInput" class="text-white font-semibold">${t('profile.email')}:</label>
 				<input 
 					class="rounded-sm bg-indigo-950 text-lg text-white border border-teal-50 ease-in-out p-2" 
@@ -82,23 +72,17 @@ export async function renderProfile() {
 				>
 			</div>
 			
-			<div class="flex justify-center items-center gap-2 w-full max-w-md">
-				<label for="2fa" class="text-white font-semibold">${t('profile.enable2FA')}:</label>
-				<input 
-					class="rounded-sm bg-indigo-950 text-lg text-white border border-teal-50 ease-in-out" 
-					type="checkbox" 
-					name="2fa" 
-					id="2fa"
-				>
-			</div>
 			
 			<button 
 				id="saveChangesBtn"
 				class="bg-green-600 text-white py-3 px-6 rounded-lg hover:bg-green-700 transition-colors font-semibold text-lg mt-4"
 			>
 				${t('profile.saveChanges')}
+			</button>
 			<button 
-				id="enable2FABtn">
+				id="enable2FABtn"
+				class="bg-green-600 text-white py-3 px-6 rounded-lg hover:bg-green-700 transition-colors font-semibold text-lg mt-4"
+			>
 				Enable 2FA
 			</button>
 		</div>
