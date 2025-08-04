@@ -5,6 +5,7 @@ import type { User } from '../../../back_end/database/src/structs';
 import { navigateTo } from '../router';
 import { i18n, t } from '../i18n';
 import { WebXRMotionControllerManager } from '@babylonjs/core';
+import * as sanitizeHtml from 'sanitize-html';
 
 
 let currentUser: any = {}
@@ -565,7 +566,7 @@ export function addFriends() {
 	if (form) {
 		form.addEventListener('submit', (e) => {
 			e.preventDefault();
-			const friendName = friendNameInput.value.trim();
+			const friendName = sanitizeHtml(friendNameInput.value.trim());
 			if (friendName) {
 				addFriendAPI(friendName);
 			}
