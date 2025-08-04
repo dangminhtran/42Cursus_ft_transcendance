@@ -8,10 +8,23 @@ import dbConnector from "./database/db";
 import friendsRoutes from './routes/friends';
 import tournamentRoutes from './routes/tournament';
 import matchRoutes from './routes/match';
+import net from 'net';
 
+const logstashClient = net.createConnection({ port: 5000, host: 'logstash' });
 
+const fastify = Fastify({
+  logger: {
+    stream: logstashClient,
+    level: 'info',
+    timestamp: () => `,"@timestamp":"${new Date().toISOString()}"`,
+    formatters: {
+      level(label) {
+        return { level: label };
+      }
+    }
+  }
+});
 
-const fastify = Fastify({ logger: true });
 fastify.register(cors, {
   origin: true,
 })
