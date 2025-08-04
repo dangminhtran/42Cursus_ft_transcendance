@@ -92,6 +92,13 @@ function initializeAuthHandlers() {
 		const username = sanitizeHtml((document.getElementById('username') as HTMLInputElement)?.value);
 		const password = sanitizeHtml((document.getElementById('password') as HTMLInputElement)?.value);
 
+		// ecris regex pour valider l'email
+		const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+		if (!emailRegex.test(email)) {
+			alert('Please enter a valid email address');
+			return;
+		}
+
 		if (isLoginMode) {
 			if (!email || !password) {
 				alert('Please fill in both email and password');
