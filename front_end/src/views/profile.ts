@@ -3,14 +3,14 @@ import { i18n, t } from "../i18n";
 import axios from "axios";
 import { navigateTo } from "../router";
 import { BASE_ADDRESS, TEST_ADDRESS } from "../config";
+import sanitizeHtml from 'sanitize-html'
 
 export async function renderProfile() {
 	renderNavbar();
 	document.getElementById('app')!.innerHTML = `
 		<div class="bg-emerald-900 border border-white flex flex-col justify-center items-center gap-5 -mt-20 text-md text-indigo-950 rounded-xl p-10">
 			<div class="text-lg text-white text-xl font-semibold">${t('profile.personalInfo')}</div>	
-		
-			<!-- Avatar Preview Section -->
+
 			<div class="flex flex-col items-center gap-4 mb-6">
 				<div class="text-white font-medium">${t('profile.profilePicturePreview')}</div>
 				<div class="relative">
@@ -21,7 +21,6 @@ export async function renderProfile() {
 						class="w-32 h-32 rounded-full object-cover border-4 border-white shadow-lg"
 						onerror="this.src='https://via.placeholder.com/150/4338ca/ffffff?text=No+Image'"
 					>
-					<div class="absolute bottom-0 right-0 bg-green-500 w-4 h-4 rounded-full border-2 border-white" title="Avatar loaded successfully" id="avatarStatus"></div>
 				</div>
 			</div>
 
@@ -34,12 +33,6 @@ export async function renderProfile() {
 					id="pictureInput"
 					placeholder="https://example.com/your-image.jpg"
 				>
-				<button 
-					id="previewBtn" 
-					class="mt-2 bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition-colors text-sm"
-				>
-					${t('profile.previewImage')}
-				</button>
 			</div>
 
 			<div class="flex flex-col justify-center gap-2 w-full max-w-md">
@@ -89,8 +82,6 @@ export async function renderProfile() {
 	`;
 
 	setupEventListeners();
-	
-	// Listen for language changes and re-render
 	i18n.addLanguageChangeListener(() => {
 		if (location.pathname === '/profile') {
 			renderProfile();
@@ -117,20 +108,19 @@ function setupEventListeners() {
 	});
 
 	saveBtn?.addEventListener('click', () => {
-		const username = (document.getElementById("usernameInput") as HTMLInputElement)?.value || '';
-		const email = (document.getElementById("emailInput") as HTMLInputElement)?.value || '';
-		const oldPassword = (document.getElementById("oldPassword") as HTMLInputElement)?.value || '';
-		const newPassword = (document.getElementById("newPassword") as HTMLInputElement)?.value || '';
+		const username = sanitizeHtml((document.getElementById("usernameInput") as HTMLInputElement)?.value) || '';
+		const email = sanitizeHtml((document.getElementById("emailInput") as HTMLInputElement)?.value) || '';
+		const oldPassword = sanitizeHtml((document.getElementById("oldPassword") as HTMLInputElement)?.value) || '';
+		const newPassword = sanitizeHtml((document.getElementById("newPassword") as HTMLInputElement)?.value) || '';
 		const twofa = (document.getElementById("2fa") as HTMLInputElement)?.checked || false;
-		const profilepicture = (document.getElementById("pictureInput") as HTMLInputElement)?.value || '';
+		const profilepicture = sanitizeHtml((document.getElementById("pictureInput") as HTMLInputElement)?.value) || '';
+
 
 		if (profilepicture && !isValidUrl(profilepicture)) {
 			alert('Please enter a valid image URL');
 			return;
 		}
 
-		console.log('profile picture dans le front', profilepicture)
-		//const json = JSON.stringify({ username, profilepicture, email, oldPassword, newPassword, twofa })
 		const data = { username, profilepicture, email, oldPassword, newPassword, twofa}
 		try {
 			axios.post(`${TEST_ADDRESS}/user-management/update`, data, {
@@ -159,10 +149,9 @@ function setupEventListeners() {
 function previewAvatar() {
 	const pictureInput = document.getElementById("pictureInput") as HTMLInputElement;
 	const avatarPreview = document.getElementById("avatarPreview") as HTMLImageElement;
-	const imageUrl = pictureInput?.value.trim();
+	const imageUrl = sanitizeHtml(pictureInput?.value).trim();
 
 	if (!imageUrl) {
-		// Reset to default if empty
 		avatarPreview.src = "https://via.placeholder.com/150/4338ca/ffffff?text=Avatar";
 		updateAvatarStatus('default');
 		return;
@@ -231,16 +220,16 @@ export function loadUserProfile(userData: any) {
 		const twofaInput = document.getElementById("2fa") as HTMLInputElement;
 
 		if (emailInput && userData.email) {
-			emailInput.value = userData.email;
+			emailInput.value = sanitizeHtml(userData.email)
 		}
 
 		if (pictureInput && userData.profilePicture) {
-			pictureInput.value = userData.profilePicture;
-			previewAvatar();
+			pictureInput.value = sanitizeHtml(userData.profilePicture)
+			previewAvatar()
 		}
 
 		if (twofaInput && userData.twofa !== undefined) {
-			twofaInput.checked = userData.twofa;
+			twofaInput.checked = userData.twofa
 		}
 	}, 100);
 }
@@ -249,8 +238,7 @@ async function get2Fa(jwt: string) {
 	try {
 		const response = await axios.post(`${BASE_ADDRESS}/2fa/setup`, {}, {
 			headers: { Authorization: `Bearer ${jwt}` }
-		});
-		console.log('2FA setup response:', response.data);
+		})
 
 		if (response.data.qrCodeDataURL) {
 			const qrCodeDataURL = response.data.qrCodeDataURL;
@@ -296,7 +284,6 @@ function create2FAModal(qrCodeDataURL: string, jwt: string) {
 						class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
 					/>
 				</div>
-				
 				<div class="flex gap-3">
 					<button 
 						id="verify-2fa-btn" 
@@ -322,7 +309,7 @@ function create2FAModal(qrCodeDataURL: string, jwt: string) {
 	const codeInput = document.getElementById('twofa-code') as HTMLInputElement;
 
 	verifyBtn?.addEventListener('click', async () => {
-		const token = codeInput.value.trim();
+		const token = sanitizeHtml(codeInput.value).trim();
 		if (!token || token.length !== 6) {
 			alert('Please enter a valid 6-digit code');
 			return;
