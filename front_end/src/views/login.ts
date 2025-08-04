@@ -122,11 +122,11 @@ function initializeAuthHandlers() {
 			if (signupSuccessful) {
 				alert('Account created successfully! Please sign in.');
 				document.getElementById('loginToggle')?.click();
+				return ;
 			} else {
 				alert('Sign up failed. Please try again.');
+				return ;
 			}
-
-			document.getElementById('loginToggle')?.click();
 		}
 	});
 
