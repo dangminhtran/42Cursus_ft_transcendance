@@ -442,7 +442,7 @@ async function refreshHomeDashboard() {
         <div class="flex flex-col justify-center items-center -mt-20 h-screen overflow-hidden pt-15">
             <div class="w-full max-w-7xl mx-auto p-6 h-full flex flex-col">
                 <h1 class="text-4xl font-bold text-center mb-6 bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
-                    🎮 Game Dashboard
+                    🎮 ${t('home.gameDashboard')}
                 </h1>
 
                 <div class="flex-1 grid grid-cols-1 lg:grid-cols-3 gap-6 overflow-hidden">
