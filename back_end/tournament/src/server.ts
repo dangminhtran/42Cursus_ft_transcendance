@@ -7,7 +7,22 @@ import { matchRoutes } from './routes/match';
 import { tournamentRoutes } from './routes/tournament';
 import dbServiceClient from './plugins/dbServiceClient';
 
-const fastify = Fastify({ logger: true });
+import net from 'net';
+
+const logstashClient = net.createConnection({ port: 5000, host: 'logstash' });
+
+const fastify = Fastify({
+  logger: {
+    stream: logstashClient,
+    level: 'info',
+    timestamp: () => `,"@timestamp":"${new Date().toISOString()}"`,
+    formatters: {
+      level(label) {
+        return { level: label };
+      }
+    }
+  }
+});
 fastify.register(cors, {
   origin: (origin, callback) => {
     if (!origin) return callback(null, true);
