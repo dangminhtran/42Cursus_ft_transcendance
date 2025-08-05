@@ -119,15 +119,17 @@ function renderUserProfile(): string {
 
 	let win: number = 0;
 	let losses: number = 0;
-	const totalGames = data.length;
+	let totalGames = data.length;
 
-	data.forEach((game) => {
+	data.filter((game) => game.player1 == currentUser.username || game.player2 == currentUser.username).forEach((game) => {
 		const winnerusername = game.player1_score > game.player2_score ? game.player1 : game.player2;
 		if (winnerusername == currentUser.username)
 			win++;
-		else
+		else if (winnerusername != currentUser.username && (game.player1 == currentUser.username || game.player2 == currentUser.username))
 			losses++;
 	})
+
+	totalGames = win + losses;
 
 
 	const winrate: number = totalGames === 0 ? 0 : Math.round((win / totalGames) * 10000) / 100;

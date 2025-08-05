@@ -5,7 +5,7 @@ import { ArcRotateCamera, Color3, Engine, HemisphericLight, MeshBuilder, Scene, 
 import { setPongGame } from '../state';
 import { i18n, t } from '../i18n';
 import axios from 'axios';
-import { TOURNAMENT_ADDRESS } from '../config';
+import { BASE_ADDRESS, TOURNAMENT_ADDRESS } from '../config';
 import sanitizeHtml from 'sanitize-html';
 
 
@@ -29,6 +29,37 @@ interface Tournament {
   currentMatchIndex: number;
   winners: string[];
 }
+    const getCurrentUser = async () => {
+      try {
+        const token = sessionStorage.getItem("token");
+    
+        if (!token) {
+          console.error('No token found in sessionStorage');
+          return null;
+        }
+    
+        const response = await axios.post(
+          `${BASE_ADDRESS}/user-management/profile`,
+          {},
+          {
+            headers:
+            {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json'
+            }
+          }
+        )
+        return response.data
+      } catch (error: any) {
+        console.error('Error loading current user:', error)
+        if (error.response) {
+          console.error('Response status:', error.response.status)
+          console.error('Response data:', error.response.data)
+        }
+        return null
+      }
+    }
+
 
 export class PongGame {
   canvas: HTMLCanvasElement | any;
@@ -54,10 +85,12 @@ export class PongGame {
   winningScore: number;
 
   
+
+  
   // Difficulty property
   difficulty: 'easy' | 'medium' | 'hard';
 
-  constructor(isMultiplayer: boolean = false, player1Name: string = "Player", player2Name: string = "AI", difficulty: 'easy' | 'medium' | 'hard' = 'medium') {
+  constructor(isMultiplayer: boolean = false, player1Name: string, player2Name: string = "AI", difficulty: 'easy' | 'medium' | 'hard' = 'medium') {
     this.canvas = document.getElementById("renderCanvas");
     this.engine = new Engine(this.canvas, true);
 
@@ -78,6 +111,7 @@ export class PongGame {
     };
 
     this.isMultiplayer = isMultiplayer;
+
     this.player1Name = player1Name;
     this.player2Name = player2Name;
     this.difficulty = difficulty;
@@ -585,7 +619,9 @@ i18n.addLanguageChangeListener(() => {
   }
 });
 
-export function renderPong() {
+export async function renderPong() {
+
+  await getCurrentUser();
   renderNavbar();
   document.getElementById('app')!.innerHTML = `
     <div class="flex flex-col justify-content items-center">
@@ -651,7 +687,8 @@ export function renderPong() {
   });
 }
 
-export function launchPongGame(difficulty: 'easy' | 'medium' | 'hard' = 'medium') {
+export async function launchPongGame(difficulty: 'easy' | 'medium' | 'hard' = 'medium') {
+  let currentUser = await getCurrentUser();
   // Helper function to get translated difficulty
   const getDifficultyText = (diff: string) => {
     switch(diff) {
@@ -675,7 +712,7 @@ export function launchPongGame(difficulty: 'easy' | 'medium' | 'hard' = 'medium'
       </div>
     </div>
   `;
-  startPongGame(false, "Player", "AI", difficulty);
+  startPongGame(false, currentUser.username, "AI", difficulty);
 }
 
 let currentTournament: Tournament = {
