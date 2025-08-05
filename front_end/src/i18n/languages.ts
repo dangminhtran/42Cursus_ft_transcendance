@@ -47,6 +47,13 @@ export interface Translations {
     add: string;
     showingGames: string;
 	enterFriendEmail: string;
+    loadingFriends: string;
+    noFriendsYet: string;
+    addSomeFriends: string;
+    confirmRemoveFriend: string;
+    addNewFriend: string;
+    loadingProfile: string;
+    removeFriend: string;
   };
   
   // Login page
@@ -207,7 +214,14 @@ export const en: Translations = {
     availableUsers: "Available Users",
     add: "Add",
     showingGames: "Showing",
-	enterFriendEmail: "Enter friend's email"
+	enterFriendEmail: "Enter friend's email",
+    loadingFriends: "Loading friends...",
+    noFriendsYet: "No friends yet",
+    addSomeFriends: "Add some friends to get started!",
+    confirmRemoveFriend: "Are you sure you want to remove this friend?",
+    addNewFriend: "Add New Friend",
+    loadingProfile: "Loading profile...",
+    removeFriend: "Remove"
   },
   login: {
     title: "LOG IN",
@@ -356,7 +370,14 @@ export const fr: Translations = {
     availableUsers: "Utilisateurs Disponibles",
     add: "Ajouter",
     showingGames: "Affichage",
-	enterFriendEmail: "Entrez l'email de l'ami"
+	enterFriendEmail: "Entrez l'email de l'ami",
+    loadingFriends: "Chargement des amis...",
+    noFriendsYet: "Aucun ami pour le moment",
+    addSomeFriends: "Ajoutez des amis pour commencer !",
+    confirmRemoveFriend: "Êtes-vous sûr de vouloir supprimer cet ami ?",
+    addNewFriend: "Ajouter un Nouvel Ami",
+    loadingProfile: "Chargement du profil...",
+    removeFriend: "Supprimer"
   },
   login: {
     title: "CONNEXION",
@@ -506,7 +527,14 @@ export const es: Translations = {
     availableUsers: "Usuarios Disponibles",
     add: "Agregar",
     showingGames: "Mostrando",
-	enterFriendEmail: "Ingresa el email del amigo"
+	enterFriendEmail: "Ingresa el email del amigo",
+    loadingFriends: "Cargando amigos...",
+    noFriendsYet: "Aún no tienes amigos",
+    addSomeFriends: "¡Agrega algunos amigos para comenzar!",
+    confirmRemoveFriend: "¿Estás seguro de que quieres eliminar este amigo?",
+    addNewFriend: "Agregar Nuevo Amigo",
+    loadingProfile: "Cargando perfil...",
+    removeFriend: "Eliminar"
   },
   login: {
     title: "INICIAR SESIÓN",
