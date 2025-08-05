@@ -46,6 +46,7 @@ export interface Translations {
     availableUsers: string;
     add: string;
     showingGames: string;
+    games: string;
 	enterFriendEmail: string;
     loadingFriends: string;
     noFriendsYet: string;
@@ -214,7 +215,8 @@ export const en: Translations = {
     availableUsers: "Available Users",
     add: "Add",
     showingGames: "Showing",
-	enterFriendEmail: "Enter friend's email",
+    games: 'games',
+	  enterFriendEmail: "Enter friend's email",
     loadingFriends: "Loading friends...",
     noFriendsYet: "No friends yet",
     addSomeFriends: "Add some friends to get started!",
@@ -370,6 +372,7 @@ export const fr: Translations = {
     availableUsers: "Utilisateurs Disponibles",
     add: "Ajouter",
     showingGames: "Affichage",
+    games: 'matches',
 	enterFriendEmail: "Entrez l'email de l'ami",
     loadingFriends: "Chargement des amis...",
     noFriendsYet: "Aucun ami pour le moment",
@@ -527,6 +530,7 @@ export const es: Translations = {
     availableUsers: "Usuarios Disponibles",
     add: "Agregar",
     showingGames: "Mostrando",
+    games: 'juegos',
 	enterFriendEmail: "Ingresa el email del amigo",
     loadingFriends: "Cargando amigos...",
     noFriendsYet: "Aún no tienes amigos",

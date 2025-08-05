@@ -3,7 +3,6 @@ import { clearPongGame } from "../state";
 import { clearTronGame } from "../state";
 import { i18n, t } from "../i18n";
 import type { Language } from "../i18n";
-import { Quaternion } from "@babylonjs/core";
 import { renderLogin } from "../views/login";
 
 function getFlagEmoji(language: Language): string {
@@ -109,9 +108,10 @@ export function renderNavbar() {
 		window.sessionStorage.removeItem('token');
 		console.log("disconnect") // la
 
-
-		navigateTo("/login"); // / login et pas /
-		renderLogin();
+		setTimeout(() => {
+			navigateTo("/login"); // / login et pas /
+			renderLogin();
+		}, 500);
 	});
 
 	// Language switcher functionality

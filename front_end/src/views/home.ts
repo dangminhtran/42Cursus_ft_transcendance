@@ -9,7 +9,7 @@ import sanitizeHtml from 'sanitize-html';
 let currentUser: any = {}
 let friends: any[] = []
 let isLoading = true;
-let currentHistoryView = 'my-games'
+//let currentHistoryView = 'my-games'
 let selectedFriend: string | null = null
 let data: Match[] = []
 
@@ -289,24 +289,6 @@ function renderMatchHistory(): string {
         <div class="bg-gray-800 rounded-lg p-6 h-full flex flex-col">
             <div class="flex items-center justify-between mb-4">
                 <h2 class="text-2xl font-bold text-white">${getHistoryTitle()}</h2>
-                <div class="flex space-x-2">
-                    <button onclick="switchHistoryView('my-games')" 
-                            class="px-3 py-2 rounded text-sm transition-colors ${currentHistoryView === 'my-games' ? 'bg-blue-600 text-white' : 'bg-gray-600 text-gray-300 hover:bg-gray-500'
-        }">
-                        ${t('home.myGames')}
-                    </button>
-                    <button onclick="switchHistoryView('all')" 
-                            class="px-3 py-2 rounded text-sm transition-colors ${currentHistoryView === 'all' ? 'bg-blue-600 text-white' : 'bg-gray-600 text-gray-300 hover:bg-gray-500'
-        }">
-                        ${t('home.allGames')}
-                    </button>
-                    ${currentHistoryView !== 'my-games' && currentHistoryView !== 'all' ? `
-                        <button onclick="switchHistoryView('my-games')" 
-                                class="px-3 py-2 rounded text-sm bg-gray-600 text-gray-300 hover:bg-gray-500 transition-colors">
-                            ${t('home.back')}
-                        </button>
-                    ` : ''}
-                </div>
             </div>
             <div class="flex-1 overflow-auto">
                 <table class="w-full border-collapse text-base">
@@ -333,7 +315,7 @@ function renderMatchHistory(): string {
                 </table>
             </div>
             <div class="mt-3 text-sm text-gray-400 text-center">
-                ${t('home.showingGames')} ${data.length} game${data.length !== 1 ? 's' : ''}
+                ${t('home.showingGames')} ${data.length} ${t('home.games')}${data.length !== 1 ? 's' : ''}
             </div>
         </div>
     `;
@@ -407,17 +389,17 @@ async function refreshHomeDashboard() {
 	addEventListeners();
 }
 
-(window as any).switchHistoryView = function (view: string) {
-	currentHistoryView = view;
-	if (view !== 'my-games' && view !== 'all') {
-		selectedFriend = view;
-		currentHistoryView = 'friend';
-	} else {
-		selectedFriend = null;
-	}
+// (window as any).switchHistoryView = function (view: string) {
+// 	currentHistoryView = view;
+// 	if (view !== 'my-games' && view !== 'all') {
+// 		selectedFriend = view;
+// 		currentHistoryView = 'friend';
+// 	} else {
+// 		selectedFriend = null;
+// 	}
 
-	refreshHomeDashboard();
-};
+// 	refreshHomeDashboard();
+// };
 
 function addEventListeners() {
 	const addFriendBtn = document.getElementById('add-friend-btn');
@@ -449,27 +431,27 @@ function addEventListeners() {
 		});
 	});
 
-	const friendElements = document.querySelectorAll('.friend-item');
-	friendElements.forEach(element => {
-		element.addEventListener('click', () => {
-			const friendName = element.querySelector('.font-semibold')?.textContent;
-			if (friendName) {
-				selectedFriend = friendName;
-				currentHistoryView = 'friend';
+	// const friendElements = document.querySelectorAll('.friend-item');
+	// friendElements.forEach(element => {
+	// 	element.addEventListener('click', () => {
+	// 		const friendName = element.querySelector('.font-semibold')?.textContent;
+	// 		if (friendName) {
+	// 			selectedFriend = friendName;
+	// 			currentHistoryView = 'friend';
 
-				refreshHomeDashboard();
-				setTimeout(() => {
-					const historySection = document.querySelector('.bg-gray-800:last-child');
-					if (historySection) {
-						historySection.scrollIntoView({
-							behavior: 'smooth',
-							block: 'center'
-						});
-					}
-				}, 100);
-			}
-		});
-	});
+	// 			refreshHomeDashboard();
+	// 			setTimeout(() => {
+	// 				const historySection = document.querySelector('.bg-gray-800:last-child');
+	// 				if (historySection) {
+	// 					historySection.scrollIntoView({
+	// 						behavior: 'smooth',
+	// 						block: 'center'
+	// 					});
+	// 				}
+	// 			}, 100);
+	// 		}
+	// 	});
+	// });
 }
 
 export function addFriends() {
