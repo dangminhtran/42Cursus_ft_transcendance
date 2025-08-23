@@ -94,7 +94,7 @@ The goal was to build a **secure, scalable, and modern web app**, integrating a 
 
 ```bash
 # Cloner le repo
-git clone [<url-du-repo>](https://github.com/dangminhtran/42Cursus_ft_transcendance)
+git clone https://github.com/dangminhtran/42Cursus_ft_transcendance.git
 
 # Aller dans le dossier
 cd ft_transcendence
