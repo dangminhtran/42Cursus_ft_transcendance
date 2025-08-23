@@ -97,7 +97,7 @@ The goal was to build a **secure, scalable, and modern web app**, integrating a 
 git clone https://github.com/dangminhtran/42Cursus_ft_transcendance.git
 
 # Aller dans le dossier
-cd ft_transcendence
+cd 42Cursus_ft_transcendance
 
 # Installer les dépendances
 npm install
